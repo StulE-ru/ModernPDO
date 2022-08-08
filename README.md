@@ -52,4 +52,4 @@ $modernPDO->select($table)->where($column, $value)->lastBy($order)
 $modernPDO->update($table)->set([$column1 => $value1, etc.])->execute();
 ```
 
-## Good Luck and Have Fun 💩
+## Good Luck and Have Fun 😘
