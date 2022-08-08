@@ -3,3 +3,9 @@
 #
 
 /.idea
+
+#
+# Private config
+#
+
+/tests/private.php
