@@ -12,6 +12,11 @@ trait Columns
 {
     protected string $columns = "*";
 
+    /**
+     * @brief Добавление столбцов в стиле SELECT `col1`, `col2`, etc.
+     *
+     * @param array $columns - массив столбцов [$col1, $col2, ...]
+     */
     public function columns(array $columns): Select
     {
         if ( empty($columns) )

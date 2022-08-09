@@ -36,12 +36,12 @@ final class ModernPDO
     /**
      * @brief Конструктор класса.
      *
-     * @param[in] $charset - используемая кодировка.
-     * @param[in] $charset - используемая кодировка.
-     * @param[in] $host - хост базы данных.
-     * @param[in] $username - имя пользователя базы данных.
-     * @param[in] $password - пароль пользователя базы данных.
-     * @param[in] $database - название базы данных.
+     * @param string $charset - используемая кодировка.
+     * @param string $charset - используемая кодировка.
+     * @param string $host - хост базы данных.
+     * @param string $username - имя пользователя базы данных.
+     * @param string $password - пароль пользователя базы данных.
+     * @param string $database - название базы данных.
      */
     public function __construct(
         string $type,
@@ -63,31 +63,79 @@ final class ModernPDO
         }
     }
 
-    /** Начинает транзакцию. */
-    public function transaction(): void
+    /**
+     * @brief Инициализация транзакции.
+     *
+     * @return bool В случае успеха true, иначе false.
+     *
+     * @note Обертка PDO::beginTransaction.
+     */
+    public function beginTransaction(): bool
     {
-        $this->pdo->beginTransaction();
+        return $this->pdo->beginTransaction();
     }
 
-    /** Отменяет изменения транзакции. */
-    public function rollback(): void
+    /**
+     * @brief Откат транзакции.
+     *
+     * @return bool В случае успеха true, иначе false.
+     *
+     * @note Обертка PDO::rollBack.
+     */
+    public function rollback(): bool
     {
-        $this->pdo->rollBack();
+        return $this->pdo->rollBack();
     }
 
-    /** Применяет изменения транзакции. */
-    public function commit(): void
+    /**
+     * @brief Фиксация транзакцию.
+     *
+     * @return bool В случае успеха true, иначе false.
+     *
+     * @note Обертка PDO::commit.
+     */
+    public function commit(): bool
     {
-        $this->pdo->commit();
+        return $this->pdo->commit();
+    }
+
+    /**
+     * @brief Начата ли транзакция?
+     *
+     * @return bool Если начата true, иначе false.
+     *
+     * @note Обертка PDO::inTransaction.
+     */
+    public function inTransaction(): bool
+    {
+        return $this->pdo->inTransaction();
+    }
+
+    /**
+     * @brief Получение ID последней вставленной строки или значение последовательност.
+     *
+     * @param ?string $name - имя объекта последовательности, который должен выдать ID.
+     *
+     * @return string|false
+     *          Если объект последовательности для $name не задан, функция вернёт строку,
+     *          представляющую ID последней добавленной в базу записи.
+     *          Если же объект последовательности для $name задан, функция вернёт строку,
+     *          представляющую последнее значение, полученное от этого объекта.
+     *
+     * @note Обертка PDO::lastInsertId.
+     */
+    public function getLastId(?string $name = null): string|false
+    {
+        return $this->pdo->lastInsertId($name);
     }
 
     /**
      * @brief Создание записи(-ей) в таблице.
      *
-     * @param[in] $table - название таблицы.
-     * @param[in] $values - значения для Insert::values().
+     * @param string $table - название таблицы.
+     * @param array $values - значения для Insert::values().
      *
-     * @return Объект класса Actions\Insert.
+     * @return Insert Объект класса Actions\Insert.
      */
     public function insert(string $table, array $values = []): Insert
     {
@@ -102,10 +150,10 @@ final class ModernPDO
     /**
      * @brief Получение записи(-ей) из таблицы.
      *
-     * @param[in] $table - название таблицы.
-     * @param[in] $columns - столбцы для Select::columns().
+     * @param string $table - название таблицы.
+     * @param array $columns - столбцы для Select::columns().
      *
-     * @return Объект класса Actions\Select.
+     * @return Select Объект класса Actions\Select.
      */
     public function select(string $table, array $columns = []): Select
     {
@@ -120,10 +168,10 @@ final class ModernPDO
     /**
      * @brief Обновление записи(-ей) в таблице.
      *
-     * @param[in] $table - название таблицы.
-     * @param[in] $values - значения для Update::values().
+     * @param string $table - название таблицы.
+     * @param array $values - значения для Update::values().
      *
-     * @return Объект класса Actions\Update.
+     * @return Update Объект класса Actions\Update.
      */
     public function update(string $table, array $values = []): Update
     {
@@ -138,9 +186,9 @@ final class ModernPDO
     /**
      * @brief Удаление записи(-ей) из таблицы.
      *
-     * @param[in] $table - название таблицы.
+     * @param string $table - название таблицы.
      *
-     * @return Объект класса Actions\Delete.
+     * @return Delete Объект класса Actions\Delete.
      */
     public function delete(string $table): Delete
     {

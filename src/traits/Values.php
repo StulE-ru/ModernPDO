@@ -15,6 +15,11 @@ trait Values
 
     protected array $values_params = [];
 
+    /**
+     * @brief Добавление значений для INSERT.
+     *
+     * @param array $values - массив значений [$col1 => $val1, ...]
+     */
     public function values(array $values): Insert
     {
         if ( empty($values) )

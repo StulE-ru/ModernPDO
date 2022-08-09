@@ -15,6 +15,13 @@ trait Where
     protected string $where = "1";
     protected array $where_params = [];
 
+    /**
+     * @brief Добавление условия.
+     *
+     * @param array $name - имя столбца
+     * @param mixed $value - значение столбца
+     * @param string $sign - знак сравнения
+     */
     public function where(string $name, mixed $value, string $sign = "="): Select|Update|Delete
     {
         if ( empty($name) )
@@ -28,6 +35,13 @@ trait Where
         return $this;
     }
 
+    /**
+     * @brief Добавление следующего условия через AND.
+     *
+     * @param array $name - имя столбца
+     * @param mixed $value - значение столбца
+     * @param string $sign - знак сравнения
+     */
     public function and(string $name, mixed $value, string $sign = "="): Select|Update|Delete
     {
         if ( empty($name) )
@@ -42,6 +56,13 @@ trait Where
         return $this;
     }
 
+    /**
+     * @brief Добавление следующего условия через OR.
+     *
+     * @param array $name - имя столбца
+     * @param mixed $value - значение столбца
+     * @param string $sign - знак сравнения
+     */
     public function or(string $name, mixed $value, string $sign = "="): Select|Update|Delete
     {
         if ( empty($name) )

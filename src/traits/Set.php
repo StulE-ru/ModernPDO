@@ -13,6 +13,11 @@ trait Set
     protected string $set = "";
     protected array $set_params = [];
 
+    /**
+     * @brief Добавление значений для SET.
+     *
+     * @param array $values - массив значений [$col1 => $val1, ...]
+     */
     public function set(array $values): Update
     {
         if ( empty($values) )

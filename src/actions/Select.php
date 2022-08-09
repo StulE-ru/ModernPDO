@@ -20,8 +20,8 @@ final class Select
     /**
      * @brief Конструктор класса.
      *
-     * @param[in] $pdo - инициализированный объект класса PDO.
-     * @param[in] $table - название таблицы.
+     * @param \PDO $pdo - инициализированный объект класса PDO.
+     * @param string $table - название таблицы.
      */
     public function __construct(
         private \PDO $pdo,
@@ -31,7 +31,7 @@ final class Select
     /**
      * @brief Получение параметров.
      *
-     * @return Массив параметров.
+     * @return array Массив параметров.
      */
     private function getParams(): array
     {
@@ -41,9 +41,9 @@ final class Select
     /**
      * @brief Получение записей из таблицы.
      *
-     * @param $query - SQL-запрос.
+     * @param string $query - SQL-запрос.
      *
-     * @return В случае успеха массив записей, иначе null.
+     * @return ?array В случае успеха массив записей, иначе null.
      */
     private function getAll(string $query): ?array
     {
@@ -63,9 +63,9 @@ final class Select
     /**
      * @brief Получение записи из таблицы.
      *
-     * @param $query - SQL-запрос.
+     * @param string $query - SQL-запрос.
      *
-     * @return В случае успеха массив записи, иначе null.
+     * @return ?array В случае успеха массив записи, иначе null.
      */
     private function getOne(string $query): ?array
     {
@@ -85,7 +85,7 @@ final class Select
     /**
      * @brief Получение записей из таблицы.
      *
-     * @return В случае успеха массив записей, иначе null.
+     * @return ?array В случае успеха массив записей, иначе null.
      */
     public function all(): ?array
     {
@@ -97,7 +97,7 @@ final class Select
     /**
      * @brief Получение записи из таблицы.
      *
-     * @return В случае успеха массив записи, иначе null.
+     * @return ?array В случае успеха массив записи, иначе null.
      */
     public function one(): ?array
     {
@@ -109,9 +109,9 @@ final class Select
     /**
      * @brief Получение первой записи из таблицы.
      *
-     * @param $order - столбец, по которому сортировать записи.
+     * @param string $order - столбец, по которому сортировать записи.
      *
-     * @return В случае успеха массив записи, иначе null.
+     * @return ?array В случае успеха массив записи, иначе null.
      */
     public function firstBy(string $order): ?array
     {
@@ -123,9 +123,9 @@ final class Select
     /**
      * @brief Получение последней записи из таблицы.
      *
-     * @param $order - столбец, по которому сортировать записи.
+     * @param string $order - столбец, по которому сортировать записи.
      *
-     * @return В случае успеха массив записи, иначе null.
+     * @return ?array В случае успеха массив записи, иначе null.
      */
     public function lastBy(string $order): ?array
     {

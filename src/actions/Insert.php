@@ -19,8 +19,8 @@ final class Insert
     /**
      * @brief Конструктор класса.
      *
-     * @param[in] $pdo - инициализированный объект класса PDO.
-     * @param[in] $table - название таблицы.
+     * @param \PDO $pdo - инициализированный объект класса PDO.
+     * @param string $table - название таблицы.
      */
     public function __construct(
         private \PDO $pdo,
@@ -30,7 +30,7 @@ final class Insert
     /**
      * @brief Получение параметров.
      *
-     * @return Массив параметров.
+     * @return array Массив параметров.
      */
     private function getParams(): array
     {
@@ -40,7 +40,7 @@ final class Insert
     /**
      * @brief Создание записи(-ей) из таблицы.
      *
-     * @return В случае успеха true, иначе false.
+     * @return bool В случае успеха true, иначе false.
      */
     public function execute(): bool
     {
