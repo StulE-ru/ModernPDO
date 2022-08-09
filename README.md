@@ -19,15 +19,35 @@ $modernPDO = new \ModernPDO\ModernPDO(
 );
 ```
 
-## CRUD Examples
+## Examples
 
-##### DELETE
+### Queries Examples
+
+#### Source
+
+```php
+// get all accounts
+$modernPDO->exec("SELECT * FROM `account` WHERE 1");
+```
+
+#### Prepared
+
+```php
+// get all accounts where balance >= ? 
+$accounts = $modernPDO->query("SELECT * FROM `account` WHERE `balance` >= ?", [1000])->fetchAll();
+// get one account where name == ?
+$account = $modernPDO->query("SELECT * FROM `account` WHERE `name` = ?", ["StulE"])->fetch();
+```
+
+### CRUD Examples
+
+#### DELETE
 
 ```php
 $modernPDO->delete($table)->where($col, $val)->execute();
 ```
 
-##### INSERT
+#### INSERT
 
 ```php
 // long syntax
@@ -36,7 +56,7 @@ $modernPDO->insert($table)->values([$col1 => $val1, ...])->execute();
 $modernPDO->insert($table, [$col1 => $val1, ...])->execute();
 ```
 
-##### SELECT
+#### SELECT
 
 ```php
 // get all rows from $table
@@ -54,7 +74,7 @@ $modernPDO->select($table)->columns([$col1, $col2, ...])->all();
 $modernPDO->select($table, [$col1, $col2, ...])->all();
 ```
 
-##### UPDATE
+#### UPDATE
 
 ```php
 // long syntax
