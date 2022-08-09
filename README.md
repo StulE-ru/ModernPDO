@@ -24,32 +24,43 @@ $modernPDO = new \ModernPDO\ModernPDO(
 ##### DELETE
 
 ```php
-$modernPDO->delete($table)->where($column, $value)->execute();
+$modernPDO->delete($table)->where($col, $val)->execute();
 ```
 
 ##### INSERT
 
 ```php
-$modernPDO->insert($table)->values([$column1 => $value1, etc.])->execute();
+// long syntax
+$modernPDO->insert($table)->values([$col1 => $val1, ...])->execute();
+// short syntax
+$modernPDO->insert($table, [$col1 => $val1, ...])->execute();
 ```
 
 ##### SELECT
 
 ```php
-// get all rows
+// get all rows from $table
 $modernPDO->select($table)->all();
-// get rows where $column == $value
-$modernPDO->select($table)->where($column, $value)->one();
-// get first row by $order where $column == $value
-$modernPDO->select($table)->where($column, $value)->firstBy($order)
-// get last row by $order where $column == $value
-$modernPDO->select($table)->where($column, $value)->lastBy($order)
+// get rows from $table where $col == $val
+$modernPDO->select($table)->where($col, $val)->one();
+// get first row from $table by $order where $col == $val
+$modernPDO->select($table)->where($col, $val)->firstBy($order);
+// get last row from $table by $order where $col == $val
+$modernPDO->select($table)->where($col, $val)->lastBy($order);
+
+// long syntax
+$modernPDO->select($table)->columns([$col1, $col2, ...])->all();
+// short syntax
+$modernPDO->select($table, [$col1, $col2, ...])->all();
 ```
 
 ##### UPDATE
 
 ```php
-$modernPDO->update($table)->set([$column1 => $value1, etc.])->execute();
+// long syntax
+$modernPDO->update($table)->set([$col1 => $val1, ...])->where($col, $val)->execute();
+// short syntax
+$modernPDO->update($table, [$col1 => $val1, ...])->where($col, $val)->execute();
 ```
 
 ## Good Luck and Have Fun 😘

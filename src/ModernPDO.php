@@ -85,36 +85,54 @@ final class ModernPDO
      * @brief Создание записи(-ей) в таблице.
      *
      * @param[in] $table - название таблицы.
+     * @param[in] $values - значения для Insert::values().
      *
      * @return Объект класса Actions\Insert.
      */
-    public function insert(string $table): Insert
+    public function insert(string $table, array $values = []): Insert
     {
-        return new Insert($this->pdo, $table);
+        $object = new Insert($this->pdo, $table);
+
+        if ( !empty($values) )
+            $object->values($values);
+
+        return $object;
     }
 
     /**
      * @brief Получение записи(-ей) из таблицы.
      *
      * @param[in] $table - название таблицы.
+     * @param[in] $columns - столбцы для Select::columns().
      *
      * @return Объект класса Actions\Select.
      */
-    public function select(string $table): Select
+    public function select(string $table, array $columns = []): Select
     {
-        return new Select($this->pdo, $table);
+        $object = new Select($this->pdo, $table);
+
+        if ( !empty($columns) )
+            $object->columns($columns);
+
+        return $object;
     }
 
     /**
      * @brief Обновление записи(-ей) в таблице.
      *
      * @param[in] $table - название таблицы.
+     * @param[in] $values - значения для Update::values().
      *
      * @return Объект класса Actions\Update.
      */
-    public function update(string $table): Update
+    public function update(string $table, array $values = []): Update
     {
-        return new Update($this->pdo, $table);
+        $object = new Update($this->pdo, $table);
+
+        if ( !empty($values) )
+            $object->set($values);
+
+        return $object;
     }
 
     /**
