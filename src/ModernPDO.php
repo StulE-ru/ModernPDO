@@ -6,6 +6,8 @@ namespace ModernPDO;
 // Подключение файлов библиотеки.
 //
 
+require_once "Statement.php";
+
 require_once "traits/Columns.php";
 require_once "traits/Set.php";
 require_once "traits/Values.php";
@@ -26,11 +28,10 @@ use ModernPDO\Actions\Select;
 use ModernPDO\Actions\Update;
 
 /**
- * @brief Класс работы с базой данных типа MySQL.
+ * @brief Класс-обертка над \PDO.
  */
 final class ModernPDO
 {
-    /** Объект класса PDO. */
     private \PDO $pdo;
 
     /**
@@ -127,6 +128,43 @@ final class ModernPDO
     public function getLastId(?string $name = null): string|false
     {
         return $this->pdo->lastInsertId($name);
+    }
+
+    /**
+     * @brief Выполнение "сырых" SQL-запросов.
+     *
+     * @param string $query - SQL-выражение, которое надо выполнить.
+     *
+     * @return int|false В случае успеха кол-во затронутых записей, иначе false.
+     *
+     * @note Обертка PDO::exec.
+     */
+    public function exec(string $query): int|false
+    {
+        return $this->pdo->exec($query);
+    }
+
+    /**
+     * @brief Выполнение "готовых" SQL-запросов.
+     *
+     * @param string $query - SQL-выражение, которое надо выполнить.
+     * @param array $values - массив значений, которые будут подставлены вместо всех '?'
+     *
+     * @return Statement Объект класса Statement.
+     */
+    public function query(string $query, array $values = []): Statement
+    {
+        if ( empty($values) ) {
+            $statement = $this->pdo->query($query);
+        } else {
+            $statement = $this->pdo->prepare($query);
+            $statement?->execute($values);
+        }
+
+        if ( !is_object($statement) )
+            $statement = null;
+
+        return new Statement($statement);
     }
 
     /**
