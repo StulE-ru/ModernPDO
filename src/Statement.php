@@ -14,9 +14,26 @@ final class Statement
     ) {}
 
     /**
+     * @brief Возвращает количество затронутых записей.
+     *
+     * @return int Кол-во затронутых записей.
+     *
+     * @note Обертка PDOStatement::rowCount.
+     */
+    public function rowCount(): int
+    {
+        if ( empty($this->statement) )
+            return 0;
+
+        return $this->statement->rowCount();
+    }
+
+    /**
      * @brief Получение одной записи.
      *
      * @return array В случае успеха массив записи, иначе пустой массив.
+     *
+     * @note Обертка PDOStatement::columnCount.
      */
     public function fetch(): array
     {
@@ -32,6 +49,8 @@ final class Statement
      * @brief Получение всех записей.
      *
      * @return array В случае успеха массив записей, иначе пустой массив.
+     *
+     * @note Обертка PDOStatement::columnCount.
      */
     public function fetchAll(): array
     {
