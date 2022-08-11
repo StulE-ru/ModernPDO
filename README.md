@@ -1,4 +1,6 @@
-# ModernPDO
+<h1 style="text-align: center"> ModernPDO </h1>
+
+<h4 style="text-align: center">
 
 ![Release](https://img.shields.io/github/v/release/StulE-ru/ModernPDO)
 ![Downloads](https://img.shields.io/github/downloads/StulE-ru/ModernPDO/total)
@@ -8,7 +10,9 @@
 ![Made by](https://img.shields.io/badge/made%20by-StulE--ru-blue)
 ![License](https://img.shields.io/github/license/StulE-ru/ModernPDO)
 
-## Getting Started
+</h4>
+
+<h2 style="text-align: center"> Getting Started </h2>
 
 Download the latest release, create the directory `ModernPDO` in your library directory, and drop `ModernPDO/src/` into `[lib-dir]/ModernPDO/`.
 
@@ -25,18 +29,16 @@ $modernPDO = new \ModernPDO\ModernPDO(
 );
 ```
 
-## Examples
+<h3 style="text-align: center"> Queries Examples </h3>
 
-### Queries Examples
-
-#### Source
+#### Source queries
 
 ```php
 // get all accounts
 $modernPDO->exec("SELECT * FROM `account` WHERE 1");
 ```
 
-#### Prepared
+#### Prepared queries
 
 ```php
 // get all accounts where balance >= ? 
@@ -45,13 +47,7 @@ $accounts = $modernPDO->query("SELECT * FROM `account` WHERE `balance` >= ?", [1
 $account = $modernPDO->query("SELECT * FROM `account` WHERE `name` = ?", ["StulE"])->fetch();
 ```
 
-### CRUD Examples
-
-#### DELETE
-
-```php
-$modernPDO->delete($table)->where($col, $val)->execute();
-```
+<h3 style="text-align: center"> CRUD Examples </h3>
 
 #### INSERT
 
@@ -89,4 +85,10 @@ $modernPDO->update($table)->set([$col1 => $val1, ...])->where($col, $val)->execu
 $modernPDO->update($table, [$col1 => $val1, ...])->where($col, $val)->execute();
 ```
 
-## Good Luck and Have Fun 😘
+#### DELETE
+
+```php
+$modernPDO->delete($table)->where($col, $val)->execute();
+```
+
+<h2 style="text-align: center"> 😘 Good Luck and Have Fun 😘 </h2>
