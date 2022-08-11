@@ -1,6 +1,12 @@
 # ModernPDO
 
-ModernPDO is a simple library for PHP v8.1
+![Release](https://img.shields.io/github/v/release/StulE-ru/ModernPDO)
+![Downloads](https://img.shields.io/github/downloads/StulE-ru/ModernPDO/total)
+![Watchers](https://img.shields.io/github/watchers/StulE-ru/ModernPDO)
+![Forks](https://img.shields.io/github/forks/StulE-ru/ModernPDO)
+![Stars](https://img.shields.io/github/stars/StulE-ru/ModernPDO)
+![Made by](https://img.shields.io/badge/made%20by-StulE--ru-blue)
+![License](https://img.shields.io/github/license/StulE-ru/ModernPDO)
 
 ## Getting Started
 
