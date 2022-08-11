@@ -37,31 +37,108 @@ final class ModernPDO
     /**
      * @brief Конструктор класса.
      *
+     * @param string $type - тип базы данных.
      * @param string $charset - используемая кодировка.
+     * @param string $host - хост базы данных.
+     * @param string $username - имя пользователя базы данных.
+     * @param string $password - пароль пользователя базы данных.
+     * @param string $database - название базы данных.
+     *
+     * @param ?array $data - массив параметров.
+     *
+     * @param ?\PDO $pdo - инициализированный объект \PDO.
+     *
+     * @note На данный момент есть 3 варианта инициализации класса:
+     *          1 - через параметры ($type, $charset, $host, ...).
+     *          2 - через массив с параметрами (имена параметров должны совпадать с именами первого способа).
+     *          3 - через инициализированный объект \PDO.
+     *       Выбор способа зависит от переданных параметров в конструктор.
+     *
+     *       + если не указаны $type/$charset/$host, то будут взяты значения по умолчанию.
+     */
+    public function __construct(
+        string $type = "",
+        string $charset = "",
+        string $host = "",
+        string $username = "",
+        string $password = "",
+        string $database = "",
+
+        ?array $data = null,
+
+        ?\PDO $pdo = null,
+    ) {
+        if ( $this->initByObject($pdo) )
+            return;
+
+        if ( $this->initByArray($data) )
+            return;
+
+        $this->initByParams($type, $charset, $host, $username, $password, $database);
+    }
+
+    /**
+     * @brief Инициализация через параметры.
+     *
+     * @param string $type - тип базы данных.
      * @param string $charset - используемая кодировка.
      * @param string $host - хост базы данных.
      * @param string $username - имя пользователя базы данных.
      * @param string $password - пароль пользователя базы данных.
      * @param string $database - название базы данных.
      */
-    public function __construct(
-        string $type,
-        string $charset,
-        string $host,
-        string $username,
-        string $password,
-        string $database,
-    ) {
-        try {
-            $this->pdo = new \PDO("{$type}:host={$host};dbname={$database}", $username, $password);
+    private function initByParams(
+        string $type = "",
+        string $charset = "",
+        string $host = "",
+        string $username = "",
+        string $password = "",
+        string $database = "",
+    ): void {
+        if ( empty($type) ) $type = "mysql";
+        if ( empty($charset) ) $charset = "utf8mb4";
+        if ( empty($host) ) $host = "localhost";
 
-            $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
-            $this->pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
+        $this->pdo = new \PDO("{$type}:host={$host};dbname={$database}", $username, $password);
 
-            $this->pdo->exec("set names $charset");
-        } catch (\PDOException $e) {
-            throw new \Exception("PDO exception: {$e->getMessage()}");
-        }
+        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
+        $this->pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
+
+        $this->pdo->exec("set names {$charset}");
+    }
+
+    /**
+     * @brief Инициализация через массив параметров.
+     *
+     * @param ?array $data - массив параметров.
+     *
+     * @return bool В случае успеха true, иначе false.
+     */
+    private function initByArray(?array $data): bool
+    {
+        if ( empty($data) )
+            return false;
+
+        call_user_func_array([$this, "initByParams"], $data);
+
+        return true;
+    }
+
+    /**
+     * @brief Инициализация через объект \PDO.
+     *
+     * @param ?\PDO $pdo - инициализированный объект \PDO.
+     *
+     * @return bool В случае успеха true, иначе false.
+     */
+    private function initByObject(?\PDO $pdo): bool
+    {
+        if ( empty($pdo) )
+            return false;
+
+        $this->pdo = $pdo;
+
+        return true;
     }
 
     /**

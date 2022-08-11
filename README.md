@@ -19,14 +19,47 @@ Download the latest release, create the directory `ModernPDO` in your library di
 Create the new ModernPDO instance:
 
 ```php
+// NOTE:
+// If $type/$charset/$host are empty, default values will be used.
+// For $type - "mysql"
+// For $charset - "utf8mb4"
+// For $host - "localhost"
+
+//
+// From params
+//
+
 $modernPDO = new \ModernPDO\ModernPDO(
-        $type, // (mysql, etc.)
-        $charset, // (utf8, utf8mb4, etc.)
-        $host, // (localhost, etc.)
-        $username, // user's name
-        $password, // user's password
-        $database, // database's name
+        type: $type, // (mysql, etc.)
+        charset: $charset, // (utf8, utf8mb4, etc.)
+        host: $host, // (localhost, etc.)
+        username: $username, // user's name
+        password: $password, // user's password
+        database: $database, // database's name
 );
+
+//
+// From array
+//
+
+$config = [
+    "type" => "",  // (mysql, etc.)
+    "charset" => "",  // (utf8, utf8mb4, etc.)
+    "host" => "", // (localhost, etc.)
+    "username" => "", // user's name
+    "password" => "", // user's password
+    "database" => "", // database's name
+];
+
+$modernPDO = new \ModernPDO\ModernPDO(data: $config);
+
+//
+// From PDO object
+//
+
+$pdo = new PDO(...);
+
+$modernPDO = new \ModernPDO\ModernPDO(pdo: $pdo);
 ```
 
 <h3 align="center"> Queries Examples </h3>
