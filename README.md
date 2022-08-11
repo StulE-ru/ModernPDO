@@ -1,6 +1,6 @@
-<h1 style="text-align: center"> ModernPDO </h1>
+<h1 align="center"> ModernPDO </h1>
 
-<h4 style="text-align: center">
+<h4 align="center">
 
 ![Release](https://img.shields.io/github/v/release/StulE-ru/ModernPDO)
 ![Downloads](https://img.shields.io/github/downloads/StulE-ru/ModernPDO/total)
@@ -12,7 +12,7 @@
 
 </h4>
 
-<h2 style="text-align: center"> Getting Started </h2>
+<h2 align="center"> Getting Started </h2>
 
 Download the latest release, create the directory `ModernPDO` in your library directory, and drop `ModernPDO/src/` into `[lib-dir]/ModernPDO/`.
 
@@ -29,7 +29,7 @@ $modernPDO = new \ModernPDO\ModernPDO(
 );
 ```
 
-<h3 style="text-align: center"> Queries Examples </h3>
+<h3 align="center"> Queries Examples </h3>
 
 #### Source queries
 
@@ -47,7 +47,7 @@ $accounts = $modernPDO->query("SELECT * FROM `account` WHERE `balance` >= ?", [1
 $account = $modernPDO->query("SELECT * FROM `account` WHERE `name` = ?", ["StulE"])->fetch();
 ```
 
-<h3 style="text-align: center"> CRUD Examples </h3>
+<h3 align="center"> CRUD Examples </h3>
 
 #### INSERT
 
@@ -91,4 +91,4 @@ $modernPDO->update($table, [$col1 => $val1, ...])->where($col, $val)->execute();
 $modernPDO->delete($table)->where($col, $val)->execute();
 ```
 
-<h2 style="text-align: center"> 😘 Good Luck and Have Fun 😘 </h2>
+<h2 align="center"> 😘 Good Luck and Have Fun 😘 </h2>
