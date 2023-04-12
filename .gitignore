@@ -3,9 +3,21 @@
 #
 
 /.idea
+/.vscode
 
 #
-# Private config
+# Vendor
 #
 
-/tests/private.php
+/vendor
+
+# PHPStan
+
+phpstan-baseline.neon
+
+#
+# Library
+#
+
+.env*
+!.env.example
