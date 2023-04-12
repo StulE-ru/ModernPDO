@@ -1,0 +1,45 @@
+{
+    "name": "stule-ru/modernpdo",
+    "type": "library",
+    "description": "The source code of the simple PDO library.",
+    "keywords": [
+        "php",
+        "modern-php",
+        "php-database",
+        "php-mysql",
+        "php-mariadb",
+        "pdo"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "StulE",
+            "homepage": "https://github.com/StulE-ru"
+        },
+        {
+            "name": "Deff",
+            "homepage": "https://github.com/deff-dev"
+        }
+    ],
+    "require": {
+        "php": ">=8.1"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^9.5",
+        "friendsofphp/php-cs-fixer": "^3.15"
+    },
+    "autoload": {
+        "psr-4": {
+            "ModernPDO\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ModernPDO\\Tests\\": "tests"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}
