@@ -6,17 +6,17 @@ namespace ModernPDO;
 // Подключение файлов библиотеки.
 //
 
-require_once "Statement.php";
+require_once 'Statement.php';
 
-require_once "traits/Columns.php";
-require_once "traits/Set.php";
-require_once "traits/Values.php";
-require_once "traits/Where.php";
+require_once 'traits/Columns.php';
+require_once 'traits/Set.php';
+require_once 'traits/Values.php';
+require_once 'traits/Where.php';
 
-require_once "actions/Delete.php";
-require_once "actions/Insert.php";
-require_once "actions/Select.php";
-require_once "actions/Update.php";
+require_once 'actions/Delete.php';
+require_once 'actions/Insert.php';
+require_once 'actions/Select.php';
+require_once 'actions/Update.php';
 
 //
 // Подключение пространств имен.
@@ -37,16 +37,14 @@ final class ModernPDO
     /**
      * @brief Конструктор класса.
      *
-     * @param string $type - тип базы данных.
-     * @param string $charset - используемая кодировка.
-     * @param string $host - хост базы данных.
-     * @param string $username - имя пользователя базы данных.
-     * @param string $password - пароль пользователя базы данных.
-     * @param string $database - название базы данных.
-     *
-     * @param ?array $data - массив параметров.
-     *
-     * @param ?\PDO $pdo - инициализированный объект \PDO.
+     * @param string $type     - тип базы данных
+     * @param string $charset  - используемая кодировка
+     * @param string $host     - хост базы данных
+     * @param string $username - имя пользователя базы данных
+     * @param string $password - пароль пользователя базы данных
+     * @param string $database - название базы данных
+     * @param ?array $data     - массив параметров
+     * @param ?\PDO  $pdo      - инициализированный объект \PDO
      *
      * @note На данный момент есть 3 варианта инициализации класса:
      *          1 - через параметры ($type, $charset, $host, ...).
@@ -57,22 +55,24 @@ final class ModernPDO
      *       + если не указаны $type/$charset/$host, то будут взяты значения по умолчанию.
      */
     public function __construct(
-        string $type = "",
-        string $charset = "",
-        string $host = "",
-        string $username = "",
-        string $password = "",
-        string $database = "",
+        string $type = '',
+        string $charset = '',
+        string $host = '',
+        string $username = '',
+        string $password = '',
+        string $database = '',
 
         ?array $data = null,
 
         ?\PDO $pdo = null,
     ) {
-        if ( $this->initByObject($pdo) )
+        if ($this->initByObject($pdo)) {
             return;
+        }
 
-        if ( $this->initByArray($data) )
+        if ($this->initByArray($data)) {
             return;
+        }
 
         $this->initByParams($type, $charset, $host, $username, $password, $database);
     }
@@ -80,24 +80,30 @@ final class ModernPDO
     /**
      * @brief Инициализация через параметры.
      *
-     * @param string $type - тип базы данных.
-     * @param string $charset - используемая кодировка.
-     * @param string $host - хост базы данных.
-     * @param string $username - имя пользователя базы данных.
-     * @param string $password - пароль пользователя базы данных.
-     * @param string $database - название базы данных.
+     * @param string $type     - тип базы данных
+     * @param string $charset  - используемая кодировка
+     * @param string $host     - хост базы данных
+     * @param string $username - имя пользователя базы данных
+     * @param string $password - пароль пользователя базы данных
+     * @param string $database - название базы данных
      */
     private function initByParams(
-        string $type = "",
-        string $charset = "",
-        string $host = "",
-        string $username = "",
-        string $password = "",
-        string $database = "",
+        string $type = '',
+        string $charset = '',
+        string $host = '',
+        string $username = '',
+        string $password = '',
+        string $database = '',
     ): void {
-        if ( empty($type) ) $type = "mysql";
-        if ( empty($charset) ) $charset = "utf8mb4";
-        if ( empty($host) ) $host = "localhost";
+        if (empty($type)) {
+            $type = 'mysql';
+        }
+        if (empty($charset)) {
+            $charset = 'utf8mb4';
+        }
+        if (empty($host)) {
+            $host = 'localhost';
+        }
 
         $this->pdo = new \PDO("{$type}:host={$host};dbname={$database}", $username, $password);
 
@@ -110,16 +116,17 @@ final class ModernPDO
     /**
      * @brief Инициализация через массив параметров.
      *
-     * @param ?array $data - массив параметров.
+     * @param ?array $data - массив параметров
      *
-     * @return bool В случае успеха true, иначе false.
+     * @return bool в случае успеха true, иначе false
      */
     private function initByArray(?array $data): bool
     {
-        if ( empty($data) )
+        if (empty($data)) {
             return false;
+        }
 
-        call_user_func_array([$this, "initByParams"], $data);
+        call_user_func_array([$this, 'initByParams'], $data);
 
         return true;
     }
@@ -127,14 +134,15 @@ final class ModernPDO
     /**
      * @brief Инициализация через объект \PDO.
      *
-     * @param ?\PDO $pdo - инициализированный объект \PDO.
+     * @param ?\PDO $pdo - инициализированный объект \PDO
      *
-     * @return bool В случае успеха true, иначе false.
+     * @return bool в случае успеха true, иначе false
      */
     private function initByObject(?\PDO $pdo): bool
     {
-        if ( empty($pdo) )
+        if (empty($pdo)) {
             return false;
+        }
 
         $this->pdo = $pdo;
 
@@ -144,7 +152,7 @@ final class ModernPDO
     /**
      * @brief Инициализация транзакции.
      *
-     * @return bool В случае успеха true, иначе false.
+     * @return bool в случае успеха true, иначе false
      *
      * @note Обертка PDO::beginTransaction.
      */
@@ -156,7 +164,7 @@ final class ModernPDO
     /**
      * @brief Откат транзакции.
      *
-     * @return bool В случае успеха true, иначе false.
+     * @return bool в случае успеха true, иначе false
      *
      * @note Обертка PDO::rollBack.
      */
@@ -168,7 +176,7 @@ final class ModernPDO
     /**
      * @brief Фиксация транзакцию.
      *
-     * @return bool В случае успеха true, иначе false.
+     * @return bool в случае успеха true, иначе false
      *
      * @note Обертка PDO::commit.
      */
@@ -180,7 +188,7 @@ final class ModernPDO
     /**
      * @brief Начата ли транзакция?
      *
-     * @return bool Если начата true, иначе false.
+     * @return bool если начата true, иначе false
      *
      * @note Обертка PDO::inTransaction.
      */
@@ -192,13 +200,13 @@ final class ModernPDO
     /**
      * @brief Получение ID последней вставленной строки или значение последовательност.
      *
-     * @param ?string $name - имя объекта последовательности, который должен выдать ID.
+     * @param ?string $name - имя объекта последовательности, который должен выдать ID
      *
      * @return string|false
-     *          Если объект последовательности для $name не задан, функция вернёт строку,
-     *          представляющую ID последней добавленной в базу записи.
-     *          Если же объект последовательности для $name задан, функция вернёт строку,
-     *          представляющую последнее значение, полученное от этого объекта.
+     *                      Если объект последовательности для $name не задан, функция вернёт строку,
+     *                      представляющую ID последней добавленной в базу записи.
+     *                      Если же объект последовательности для $name задан, функция вернёт строку,
+     *                      представляющую последнее значение, полученное от этого объекта.
      *
      * @note Обертка PDO::lastInsertId.
      */
@@ -210,9 +218,9 @@ final class ModernPDO
     /**
      * @brief Выполнение "сырых" SQL-запросов.
      *
-     * @param string $query - SQL-выражение, которое надо выполнить.
+     * @param string $query - SQL-выражение, которое надо выполнить
      *
-     * @return int|false В случае успеха кол-во затронутых записей, иначе false.
+     * @return int|false в случае успеха кол-во затронутых записей, иначе false
      *
      * @note Обертка PDO::exec.
      */
@@ -224,22 +232,23 @@ final class ModernPDO
     /**
      * @brief Выполнение "готовых" SQL-запросов.
      *
-     * @param string $query - SQL-выражение, которое надо выполнить.
-     * @param array $values - массив значений, которые будут подставлены вместо всех '?'
+     * @param string $query  - SQL-выражение, которое надо выполнить
+     * @param array  $values - массив значений, которые будут подставлены вместо всех '?'
      *
-     * @return Statement Объект класса Statement.
+     * @return Statement объект класса Statement
      */
     public function query(string $query, array $values = []): Statement
     {
-        if ( empty($values) ) {
+        if (empty($values)) {
             $statement = $this->pdo->query($query);
         } else {
             $statement = $this->pdo->prepare($query);
             $statement?->execute($values);
         }
 
-        if ( !is_object($statement) )
+        if (!is_object($statement)) {
             $statement = null;
+        }
 
         return new Statement($statement);
     }
@@ -247,17 +256,18 @@ final class ModernPDO
     /**
      * @brief Создание записи(-ей) в таблице.
      *
-     * @param string $table - название таблицы.
-     * @param array $values - значения для Insert::values().
+     * @param string $table  - название таблицы
+     * @param array  $values - значения для Insert::values()
      *
-     * @return Insert Объект класса Actions\Insert.
+     * @return Insert объект класса Actions\Insert
      */
     public function insert(string $table, array $values = []): Insert
     {
         $object = new Insert($this->pdo, $table);
 
-        if ( !empty($values) )
+        if (!empty($values)) {
             $object->values($values);
+        }
 
         return $object;
     }
@@ -265,17 +275,18 @@ final class ModernPDO
     /**
      * @brief Получение записи(-ей) из таблицы.
      *
-     * @param string $table - название таблицы.
-     * @param array $columns - столбцы для Select::columns().
+     * @param string $table   - название таблицы
+     * @param array  $columns - столбцы для Select::columns()
      *
-     * @return Select Объект класса Actions\Select.
+     * @return Select объект класса Actions\Select
      */
     public function select(string $table, array $columns = []): Select
     {
         $object = new Select($this->pdo, $table);
 
-        if ( !empty($columns) )
+        if (!empty($columns)) {
             $object->columns($columns);
+        }
 
         return $object;
     }
@@ -283,17 +294,18 @@ final class ModernPDO
     /**
      * @brief Обновление записи(-ей) в таблице.
      *
-     * @param string $table - название таблицы.
-     * @param array $values - значения для Update::values().
+     * @param string $table  - название таблицы
+     * @param array  $values - значения для Update::values()
      *
-     * @return Update Объект класса Actions\Update.
+     * @return Update объект класса Actions\Update
      */
     public function update(string $table, array $values = []): Update
     {
         $object = new Update($this->pdo, $table);
 
-        if ( !empty($values) )
+        if (!empty($values)) {
             $object->set($values);
+        }
 
         return $object;
     }
@@ -301,9 +313,9 @@ final class ModernPDO
     /**
      * @brief Удаление записи(-ей) из таблицы.
      *
-     * @param string $table - название таблицы.
+     * @param string $table - название таблицы
      *
-     * @return Delete Объект класса Actions\Delete.
+     * @return Delete объект класса Actions\Delete
      */
     public function delete(string $table): Delete
     {

@@ -15,23 +15,25 @@ use ModernPDO\Traits\Where;
 final class Update
 {
     // Подключение трейтов.
-    use Set, Where;
+    use Set;
+    use Where;
 
     /**
      * @brief Конструктор класса.
      *
-     * @param \PDO $pdo - инициализированный объект класса PDO.
-     * @param string $table - название таблицы.
+     * @param \PDO   $pdo   - инициализированный объект класса PDO
+     * @param string $table - название таблицы
      */
     public function __construct(
         private \PDO $pdo,
         private string $table,
-    ) {}
+    ) {
+    }
 
     /**
      * @brief Получение параметров.
      *
-     * @return array Массив параметров.
+     * @return array массив параметров
      */
     private function getParams(): array
     {
@@ -41,17 +43,18 @@ final class Update
     /**
      * @brief Обновление записи(-ей) из таблицы.
      *
-     * @return bool В случае успеха true, иначе false.
+     * @return bool в случае успеха true, иначе false
      */
     public function execute(): bool
     {
-        if ( empty($this->set) )
+        if (empty($this->set)) {
             return false;
+        }
 
         $statement = $this->pdo->prepare(
             "UPDATE `{$this->table}` SET {$this->set} WHERE {$this->where}"
         );
 
-        return ( $statement && $statement->execute($this->getParams()) );
+        return  $statement && $statement->execute($this->getParams());
     }
 }

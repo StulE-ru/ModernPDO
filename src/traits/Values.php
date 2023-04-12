@@ -10,8 +10,8 @@ use ModernPDO\Actions\Insert;
 
 trait Values
 {
-    protected string $columns = "";
-    protected string $values = "";
+    protected string $columns = '';
+    protected string $values = '';
 
     protected array $values_params = [];
 
@@ -22,27 +22,26 @@ trait Values
      */
     public function values(array $values): Insert
     {
-        if ( empty($values) )
+        if (empty($values)) {
             return $this;
+        }
 
-        $this->columns = "";
-        $this->values = "";
+        $this->columns = '';
+        $this->values = '';
 
         $this->values_params = [];
 
         $last_key = array_key_last($values);
 
-        foreach ($values as $column => $value)
-        {
+        foreach ($values as $column => $value) {
             $this->columns .= "`{$column}`";
-            $this->values .= "?";
+            $this->values .= '?';
 
             $this->values_params[] = $value;
 
-            if ( $last_key !== $column )
-            {
-                $this->columns .= ", ";
-                $this->values .= ", ";
+            if ($last_key !== $column) {
+                $this->columns .= ', ';
+                $this->values .= ', ';
             }
         }
 

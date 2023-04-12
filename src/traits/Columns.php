@@ -10,7 +10,7 @@ use ModernPDO\Actions\Select;
 
 trait Columns
 {
-    protected string $columns = "*";
+    protected string $columns = '*';
 
     /**
      * @brief Добавление столбцов в стиле SELECT `col1`, `col2`, etc.
@@ -19,19 +19,20 @@ trait Columns
      */
     public function columns(array $columns): Select
     {
-        if ( empty($columns) )
+        if (empty($columns)) {
             return $this;
+        }
 
-        $this->columns = "";
+        $this->columns = '';
 
         $last_key = array_key_last($columns);
 
-        foreach ($columns as $key => $column)
-        {
+        foreach ($columns as $key => $column) {
             $this->columns .= "`{$column}`";
 
-            if ( $last_key !== $key )
-                $this->columns .= ", ";
+            if ($last_key !== $key) {
+                $this->columns .= ', ';
+            }
         }
 
         return $this;

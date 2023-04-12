@@ -15,23 +15,25 @@ use ModernPDO\Traits\Where;
 final class Select
 {
     // Подключение трейтов.
-    use Columns, Where;
+    use Columns;
+    use Where;
 
     /**
      * @brief Конструктор класса.
      *
-     * @param \PDO $pdo - инициализированный объект класса PDO.
-     * @param string $table - название таблицы.
+     * @param \PDO   $pdo   - инициализированный объект класса PDO
+     * @param string $table - название таблицы
      */
     public function __construct(
         private \PDO $pdo,
         private string $table,
-    ) {}
+    ) {
+    }
 
     /**
      * @brief Получение параметров.
      *
-     * @return array Массив параметров.
+     * @return array массив параметров
      */
     private function getParams(): array
     {
@@ -41,20 +43,20 @@ final class Select
     /**
      * @brief Получение записей из таблицы.
      *
-     * @param string $query - SQL-запрос.
+     * @param string $query - SQL-запрос
      *
-     * @return ?array В случае успеха массив записей, иначе null.
+     * @return ?array в случае успеха массив записей, иначе null
      */
     private function getAll(string $query): ?array
     {
         $statement = $this->pdo->prepare($query);
 
-        if ( $statement && $statement->execute($this->getParams()) )
-        {
+        if ($statement && $statement->execute($this->getParams())) {
             $data = $statement->fetchAll();
 
-            if ( is_array($data) )
+            if (is_array($data)) {
                 return $data;
+            }
         }
 
         return null;
@@ -63,20 +65,20 @@ final class Select
     /**
      * @brief Получение записи из таблицы.
      *
-     * @param string $query - SQL-запрос.
+     * @param string $query - SQL-запрос
      *
-     * @return ?array В случае успеха массив записи, иначе null.
+     * @return ?array в случае успеха массив записи, иначе null
      */
     private function getOne(string $query): ?array
     {
         $statement = $this->pdo->prepare($query);
 
-        if ( $statement && $statement->execute($this->getParams()) )
-        {
+        if ($statement && $statement->execute($this->getParams())) {
             $data = $statement->fetch();
 
-            if ( is_array($data) )
+            if (is_array($data)) {
                 return $data;
+            }
         }
 
         return null;
@@ -85,7 +87,7 @@ final class Select
     /**
      * @brief Получение записей из таблицы.
      *
-     * @return ?array В случае успеха массив записей, иначе null.
+     * @return ?array в случае успеха массив записей, иначе null
      */
     public function all(): ?array
     {
@@ -97,7 +99,7 @@ final class Select
     /**
      * @brief Получение записи из таблицы.
      *
-     * @return ?array В случае успеха массив записи, иначе null.
+     * @return ?array в случае успеха массив записи, иначе null
      */
     public function one(): ?array
     {
@@ -109,9 +111,9 @@ final class Select
     /**
      * @brief Получение первой записи из таблицы.
      *
-     * @param string $order - столбец, по которому сортировать записи.
+     * @param string $order - столбец, по которому сортировать записи
      *
-     * @return ?array В случае успеха массив записи, иначе null.
+     * @return ?array в случае успеха массив записи, иначе null
      */
     public function firstBy(string $order): ?array
     {
@@ -123,9 +125,9 @@ final class Select
     /**
      * @brief Получение последней записи из таблицы.
      *
-     * @param string $order - столбец, по которому сортировать записи.
+     * @param string $order - столбец, по которому сортировать записи
      *
-     * @return ?array В случае успеха массив записи, иначе null.
+     * @return ?array в случае успеха массив записи, иначе null
      */
     public function lastBy(string $order): ?array
     {

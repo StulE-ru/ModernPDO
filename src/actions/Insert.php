@@ -19,18 +19,19 @@ final class Insert
     /**
      * @brief Конструктор класса.
      *
-     * @param \PDO $pdo - инициализированный объект класса PDO.
-     * @param string $table - название таблицы.
+     * @param \PDO   $pdo   - инициализированный объект класса PDO
+     * @param string $table - название таблицы
      */
     public function __construct(
         private \PDO $pdo,
         private string $table,
-    ) {}
+    ) {
+    }
 
     /**
      * @brief Получение параметров.
      *
-     * @return array Массив параметров.
+     * @return array массив параметров
      */
     private function getParams(): array
     {
@@ -40,7 +41,7 @@ final class Insert
     /**
      * @brief Создание записи(-ей) из таблицы.
      *
-     * @return bool В случае успеха true, иначе false.
+     * @return bool в случае успеха true, иначе false
      */
     public function execute(): bool
     {
@@ -48,6 +49,6 @@ final class Insert
             "INSERT INTO `{$this->table}` ({$this->columns}) VALUES ({$this->values})"
         );
 
-        return ( $statement && $statement->execute($this->getParams()) );
+        return  $statement && $statement->execute($this->getParams());
     }
 }
