@@ -1,16 +1,11 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^PHPDoc tag @param for parameter \\$name with type array is incompatible with native type string\\.$#"
-			count: 3
-			path: src/actions/Delete.php
+			message: "#^Using nullsafe method call on non\\-nullable type \\(PDOStatement\\|false\\)\\. Use \\-\\> instead\\.$#"
+			count: 1
+			path: src/ModernPDO.php
 
 		-
-			message: "#^PHPDoc tag @param for parameter \\$name with type array is incompatible with native type string\\.$#"
-			count: 3
-			path: src/actions/Select.php
-
-		-
-			message: "#^PHPDoc tag @param for parameter \\$name with type array is incompatible with native type string\\.$#"
-			count: 3
-			path: src/actions/Update.php
+			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
+			count: 1
+			path: src/Statement.php
