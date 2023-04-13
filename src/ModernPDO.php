@@ -3,22 +3,6 @@
 namespace ModernPDO;
 
 //
-// Подключение файлов библиотеки.
-//
-
-require_once 'Statement.php';
-
-require_once 'traits/Columns.php';
-require_once 'traits/Set.php';
-require_once 'traits/Values.php';
-require_once 'traits/Where.php';
-
-require_once 'actions/Delete.php';
-require_once 'actions/Insert.php';
-require_once 'actions/Select.php';
-require_once 'actions/Update.php';
-
-//
 // Подключение пространств имен.
 //
 
