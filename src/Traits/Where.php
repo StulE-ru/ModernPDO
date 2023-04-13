@@ -18,7 +18,7 @@ trait Where
     /**
      * @brief Добавление условия.
      *
-     * @param array  $name  - имя столбца
+     * @param string  $name  - имя столбца
      * @param mixed  $value - значение столбца
      * @param string $sign  - знак сравнения
      */
@@ -39,7 +39,7 @@ trait Where
     /**
      * @brief Добавление следующего условия через AND.
      *
-     * @param array  $name  - имя столбца
+     * @param string  $name  - имя столбца
      * @param mixed  $value - значение столбца
      * @param string $sign  - знак сравнения
      */
@@ -62,7 +62,7 @@ trait Where
     /**
      * @brief Добавление следующего условия через OR.
      *
-     * @param array  $name  - имя столбца
+     * @param string  $name  - имя столбца
      * @param mixed  $value - значение столбца
      * @param string $sign  - знак сравнения
      */
