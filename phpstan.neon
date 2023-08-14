@@ -1,4 +1,5 @@
 parameters:
+    # level can be 0-9 (where level 9 is the most strict)
     level: 4
 
     paths:
