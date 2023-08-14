@@ -26,11 +26,6 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 COPY .github/docker/php/docker.conf /usr/local/etc/php-fpm.d/docker.conf
 
-COPY .github/docker/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
-RUN chmod +x /usr/local/bin/docker-entrypoint
-
-ENTRYPOINT ["docker-entrypoint"]
-
 USER www-data
 
 WORKDIR ${WORKDIR}
