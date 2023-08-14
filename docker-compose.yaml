@@ -41,15 +41,6 @@ services:
       retries: 3
       timeout: 5s
 
-  pma:
-    image: phpmyadmin:latest
-    container_name: pma
-    restart: always
-    ports:
-      - 127.0.0.1:${FORWARD_PMA_PORT:-8080}:80
-    networks:
-      - modernpdo
-
 volumes:
   database:
   minio:
