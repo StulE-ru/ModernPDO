@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   php:
-    image: modernpdo
+    image: php:${PHP_VERSION}
     container_name: php
     restart: on-failure
     environment:
