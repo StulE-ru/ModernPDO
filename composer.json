@@ -31,7 +31,8 @@
     },
     "scripts": {
         "stan": "phpstan analyse --error-format=checkstyle -c phpstan.neon > phpstan-report.xml",
-        "stan-bl": "phpstan analyse -c phpstan.neon -b --allow-empty-baseline"
+        "stan-bl": "phpstan analyse -c phpstan.neon -b --allow-empty-baseline",
+        "csfix": "php-cs-fixer fix --using-cache no"
     },
     "autoload": {
         "psr-4": {
