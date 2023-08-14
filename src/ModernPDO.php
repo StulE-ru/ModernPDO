@@ -154,6 +154,14 @@ final class ModernPDO
     }
 
     /**
+     * Returns Transaction object.
+     */
+    public function transaction(): Transaction
+    {
+        return new Transaction($this->pdo);
+    }
+
+    /**
      * Execute an SQL statement and return the number of affected rows.
      *
      * @param string $query The SQL statement to execute
