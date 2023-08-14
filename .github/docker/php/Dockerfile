@@ -15,6 +15,15 @@ RUN apk add --no-cache --update --virtual buildDeps \
     && docker-php-ext-enable xdebug \
     && apk del buildDeps
 
+# Install PDO for PostgreSQL
+RUN apk --no-cache update \
+    && apk add --no-cache autoconf g++ make \
+    postgresql-dev \
+    \
+    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+    \
+    && docker-php-ext-install pdo_pgsql
+
 # Install PDO for MariaDB
 RUN docker-php-ext-install pdo_mysql
 

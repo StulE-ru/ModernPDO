@@ -6,6 +6,10 @@ services:
     container_name: php
     restart: on-failure
     environment:
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USERNAME: ${POSTGRES_USERNAME}
       MARIADB_HOST: ${MARIADB_HOST}
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       MARIADB_USERNAME: ${MARIADB_USERNAME}
@@ -15,6 +19,7 @@ services:
       XDEBUG_CONFIG: "client_host=${XDEBUG_HOST} client_port=${FORWARD_XDEBUG_PORT}"
       XDEBUG_TRIGGER: ${XDEBUG_TRIGGER}
     depends_on:
+      - postgres
       - mariadb
     volumes:
       - ${APP_DIR}:/var/www
@@ -22,6 +27,23 @@ services:
       - modernpdo
     extra_hosts:
       - host.docker.internal:host-gateway
+
+  postgres:
+    image: postgres:${POSTGRES_VERSION}
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USERNAME}
+    volumes:
+       - postgres:/var/lib/postgres
+    networks:
+      - modernpdo
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U${POSTGRES_USERNAME}", "-d${POSTGRES_PASSWORD}"]
+      retries: 3
+      timeout: 5s
 
   mariadb:
     image: mariadb:${MARIADB_VERSION}
@@ -42,6 +64,7 @@ services:
       timeout: 5s
 
 volumes:
+  postgres:
   mariadb:
 
 networks:
