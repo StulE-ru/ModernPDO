@@ -1,19 +1,12 @@
 <?php
 
-use PhpCsFixer\Config;
-use PhpCsFixer\Finder;
-
-$finder = (new Finder())
-    ->in(__DIR__)
-    ->exclude([
-        'vendor',
-    ]);
-
-return (new Config())
-    ->setFinder($finder)
+return (new PhpCsFixer\Config)
     ->setRiskyAllowed(true)
     ->setRules([
-        '@Symfony' => true,
+        // PSR12 rulesets
+
+        '@PSR12:risky' => true,
+        '@PSR12' => true,
 
         // Alias
 
@@ -44,20 +37,18 @@ return (new Config())
             'spacing' => 'one',
         ],
         'heredoc_to_nowdoc' => true,
-        'no_unreachable_default_argument_value' => true,
         'no_useless_return' => true,
-        'ordered_imports' => [
-            'sort_algorithm' => 'alpha',
-            'imports_order' => [
-                'class',
-                'const',
-                'function',
-            ],
-        ],
         'ternary_to_null_coalescing' => true,
         'yoda_style' => [
             'equal' => false,
             'identical' => false,
             'less_and_greater' => false,
         ],
-    ]);
+    ])
+    ->setFinder(
+        (new PhpCsFixer\Finder())
+            ->in(__DIR__)
+            ->exclude([
+                'vendor',
+            ])
+    );
