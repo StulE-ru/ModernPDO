@@ -15,7 +15,7 @@ services:
       XDEBUG_CONFIG: "client_host=${XDEBUG_HOST} client_port=${FORWARD_XDEBUG_PORT}"
       XDEBUG_TRIGGER: ${XDEBUG_TRIGGER}
     depends_on:
-      - db
+      - mariadb
     volumes:
       - ${APP_DIR}:/var/www
     networks:
@@ -23,9 +23,9 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
 
-  db:
+  mariadb:
     image: mariadb:${MARIADB_VERSION}
-    container_name: db
+    container_name: mariadb
     restart: always
     environment:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
