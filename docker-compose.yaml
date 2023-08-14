@@ -43,7 +43,6 @@ services:
 
 volumes:
   database:
-  minio:
 
 networks:
   modernpdo:
