@@ -183,7 +183,10 @@ final class ModernPDO
             $statement = $this->pdo->query($query);
         } else {
             $statement = $this->pdo->prepare($query);
-            $statement?->execute($values);
+
+            if ($statement !== false) {
+                $statement->execute($values);
+            }
         }
 
         return new Statement($statement !== false ? $statement : null);
