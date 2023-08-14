@@ -152,4 +152,40 @@ final class ModernPDO
             new \PDO('sqlite:' . $mode),
         );
     }
+
+    /**
+     * Execute an SQL statement and return the number of affected rows.
+     *
+     * @param string $query The SQL statement to execute
+     *
+     * @see https://www.php.net/manual/en/pdo.exec.php
+     */
+    public function exec(string $query): int
+    {
+        $count = $this->pdo->exec($query);
+
+        return $count !== false ? $count : 0;
+    }
+
+    /**
+     * Prepares and executes an SQL statement.
+     *
+     * @param string $query The SQL statement to prepare and execute
+     * @param array $values Placeholders that will replace '?'
+     *
+     * @see https://www.php.net/manual/en/pdo.query.php
+     * @see https://www.php.net/manual/en/pdo.prepare.php
+     * @see https://www.php.net/manual/en/pdostatement.execute.php
+     */
+    public function query(string $query, array $values = []): Statement
+    {
+        if (empty($values)) {
+            $statement = $this->pdo->query($query);
+        } else {
+            $statement = $this->pdo->prepare($query);
+            $statement?->execute($values);
+        }
+
+        return new Statement($statement !== false ? $statement : null);
+    }
 }
