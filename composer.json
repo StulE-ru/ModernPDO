@@ -35,6 +35,8 @@
         "tests-ca": "phpunit --coverage-text",
         "stan": "phpstan analyse --error-format=checkstyle -c phpstan.neon > phpstan-report.xml",
         "stan-bl": "phpstan analyse -c phpstan.neon -b --allow-empty-baseline",
+        "salm": "psalm --output-format=checkstyle > psalm-report.xml",
+        "salm-bl": "psalm --set-baseline=psalm-baseline.xml",
         "csfix": "php-cs-fixer fix --using-cache no"
     },
     "autoload": {
