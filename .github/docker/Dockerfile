@@ -4,7 +4,7 @@ FROM php:${PHP_VERSION}-fpm-alpine
 
 ARG WORKDIR=/var/www/data
 
-# Install xdebug pacakge
+# Install xdebug package
 RUN apk add --no-cache --update --virtual buildDeps \
         autoconf \
         make \
