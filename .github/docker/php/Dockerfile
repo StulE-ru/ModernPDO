@@ -24,7 +24,7 @@ RUN apk --no-cache update \
     \
     && docker-php-ext-install pdo_pgsql
 
-# Install PDO for MariaDB
+# Install PDO for MySQL/MariaDB
 RUN docker-php-ext-install pdo_mysql
 
 # Clear cache

@@ -6,6 +6,11 @@ services:
     container_name: php
     restart: on-failure
     environment:
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_CHARSET: ${MYSQL_CHARSET}
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_DATABASE: ${POSTGRES_DATABASE}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -19,6 +24,7 @@ services:
       XDEBUG_CONFIG: "client_host=${XDEBUG_HOST} client_port=${FORWARD_XDEBUG_PORT}"
       XDEBUG_TRIGGER: ${XDEBUG_TRIGGER}
     depends_on:
+      - mysql
       - postgres
       - mariadb
     volumes:
@@ -27,6 +33,24 @@ services:
       - modernpdo
     extra_hosts:
       - host.docker.internal:host-gateway
+
+  mysql:
+    image: mysql:${MYSQL_VERSION}
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_USER: ${MYSQL_USERNAME}
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - modernpdo
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${MYSQL_ROOT_PASSWORD}"]
+      retries: 3
+      timeout: 5s
 
   postgres:
     image: postgres:${POSTGRES_VERSION}
@@ -64,6 +88,7 @@ services:
       timeout: 5s
 
 volumes:
+  mysql:
   postgres:
   mariadb:
 
