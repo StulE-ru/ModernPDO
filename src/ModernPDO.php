@@ -10,11 +10,11 @@ namespace ModernPDO;
 final class ModernPDO
 {
     /** Default port for MySQL. */
-    const MYSQL_DEFAULT_PORT = '3306';
+    public const MYSQL_DEFAULT_PORT = '3306';
     /** Default port for MariaDB. */
-    const MARIADB_DEFAULT_PORT = '3306';
+    public const MARIADB_DEFAULT_PORT = '3306';
     /** Default port for PostgreSQL. */
-    const POSTGRESQL_DEFAULT_PORT = '5432';
+    public const POSTGRESQL_DEFAULT_PORT = '5432';
 
     private function __construct(
         private \PDO $pdo,
