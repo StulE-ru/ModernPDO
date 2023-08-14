@@ -21,6 +21,9 @@ RUN docker-php-ext-install pdo_mysql
 RUN rm -rf /tmp/pear \
     && rm -rf /var/cache/apk/*
 
+# Install composer
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
 COPY .github/docker/php/docker.conf /usr/local/etc/php-fpm.d/docker.conf
 
 COPY .github/docker/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
