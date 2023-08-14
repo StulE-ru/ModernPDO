@@ -33,7 +33,7 @@ services:
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       MARIADB_USER: ${MARIADB_USERNAME}
     volumes:
-      - database:/var/lib/mysql
+      - mariadb:/var/lib/mariadb
     networks:
       - modernpdo
     healthcheck:
@@ -42,7 +42,7 @@ services:
       timeout: 5s
 
 volumes:
-  database:
+  mariadb:
 
 networks:
   modernpdo:
