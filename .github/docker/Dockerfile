@@ -2,7 +2,7 @@ ARG PHP_VERSION
 
 FROM php:${PHP_VERSION}-fpm-alpine
 
-ARG WORKDIR=/var/www/data
+ARG WORKDIR=/var/www
 
 # Install xdebug package
 RUN apk add --no-cache --update --virtual buildDeps \
