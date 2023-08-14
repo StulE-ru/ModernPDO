@@ -15,6 +15,7 @@ RUN apk add --no-cache --update --virtual buildDeps \
     && docker-php-ext-enable xdebug \
     && apk del buildDeps
 
+# Install PDO for MariaDB
 RUN docker-php-ext-install pdo_mysql
 
 # Clear cache
