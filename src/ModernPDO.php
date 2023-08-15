@@ -202,6 +202,9 @@ class ModernPDO
         return new Statement($statement !== false ? $statement : null);
     }
 
+    /**
+     * Returns Select object.
+     */
     public function select(string $table): Select
     {
         return new Select($this, $table);
