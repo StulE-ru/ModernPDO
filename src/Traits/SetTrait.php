@@ -31,7 +31,7 @@ trait SetTrait
         $last_key = array_key_last($values);
 
         foreach ($values as $column => $value) {
-            $this->set .= "`{$column}`=?";
+            $this->set .= $column . '=?';
 
             $this->set_params[] = $value;
 

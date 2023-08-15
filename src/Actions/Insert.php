@@ -27,7 +27,7 @@ class Insert
      */
     protected function buildQuery(): string
     {
-        return '';
+        return 'INSERT INTO ' . $this->table . ' (' . $this->columns . ') VALUES (' . $this->values . ')';
     }
 
     /**
@@ -62,7 +62,7 @@ class Insert
      */
     public function execute(): bool
     {
-        $this->query = 'INSERT INTO ' . $this->table . ' (' . $this->columns . ') VALUES (' . $this->values . ')';
+        $this->query = $this->buildQuery();
 
         return $this->exec()->rowCount() > 0;
     }

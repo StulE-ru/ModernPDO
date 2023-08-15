@@ -29,7 +29,7 @@ class Update
      */
     protected function buildQuery(): string
     {
-        return '';
+        return 'UPDATE ' . $this->table . ' SET ' . $this->set . ' ' . $this->where;
     }
 
     /**
@@ -68,7 +68,7 @@ class Update
             return false;
         }
 
-        $this->query = 'UPDATE ' . $this->table . ' SET ' . $this->set . ' WHERE ' . $this->where;
+        $this->query = $this->buildQuery();
 
         return $this->exec()->rowCount() > 0;
     }

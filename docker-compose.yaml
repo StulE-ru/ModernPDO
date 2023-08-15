@@ -4,7 +4,7 @@ services:
   php:
     image: php:${PHP_VERSION}
     container_name: php
-    restart: on-failure
+    restart: always
     environment:
       MYSQL_HOST: ${MYSQL_HOST}
       MYSQL_DATABASE: ${MYSQL_DATABASE}

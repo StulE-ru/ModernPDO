@@ -33,7 +33,7 @@ trait ValuesTrait
         $last_key = array_key_last($values);
 
         foreach ($values as $column => $value) {
-            $this->columns .= "`{$column}`";
+            $this->columns .= $column;
             $this->values .= '?';
 
             $this->values_params[] = $value;

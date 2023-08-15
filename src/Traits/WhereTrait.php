@@ -12,7 +12,7 @@ use ModernPDO\Actions\Update;
 trait WhereTrait
 {
     /** List of where. */
-    protected string $where = '1';
+    protected string $where = '';
     /** Array of placeholders. */
     protected array $where_params = [];
 
@@ -25,7 +25,7 @@ trait WhereTrait
             return $this;
         }
 
-        $this->where = "`{$name}`{$sign}?";
+        $this->where = 'WHERE ' . $name . $sign . '?';
         $this->where_params = [$value];
 
         return $this;
@@ -44,7 +44,7 @@ trait WhereTrait
             return $this->where($name, $value, $sign);
         }
 
-        $this->where .= " AND `{$name}`{$sign}?";
+        $this->where .= ' AND ' . $name . $sign . '?';
         $this->where_params[] = $value;
 
         return $this;
@@ -63,7 +63,7 @@ trait WhereTrait
             return $this->where($name, $value, $sign);
         }
 
-        $this->where .= " OR `{$name}`{$sign}?";
+        $this->where .= ' OR ' . $name . $sign . '?';
         $this->where_params[] = $value;
 
         return $this;
