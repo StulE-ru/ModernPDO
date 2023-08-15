@@ -3,6 +3,7 @@
 namespace ModernPDO\Traits;
 
 use ModernPDO\Actions\Select;
+use ModernPDO\Actions\Update;
 
 /**
  * Trait for working with 'where'.
@@ -11,16 +12,13 @@ trait WhereTrait
 {
     /** List of where. */
     protected string $where = '1';
-
-    /**
-     * Array of placeholders.
-     */
+    /** Array of placeholders. */
     protected array $where_params = [];
 
     /**
      * Set first condition.
      */
-    public function where(string $name, mixed $value, string $sign = '='): Select
+    public function where(string $name, mixed $value, string $sign = '='): Select|Update
     {
         if (empty($name)) {
             return $this;
@@ -35,7 +33,7 @@ trait WhereTrait
     /**
      * Adds 'and' condition.
      */
-    public function and(string $name, mixed $value, string $sign = '='): Select
+    public function and(string $name, mixed $value, string $sign = '='): Select|Update
     {
         if (empty($name)) {
             return $this;
@@ -54,7 +52,7 @@ trait WhereTrait
     /**
      * Adds 'or' condition.
      */
-    public function or(string $name, mixed $value, string $sign = '='): Select
+    public function or(string $name, mixed $value, string $sign = '='): Select|Update
     {
         if (empty($name)) {
             return $this;
