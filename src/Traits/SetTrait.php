@@ -2,21 +2,22 @@
 
 namespace ModernPDO\Traits;
 
-//
-// Подключение пространств имен.
-//
-
 use ModernPDO\Actions\Update;
 
-trait Set
+/**
+ * Trait for working with 'where'.
+ */
+trait SetTrait
 {
+    /** List of set. */
     protected string $set = '';
+    /** Array of placeholders. */
     protected array $set_params = [];
 
     /**
-     * @brief Добавление значений для SET.
+     * Set values for SET.
      *
-     * @param array $values - массив значений [$col1 => $val1, ...]
+     * @param string[] $values array of values for SET
      */
     public function set(array $values): Update
     {

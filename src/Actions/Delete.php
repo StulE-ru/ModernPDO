@@ -2,53 +2,68 @@
 
 namespace ModernPDO\Actions;
 
-//
-// Подключение пространств имен.
-//
-
-use ModernPDO\Traits\Where;
+use ModernPDO\ModernPDO;
+use ModernPDO\Statement;
+use ModernPDO\Traits\WhereTrait;
 
 /**
- * @brief Класс удаления записи(-ей) из таблицы.
+ * Class for deleting rows from a table.
  */
-final class Delete
+class Delete
 {
-    // Подключение трейтов.
-    use Where;
+    use WhereTrait;
 
-    /**
-     * @brief Конструктор класса.
-     *
-     * @param \PDO   $pdo   - инициализированный объект класса PDO
-     * @param string $table - название таблицы
-     */
+    /** The SQL statement. */
+    protected string $query;
+
     public function __construct(
-        private \PDO $pdo,
-        private string $table,
+        protected ModernPDO $mpdo,
+        protected string $table,
     ) {
     }
 
     /**
-     * @brief Получение параметров.
-     *
-     * @return array массив параметров
+     * Returns base query.
      */
-    private function getParams(): array
+    protected function buildQuery(): string
+    {
+        return '';
+    }
+
+    /**
+     * Returns the SQL statement.
+     */
+    protected function getQuery(): string
+    {
+        return $this->query;
+    }
+
+    /**
+     * Returns placeholders.
+     */
+    protected function getPlaceholders(): array
     {
         return $this->where_params;
     }
 
     /**
-     * @brief Удаление записи(-ей) из таблицы.
-     *
-     * @return bool в случае успеха true, иначе false
+     * Executes query and returns statement.
+     */
+    protected function exec(): Statement
+    {
+        return $this->mpdo->query(
+            $this->getQuery(),
+            $this->getPlaceholders(),
+        );
+    }
+
+    /**
+     * Deletes row from table.
      */
     public function execute(): bool
     {
-        $statement = $this->pdo->prepare(
-            "DELETE FROM `{$this->table}` WHERE {$this->where}"
-        );
+        $this->query = 'DELETE FROM ' . $this->table . ' WHERE ' . $this->where;
 
-        return  $statement && $statement->execute($this->getParams());
+        return $this->exec()->rowCount() > 0;
     }
 }

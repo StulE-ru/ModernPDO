@@ -2,53 +2,68 @@
 
 namespace ModernPDO\Actions;
 
-//
-// Подключение пространств имен.
-//
-
-use ModernPDO\Traits\Values;
+use ModernPDO\ModernPDO;
+use ModernPDO\Statement;
+use ModernPDO\Traits\ValuesTrait;
 
 /**
- * @brief Класс создания записи(-ей) из таблицы.
+ * Class for inserting rows to a table.
  */
-final class Insert
+class Insert
 {
-    // Подключение трейтов.
-    use Values;
+    use ValuesTrait;
 
-    /**
-     * @brief Конструктор класса.
-     *
-     * @param \PDO   $pdo   - инициализированный объект класса PDO
-     * @param string $table - название таблицы
-     */
+    /** The SQL statement. */
+    protected string $query;
+
     public function __construct(
-        private \PDO $pdo,
-        private string $table,
+        protected ModernPDO $mpdo,
+        protected string $table,
     ) {
     }
 
     /**
-     * @brief Получение параметров.
-     *
-     * @return array массив параметров
+     * Returns base query.
      */
-    private function getParams(): array
+    protected function buildQuery(): string
+    {
+        return '';
+    }
+
+    /**
+     * Returns the SQL statement.
+     */
+    protected function getQuery(): string
+    {
+        return $this->query;
+    }
+
+    /**
+     * Returns placeholders.
+     */
+    protected function getPlaceholders(): array
     {
         return $this->values_params;
     }
 
     /**
-     * @brief Создание записи(-ей) из таблицы.
-     *
-     * @return bool в случае успеха true, иначе false
+     * Executes query and returns statement.
+     */
+    protected function exec(): Statement
+    {
+        return $this->mpdo->query(
+            $this->getQuery(),
+            $this->getPlaceholders(),
+        );
+    }
+
+    /**
+     * Inserts row into table.
      */
     public function execute(): bool
     {
-        $statement = $this->pdo->prepare(
-            "INSERT INTO `{$this->table}` ({$this->columns}) VALUES ({$this->values})"
-        );
+        $this->query = 'INSERT INTO ' . $this->table . ' (' . $this->columns . ') VALUES (' . $this->values . ')';
 
-        return  $statement && $statement->execute($this->getParams());
+        return $this->exec()->rowCount() > 0;
     }
 }

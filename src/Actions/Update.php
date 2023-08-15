@@ -2,48 +2,65 @@
 
 namespace ModernPDO\Actions;
 
-//
-// Подключение пространств имен.
-//
-
-use ModernPDO\Traits\Set;
-use ModernPDO\Traits\Where;
+use ModernPDO\ModernPDO;
+use ModernPDO\Statement;
+use ModernPDO\Traits\SetTrait;
+use ModernPDO\Traits\WhereTrait;
 
 /**
- * @brief Класс обновления записи(-ей) из таблицы.
+ * Class for updating rows from a table.
  */
-final class Update
+class Update
 {
-    // Подключение трейтов.
-    use Set;
-    use Where;
+    use SetTrait;
+    use WhereTrait;
 
-    /**
-     * @brief Конструктор класса.
-     *
-     * @param \PDO   $pdo   - инициализированный объект класса PDO
-     * @param string $table - название таблицы
-     */
+    /** The SQL statement. */
+    protected string $query;
+
     public function __construct(
-        private \PDO $pdo,
-        private string $table,
+        protected ModernPDO $mpdo,
+        protected string $table,
     ) {
     }
 
     /**
-     * @brief Получение параметров.
-     *
-     * @return array массив параметров
+     * Returns base query.
      */
-    private function getParams(): array
+    protected function buildQuery(): string
+    {
+        return '';
+    }
+
+    /**
+     * Returns the SQL statement.
+     */
+    protected function getQuery(): string
+    {
+        return $this->query;
+    }
+
+    /**
+     * Returns placeholders.
+     */
+    protected function getPlaceholders(): array
     {
         return array_merge($this->set_params, $this->where_params);
     }
 
     /**
-     * @brief Обновление записи(-ей) из таблицы.
-     *
-     * @return bool в случае успеха true, иначе false
+     * Executes query and returns statement.
+     */
+    protected function exec(): Statement
+    {
+        return $this->mpdo->query(
+            $this->getQuery(),
+            $this->getPlaceholders(),
+        );
+    }
+
+    /**
+     * Updates rows in table.
      */
     public function execute(): bool
     {
@@ -51,10 +68,8 @@ final class Update
             return false;
         }
 
-        $statement = $this->pdo->prepare(
-            "UPDATE `{$this->table}` SET {$this->set} WHERE {$this->where}"
-        );
+        $this->query = 'UPDATE ' . $this->table . ' SET ' . $this->set . ' WHERE ' . $this->where;
 
-        return  $statement && $statement->execute($this->getParams());
+        return $this->exec()->rowCount() > 0;
     }
 }
