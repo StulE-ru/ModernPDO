@@ -7,7 +7,7 @@ namespace ModernPDO;
  *
  * Use ModerPDO objects to get this class object.
  */
-final class Transaction
+class Transaction
 {
     public function __construct(
         private \PDO $pdo,

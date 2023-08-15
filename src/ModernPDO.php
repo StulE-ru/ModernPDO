@@ -9,7 +9,7 @@ use ModernPDO\Actions\Select;
  *
  * Use ModerPDO::create... methods for create connections.
  */
-final class ModernPDO
+class ModernPDO
 {
     /** Default port for MySQL. */
     public const MYSQL_DEFAULT_PORT = '3306';

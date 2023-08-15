@@ -7,7 +7,7 @@ namespace ModernPDO;
  *
  * Use ModerPDO objects to get this class object.
  */
-final class Statement
+class Statement
 {
     public function __construct(
         private ?\PDOStatement $statement,
