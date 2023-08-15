@@ -12,7 +12,8 @@ use ModernPDO\Traits\WhereTrait;
  */
 class Select
 {
-    use ColumnsTrait, WhereTrait;
+    use ColumnsTrait;
+    use WhereTrait;
 
     /** The SQL statement. */
     protected string $query;
