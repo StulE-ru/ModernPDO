@@ -27,7 +27,7 @@ class Delete
      */
     protected function buildQuery(): string
     {
-        return '';
+        return 'DELETE FROM ' . $this->table . ' ' . $this->where;
     }
 
     /**
@@ -62,7 +62,7 @@ class Delete
      */
     public function execute(): bool
     {
-        $this->query = 'DELETE FROM ' . $this->table . ' ' . $this->where;
+        $this->query = $this->buildQuery();
 
         return $this->exec()->rowCount() > 0;
     }
