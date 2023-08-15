@@ -2,8 +2,10 @@
 
 namespace ModernPDO;
 
+use ModernPDO\Actions\Delete;
 use ModernPDO\Actions\Insert;
 use ModernPDO\Actions\Select;
+use ModernPDO\Actions\Update;
 
 /**
  * Wrapper over PDO.
@@ -205,5 +207,21 @@ class ModernPDO
     public function insert(string $table): Insert
     {
         return new Insert($this, $table);
+    }
+
+    /**
+     * Returns Update object.
+     */
+    public function update(string $table): Update
+    {
+        return new Update($this, $table);
+    }
+
+    /**
+     * Returns Delete object.
+     */
+    public function delete(string $table): Delete
+    {
+        return new Delete($this, $table);
     }
 }
