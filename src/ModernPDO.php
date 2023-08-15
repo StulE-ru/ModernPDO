@@ -2,6 +2,8 @@
 
 namespace ModernPDO;
 
+use ModernPDO\Actions\Select;
+
 /**
  * Wrapper over PDO.
  *
@@ -198,5 +200,10 @@ final class ModernPDO
         }
 
         return new Statement($statement !== false ? $statement : null);
+    }
+
+    public function select(string $table): Select
+    {
+        return new Select($this, $table);
     }
 }
