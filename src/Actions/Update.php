@@ -68,7 +68,7 @@ class Update
             return false;
         }
 
-        $this->query = 'UPDATE ' . $this->table . ' SET ' . $this->set . ' WHERE ' . $this->where;
+        $this->query = 'UPDATE ' . $this->table . ' SET ' . $this->set . ' ' . $this->where;
 
         return $this->exec()->rowCount() > 0;
     }

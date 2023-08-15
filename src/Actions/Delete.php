@@ -62,7 +62,7 @@ class Delete
      */
     public function execute(): bool
     {
-        $this->query = 'DELETE FROM ' . $this->table . ' WHERE ' . $this->where;
+        $this->query = 'DELETE FROM ' . $this->table . ' ' . $this->where;
 
         return $this->exec()->rowCount() > 0;
     }

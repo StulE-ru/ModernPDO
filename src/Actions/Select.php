@@ -29,7 +29,7 @@ class Select
      */
     protected function buildQuery(): string
     {
-        return 'SELECT ' . $this->columns . ' FROM ' . $this->table . ' WHERE ' . $this->where;
+        return 'SELECT ' . $this->columns . ' FROM ' . $this->table . ' ' . $this->where;
     }
 
     /**

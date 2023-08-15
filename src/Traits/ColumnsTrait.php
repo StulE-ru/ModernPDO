@@ -28,7 +28,7 @@ trait ColumnsTrait
         $last_key = array_key_last($columns);
 
         foreach ($columns as $key => $column) {
-            $this->columns .= "`{$column}`";
+            $this->columns .= $column;
 
             if ($last_key !== $key) {
                 $this->columns .= ', ';
