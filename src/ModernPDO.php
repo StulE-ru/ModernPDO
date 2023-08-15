@@ -53,12 +53,8 @@ class ModernPDO
         string $username,
         string $password,
         string $charset = '',
-        string $port = '',
+        string $port = ModernPDO::MYSQL_DEFAULT_PORT,
     ): ModernPDO {
-        if (empty($port)) {
-            $port = self::MYSQL_DEFAULT_PORT;
-        }
-
         $pdo = new \PDO(
             'mysql:host=' . $host . ';dbname=' . $database . ';port=' . $port,
             $username,
@@ -90,12 +86,8 @@ class ModernPDO
         string $username,
         string $password,
         string $charset = '',
-        string $port = '',
+        string $port = ModernPDO::MARIADB_DEFAULT_PORT,
     ): ModernPDO {
-        if (empty($port)) {
-            $port = self::POSTGRESQL_DEFAULT_PORT;
-        }
-
         return self::createMySQL(
             host: $host,
             database: $database,
@@ -122,12 +114,8 @@ class ModernPDO
         string $database,
         string $username,
         string $password,
-        string $port = '',
+        string $port = ModernPDO::POSTGRESQL_DEFAULT_PORT,
     ): ModernPDO {
-        if (empty($port)) {
-            $port = self::POSTGRESQL_DEFAULT_PORT;
-        }
-
         return self::createByPDO(
             new \PDO(
                 'pgsql:host=' . $host . ';dbname=' . $database . ';port=' . $port,
