@@ -2,6 +2,7 @@
 
 namespace ModernPDO;
 
+use ModernPDO\Actions\Insert;
 use ModernPDO\Actions\Select;
 
 /**
@@ -208,5 +209,13 @@ class ModernPDO
     public function select(string $table): Select
     {
         return new Select($this, $table);
+    }
+
+    /**
+     * Returns Insert object.
+     */
+    public function insert(string $table): Insert
+    {
+        return new Insert($this, $table);
     }
 }
