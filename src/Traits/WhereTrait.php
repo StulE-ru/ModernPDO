@@ -2,6 +2,7 @@
 
 namespace ModernPDO\Traits;
 
+use ModernPDO\Actions\Delete;
 use ModernPDO\Actions\Select;
 use ModernPDO\Actions\Update;
 
@@ -18,7 +19,7 @@ trait WhereTrait
     /**
      * Set first condition.
      */
-    public function where(string $name, mixed $value, string $sign = '='): Select|Update
+    public function where(string $name, mixed $value, string $sign = '='): Select|Update|Delete
     {
         if (empty($name)) {
             return $this;
@@ -33,7 +34,7 @@ trait WhereTrait
     /**
      * Adds 'and' condition.
      */
-    public function and(string $name, mixed $value, string $sign = '='): Select|Update
+    public function and(string $name, mixed $value, string $sign = '='): Select|Update|Delete
     {
         if (empty($name)) {
             return $this;
@@ -52,7 +53,7 @@ trait WhereTrait
     /**
      * Adds 'or' condition.
      */
-    public function or(string $name, mixed $value, string $sign = '='): Select|Update
+    public function or(string $name, mixed $value, string $sign = '='): Select|Update|Delete
     {
         if (empty($name)) {
             return $this;
