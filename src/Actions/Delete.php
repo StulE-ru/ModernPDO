@@ -4,15 +4,13 @@ namespace ModernPDO\Actions;
 
 use ModernPDO\ModernPDO;
 use ModernPDO\Statement;
-use ModernPDO\Traits\SetTrait;
 use ModernPDO\Traits\WhereTrait;
 
 /**
- * Class for updating rows from a table.
+ * Class for deleting rows from a table.
  */
-class Update
+class Delete
 {
-    use SetTrait;
     use WhereTrait;
 
     /** The SQL statement. */
@@ -45,7 +43,7 @@ class Update
      */
     protected function getPlaceholders(): array
     {
-        return array_merge($this->set_params, $this->where_params);
+        return $this->where_params;
     }
 
     /**
@@ -60,15 +58,11 @@ class Update
     }
 
     /**
-     * Updates rows in table.
+     * Deletes row from table.
      */
     public function execute(): bool
     {
-        if (empty($this->set)) {
-            return false;
-        }
-
-        $this->query = 'UPDATE ' . $this->table . ' SET ' . $this->set . ' WHERE ' . $this->where;
+        $this->query = 'DELETE FROM ' . $this->table . ' WHERE ' . $this->where;
 
         return $this->exec()->rowCount() > 0;
     }
