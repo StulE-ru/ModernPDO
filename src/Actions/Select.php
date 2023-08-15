@@ -24,6 +24,9 @@ class Select
     ) {
     }
 
+    /**
+     * Returns base query.
+     */
     protected function buildQuery(): string
     {
         return 'SELECT ' . $this->columns . ' FROM ' . $this->table . ' WHERE ' . $this->where;

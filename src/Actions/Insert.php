@@ -22,6 +22,9 @@ class Insert
     ) {
     }
 
+    /**
+     * Returns base query.
+     */
     protected function buildQuery(): string
     {
         return '';
