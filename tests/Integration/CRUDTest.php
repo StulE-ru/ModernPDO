@@ -26,7 +26,7 @@ class CRUDTest extends TestCase
             /** @var ModernPDO */
             $mpdo = $db[0];
 
-            $mpdo->query('CREATE TABLE IF NOT EXISTS ' . self::TABLE . '(id int, name varchar(32));');
+            $mpdo->query('CREATE TABLE IF NOT EXISTS ' . self::TABLE . ' (id int, name varchar(32));');
             $mpdo->query('DELETE FROM ' . self::TABLE . ';');
         }
     }
