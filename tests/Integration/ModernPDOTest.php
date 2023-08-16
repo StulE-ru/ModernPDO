@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration;
+namespace ModernPDO\Tests\Integration;
 
 use ModernPDO\ModernPDO;
 use PHPUnit\Framework\TestCase;
