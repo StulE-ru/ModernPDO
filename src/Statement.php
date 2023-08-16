@@ -33,9 +33,10 @@ class Statement
      */
     public function fetch(): array
     {
+        /** @var array<string, mixed>|false */
         $row = $this->statement?->fetch() ?? false;
 
-        return is_array($row) ? $row : [];
+        return $row !== false ? $row : [];
     }
 
     /**
@@ -47,6 +48,7 @@ class Statement
      */
     public function fetchAll(): array
     {
+        /** @var list<array<string, mixed>>|false */
         $rows = $this->statement?->fetchAll() ?? false;
 
         return $rows !== false ? $rows : [];

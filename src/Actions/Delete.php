@@ -14,7 +14,7 @@ class Delete
     use WhereTrait;
 
     /** The SQL statement. */
-    protected string $query;
+    protected string $query = '';
 
     public function __construct(
         protected ModernPDO $mpdo,
