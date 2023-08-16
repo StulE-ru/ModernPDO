@@ -10,7 +10,6 @@ use function PHPUnit\Framework\assertTrue;
 
 class TransactionTest extends TestCase
 {
-
     private function helperCreateMock(): MockObject
     {
         /** @var MockObject */

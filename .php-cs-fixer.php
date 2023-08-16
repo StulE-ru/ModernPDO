@@ -3,6 +3,11 @@
 return (new PhpCsFixer\Config)
     ->setRiskyAllowed(true)
     ->setRules([
+        // Symfony rulesets
+
+        '@Symfony' => true,
+        '@Symfony:risky' => true,
+
         // PSR12 rulesets
 
         '@PSR12:risky' => true,

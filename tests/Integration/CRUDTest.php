@@ -11,7 +11,6 @@ use function PHPUnit\Framework\assertEmpty;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertGreaterThan;
-use function PHPUnit\Framework\assertNotEquals;
 use function PHPUnit\Framework\assertTrue;
 
 class CRUDTest extends TestCase
@@ -63,7 +62,7 @@ class CRUDTest extends TestCase
                 ],
                 [
                     ModernPDO::createSQLite3(':memory:'),
-                ]
+                ],
             ];
         }
 
@@ -114,7 +113,7 @@ class CRUDTest extends TestCase
         assertEquals('test2', $mpdo->select(self::TABLE)->or('', 1)->and('id', 2)->one()['name']);
 
         // test all
-        assertGreaterThan(0, count($mpdo->select(self::TABLE)->all()));
+        assertGreaterThan(0, \count($mpdo->select(self::TABLE)->all()));
 
         // test (first/last)By
         assertEquals('test1', $mpdo->select(self::TABLE)->where('id', 1)->or('id', 2)->firstBy('id')['name']);
