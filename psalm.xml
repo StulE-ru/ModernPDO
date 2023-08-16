@@ -3,7 +3,7 @@
 <psalm
     name="Psalm for Scarecrow Core"
 
-    errorLevel="8"
+    errorLevel="1"
 
     errorBaseline="psalm-baseline.xml"
 
