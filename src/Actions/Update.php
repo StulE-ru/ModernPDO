@@ -29,7 +29,7 @@ class Update
      */
     protected function buildQuery(): string
     {
-        return 'UPDATE ' . $this->table . ' SET ' . $this->set . ' ' . $this->where;
+        return trim('UPDATE ' . $this->table . ' SET ' . $this->set . ' ' . $this->where);
     }
 
     /**

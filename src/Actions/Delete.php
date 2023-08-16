@@ -27,7 +27,7 @@ class Delete
      */
     protected function buildQuery(): string
     {
-        return 'DELETE FROM ' . $this->table . ' ' . $this->where;
+        return trim('DELETE FROM ' . $this->table . ' ' . $this->where);
     }
 
     /**
