@@ -172,7 +172,7 @@ class ModernPDO
      * Prepares and executes an SQL statement.
      *
      * @param string $query The SQL statement to prepare and execute
-     * @param array $values Placeholders that will replace '?'
+     * @param array<string, mixed> $values Placeholders that will replace '?'
      *
      * @see https://www.php.net/manual/en/pdo.query.php
      * @see https://www.php.net/manual/en/pdo.prepare.php

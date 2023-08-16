@@ -40,6 +40,8 @@ class Insert
 
     /**
      * Returns placeholders.
+     *
+     * @return mixed[]
      */
     protected function getPlaceholders(): array
     {

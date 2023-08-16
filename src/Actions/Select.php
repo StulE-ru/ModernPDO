@@ -42,6 +42,8 @@ class Select
 
     /**
      * Returns placeholders.
+     *
+     * @return mixed[]
      */
     protected function getPlaceholders(): array
     {
@@ -61,6 +63,8 @@ class Select
 
     /**
      * Executes query and returns one row.
+     *
+     * @return array<string, mixed>
      */
     protected function getOne(): array
     {
@@ -69,6 +73,8 @@ class Select
 
     /**
      * Executes query and returns all rows.
+     *
+     * @return list<array<string, mixed>>
      */
     protected function getAll(): array
     {
@@ -77,6 +83,8 @@ class Select
 
     /**
      * Returns all rows from table.
+     *
+     * @return list<array<string, mixed>>
      */
     public function all(): array
     {
@@ -87,6 +95,8 @@ class Select
 
     /**
      * Returns one row from table.
+     *
+     * @return array<string, mixed>
      */
     public function one(): array
     {
@@ -99,6 +109,8 @@ class Select
      * Returns first row from table.
      *
      * @param string $order column name to sort rows
+     *
+     * @return array<string, mixed>
      */
     public function firstBy(string $order): array
     {
@@ -111,6 +123,8 @@ class Select
      * Returns last row from table.
      *
      * @param string $order column name to sort rows
+     *
+     * @return array<string, mixed>
      */
     public function lastBy(string $order): array
     {

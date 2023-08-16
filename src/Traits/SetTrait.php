@@ -11,7 +11,12 @@ trait SetTrait
 {
     /** List of set. */
     protected string $set = '';
-    /** Array of placeholders. */
+
+    /**
+     * Array of placeholders.
+     *
+     * @var mixed[]
+     */
     protected array $set_params = [];
 
     /**
