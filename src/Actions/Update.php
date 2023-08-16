@@ -42,6 +42,8 @@ class Update
 
     /**
      * Returns placeholders.
+     *
+     * @return mixed[]
      */
     protected function getPlaceholders(): array
     {

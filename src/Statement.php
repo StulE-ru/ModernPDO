@@ -27,7 +27,7 @@ class Statement
     /**
      * Fetches the next row from a result set.
      *
-     * @return array If successful, an array of data, otherwise an empty array
+     * @return array<string, mixed> If successful, an array of data, otherwise an empty array
      *
      * @see https://www.php.net/manual/en/pdostatement.fetch.php
      */
@@ -35,13 +35,13 @@ class Statement
     {
         $row = $this->statement?->fetch() ?? false;
 
-        return $row !== false ? $row : [];
+        return is_array($row) ? $row : [];
     }
 
     /**
      * Fetches the remaining rows from a result set.
      *
-     * @return array If successful, an array of arrays, otherwise an empty array
+     * @return list<array<string, mixed>> If successful, an array of arrays, otherwise an empty array
      *
      * @see https://www.php.net/manual/en/pdostatement.fetchall.php
      */

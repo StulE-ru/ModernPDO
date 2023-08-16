@@ -11,7 +11,11 @@ trait ValuesTrait
     /** List of values. */
     protected string $values = '';
 
-    /** Array of placeholders. */
+    /**
+     * Array of placeholders.
+     *
+     * @var mixed[]
+     */
     protected array $values_params = [];
 
     /**

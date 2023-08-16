@@ -13,7 +13,12 @@ trait WhereTrait
 {
     /** List of where. */
     protected string $where = '';
-    /** Array of placeholders. */
+
+    /**
+     * Array of placeholders.
+     *
+     * @var mixed[]
+     */
     protected array $where_params = [];
 
     /**
