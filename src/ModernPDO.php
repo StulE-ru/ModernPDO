@@ -29,23 +29,22 @@ class ModernPDO
     /**
      * Creates and returns ModernPDO object using PDO object.
      */
-    public static function createByPDO(\PDO $pdo): ModernPDO
+    public static function createByPDO(\PDO $pdo): self
     {
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
         $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
 
-        return new ModernPDO($pdo);
+        return new self($pdo);
     }
 
     /**
      * Returns ModernPDO object configured with MySQL.
      *
-     * @param string $host The hostname on which the database server reside
-     * @param string $database
+     * @param string $host     The hostname on which the database server reside
      * @param string $username The user name for the DSN string
      * @param string $password The password for the DSN string
-     * @param string $charset Connection charset, if empty, default database charset is used
-     * @param string $port Connection port, if empty, default is used
+     * @param string $charset  Connection charset, if empty, default database charset is used
+     * @param string $port     Connection port, if empty, default is used
      *
      * @see https://www.php.net/manual/ru/ref.pdo-mysql.php
      */
@@ -55,8 +54,8 @@ class ModernPDO
         string $username,
         string $password,
         string $charset = '',
-        string $port = ModernPDO::MYSQL_DEFAULT_PORT,
-    ): ModernPDO {
+        string $port = self::MYSQL_DEFAULT_PORT,
+    ): self {
         $pdo = new \PDO(
             'mysql:host=' . $host . ';dbname=' . $database . ';port=' . $port,
             $username,
@@ -73,12 +72,12 @@ class ModernPDO
     /**
      * Returns ModernPDO object configured with MariaDB.
      *
-     * @param string $host The hostname on which the database server reside
+     * @param string $host     The hostname on which the database server reside
      * @param string $database The name of the database
      * @param string $username The user name for the DSN string
      * @param string $password The password for the DSN string
-     * @param string $charset Connection charset, if empty, default database charset is used
-     * @param string $port Connection port, if empty, default is used
+     * @param string $charset  Connection charset, if empty, default database charset is used
+     * @param string $port     Connection port, if empty, default is used
      *
      * @see https://www.php.net/manual/ru/ref.pdo-mysql.php
      */
@@ -88,8 +87,8 @@ class ModernPDO
         string $username,
         string $password,
         string $charset = '',
-        string $port = ModernPDO::MARIADB_DEFAULT_PORT,
-    ): ModernPDO {
+        string $port = self::MARIADB_DEFAULT_PORT,
+    ): self {
         return self::createMySQL(
             host: $host,
             database: $database,
@@ -103,11 +102,11 @@ class ModernPDO
     /**
      * Returns ModernPDO object configured with PostgreSQL.
      *
-     * @param string $host The hostname on which the database server reside
+     * @param string $host     The hostname on which the database server reside
      * @param string $database The name of the database
      * @param string $username The user name for the DSN string
      * @param string $password The password for the DSN string
-     * @param string $port Connection port, if empty, default is used
+     * @param string $port     Connection port, if empty, default is used
      *
      * @see https://www.php.net/manual/ru/ref.pdo-pgsql.php
      */
@@ -116,8 +115,8 @@ class ModernPDO
         string $database,
         string $username,
         string $password,
-        string $port = ModernPDO::POSTGRESQL_DEFAULT_PORT,
-    ): ModernPDO {
+        string $port = self::POSTGRESQL_DEFAULT_PORT,
+    ): self {
         return self::createByPDO(
             new \PDO(
                 'pgsql:host=' . $host . ';dbname=' . $database . ';port=' . $port,
@@ -140,7 +139,7 @@ class ModernPDO
      */
     public static function createSQLite3(
         string $mode = '',
-    ): ModernPDO {
+    ): self {
         return self::createByPDO(
             new \PDO('sqlite:' . $mode),
         );
@@ -171,7 +170,7 @@ class ModernPDO
     /**
      * Prepares and executes an SQL statement.
      *
-     * @param string $query The SQL statement to prepare and execute
+     * @param string  $query  The SQL statement to prepare and execute
      * @param mixed[] $values Placeholders that will replace '?'
      *
      * @see https://www.php.net/manual/en/pdo.query.php

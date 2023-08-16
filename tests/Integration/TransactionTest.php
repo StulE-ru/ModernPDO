@@ -58,7 +58,7 @@ class TransactionTest extends TestCase
                 ],
                 [
                     ModernPDO::createSQLite3(':memory:'),
-                ]
+                ],
             ];
         }
 
