@@ -2,25 +2,14 @@
 
 namespace ModernPDO\Actions;
 
-use ModernPDO\ModernPDO;
-use ModernPDO\Statement;
 use ModernPDO\Traits\WhereTrait;
 
 /**
  * Class for deleting rows from a table.
  */
-class Delete
+class Delete extends Action
 {
     use WhereTrait;
-
-    /** The SQL statement. */
-    protected string $query = '';
-
-    public function __construct(
-        protected ModernPDO $mpdo,
-        protected string $table,
-    ) {
-    }
 
     /**
      * Returns base query.
@@ -31,14 +20,6 @@ class Delete
     }
 
     /**
-     * Returns the SQL statement.
-     */
-    protected function getQuery(): string
-    {
-        return $this->query;
-    }
-
-    /**
      * Returns placeholders.
      *
      * @return mixed[]
@@ -46,17 +27,6 @@ class Delete
     protected function getPlaceholders(): array
     {
         return $this->where_params;
-    }
-
-    /**
-     * Executes query and returns statement.
-     */
-    protected function exec(): Statement
-    {
-        return $this->mpdo->query(
-            $this->getQuery(),
-            $this->getPlaceholders(),
-        );
     }
 
     /**
