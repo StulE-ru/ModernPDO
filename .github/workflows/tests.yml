@@ -91,3 +91,36 @@ jobs:
 
           - name: Exec unit tests
             run: sleep 20;docker compose exec php "composer" "tests"
+
+  php-salm:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.1]
+
+    name: PHP-PSalm ${{ matrix.php }}
+
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v3
+
+      - name: Get cache directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-${{ matrix.php }}-
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
+
+      - name: Srart PHP PSalm
+        run: composer salm
