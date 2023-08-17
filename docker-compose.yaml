@@ -1,8 +1,17 @@
+#
+# We know this is bullshit, but right now we think it does not matter.
+#
+
 version: '3.9'
 
 services:
   php:
-    image: php:${PHP_VERSION}
+    build:
+      context: .
+      dockerfile: ./.github/docker/php/Dockerfile
+      args:
+        PHP_VERSION: ${PHP_VERSION}
+    image: modernpdo/php:${PHP_VERSION}
     container_name: php
     restart: always
     environment:
