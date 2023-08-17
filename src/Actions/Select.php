@@ -2,27 +2,16 @@
 
 namespace ModernPDO\Actions;
 
-use ModernPDO\ModernPDO;
-use ModernPDO\Statement;
 use ModernPDO\Traits\ColumnsTrait;
 use ModernPDO\Traits\WhereTrait;
 
 /**
  * Class for getting rows from a table.
  */
-class Select
+class Select extends Action
 {
     use ColumnsTrait;
     use WhereTrait;
-
-    /** The SQL statement. */
-    protected string $query = '';
-
-    public function __construct(
-        protected ModernPDO $mpdo,
-        protected string $table,
-    ) {
-    }
 
     /**
      * Returns base query.
@@ -30,14 +19,6 @@ class Select
     protected function buildQuery(): string
     {
         return trim('SELECT ' . $this->columns . ' FROM ' . $this->table . ' ' . $this->where);
-    }
-
-    /**
-     * Returns the SQL statement.
-     */
-    protected function getQuery(): string
-    {
-        return $this->query;
     }
 
     /**
@@ -51,24 +32,13 @@ class Select
     }
 
     /**
-     * Executes query and returns statement.
-     */
-    protected function execute(): Statement
-    {
-        return $this->mpdo->query(
-            $this->getQuery(),
-            $this->getPlaceholders(),
-        );
-    }
-
-    /**
      * Executes query and returns one row.
      *
      * @return array<string, mixed>
      */
     protected function getOne(): array
     {
-        return $this->execute()->fetch();
+        return $this->exec()->fetch();
     }
 
     /**
@@ -78,7 +48,7 @@ class Select
      */
     protected function getAll(): array
     {
-        return $this->execute()->fetchAll();
+        return $this->exec()->fetchAll();
     }
 
     /**
