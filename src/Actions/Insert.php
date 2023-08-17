@@ -2,53 +2,40 @@
 
 namespace ModernPDO\Actions;
 
-//
-// Подключение пространств имен.
-//
-
-use ModernPDO\Traits\Values;
+use ModernPDO\Traits\ValuesTrait;
 
 /**
- * @brief Класс создания записи(-ей) из таблицы.
+ * Class for inserting rows to a table.
  */
-final class Insert
+class Insert extends Action
 {
-    // Подключение трейтов.
-    use Values;
+    use ValuesTrait;
 
     /**
-     * @brief Конструктор класса.
-     *
-     * @param \PDO   $pdo   - инициализированный объект класса PDO
-     * @param string $table - название таблицы
+     * Returns base query.
      */
-    public function __construct(
-        private \PDO $pdo,
-        private string $table,
-    ) {
+    protected function buildQuery(): string
+    {
+        return 'INSERT INTO ' . $this->table . ' (' . $this->columns . ') VALUES (' . $this->values . ')';
     }
 
     /**
-     * @brief Получение параметров.
+     * Returns placeholders.
      *
-     * @return array массив параметров
+     * @return mixed[]
      */
-    private function getParams(): array
+    protected function getPlaceholders(): array
     {
         return $this->values_params;
     }
 
     /**
-     * @brief Создание записи(-ей) из таблицы.
-     *
-     * @return bool в случае успеха true, иначе false
+     * Inserts row into table.
      */
     public function execute(): bool
     {
-        $statement = $this->pdo->prepare(
-            "INSERT INTO `{$this->table}` ({$this->columns}) VALUES ({$this->values})"
-        );
+        $this->query = $this->buildQuery();
 
-        return  $statement && $statement->execute($this->getParams());
+        return $this->exec()->rowCount() > 0;
     }
 }

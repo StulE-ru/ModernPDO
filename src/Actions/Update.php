@@ -2,48 +2,37 @@
 
 namespace ModernPDO\Actions;
 
-//
-// Подключение пространств имен.
-//
-
-use ModernPDO\Traits\Set;
-use ModernPDO\Traits\Where;
+use ModernPDO\Traits\SetTrait;
+use ModernPDO\Traits\WhereTrait;
 
 /**
- * @brief Класс обновления записи(-ей) из таблицы.
+ * Class for updating rows from a table.
  */
-final class Update
+class Update extends Action
 {
-    // Подключение трейтов.
-    use Set;
-    use Where;
+    use SetTrait;
+    use WhereTrait;
 
     /**
-     * @brief Конструктор класса.
-     *
-     * @param \PDO   $pdo   - инициализированный объект класса PDO
-     * @param string $table - название таблицы
+     * Returns base query.
      */
-    public function __construct(
-        private \PDO $pdo,
-        private string $table,
-    ) {
+    protected function buildQuery(): string
+    {
+        return trim('UPDATE ' . $this->table . ' SET ' . $this->set . ' ' . $this->where);
     }
 
     /**
-     * @brief Получение параметров.
+     * Returns placeholders.
      *
-     * @return array массив параметров
+     * @return mixed[]
      */
-    private function getParams(): array
+    protected function getPlaceholders(): array
     {
         return array_merge($this->set_params, $this->where_params);
     }
 
     /**
-     * @brief Обновление записи(-ей) из таблицы.
-     *
-     * @return bool в случае успеха true, иначе false
+     * Updates rows in table.
      */
     public function execute(): bool
     {
@@ -51,10 +40,8 @@ final class Update
             return false;
         }
 
-        $statement = $this->pdo->prepare(
-            "UPDATE `{$this->table}` SET {$this->set} WHERE {$this->where}"
-        );
+        $this->query = $this->buildQuery();
 
-        return  $statement && $statement->execute($this->getParams());
+        return $this->exec()->rowCount() > 0;
     }
 }

@@ -6,6 +6,12 @@
 /.vscode
 
 #
+# Analyzers
+#
+
+*-report.*
+
+#
 # Vendor
 #
 

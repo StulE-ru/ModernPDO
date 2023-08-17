@@ -2,23 +2,26 @@
 
 namespace ModernPDO\Traits;
 
-//
-// Подключение пространств имен.
-//
-
 use ModernPDO\Actions\Insert;
 
-trait Values
+trait ValuesTrait
 {
+    /** List of columns. */
     protected string $columns = '';
+    /** List of values. */
     protected string $values = '';
 
+    /**
+     * Array of placeholders.
+     *
+     * @var mixed[]
+     */
     protected array $values_params = [];
 
     /**
-     * @brief Добавление значений для INSERT.
+     * Set values for VALUES.
      *
-     * @param array $values - массив значений [$col1 => $val1, ...]
+     * @param string[] $values array of values for VALUES
      */
     public function values(array $values): Insert
     {
@@ -34,7 +37,7 @@ trait Values
         $last_key = array_key_last($values);
 
         foreach ($values as $column => $value) {
-            $this->columns .= "`{$column}`";
+            $this->columns .= $column;
             $this->values .= '?';
 
             $this->values_params[] = $value;

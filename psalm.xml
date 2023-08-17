@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!-- errorLevel can be 1-8 (where level 1 is the most strict) -->
+<psalm
+    name="Psalm for Scarecrow Core"
+
+    errorLevel="1"
+
+    errorBaseline="psalm-baseline.xml"
+
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+
+    ensureArrayStringOffsetsExist="true"
+    ensureArrayIntOffsetsExist="true"
+
+    findUnusedPsalmSuppress="true"
+    findUnusedBaselineEntry="true"
+    findUnusedVariablesAndParams="true"
+    findUnusedCode="false"
+>
+    <projectFiles>
+        <directory name="src"/>
+        <ignoreFiles>
+            <directory name="vendor"/>
+        </ignoreFiles>
+    </projectFiles>
+</psalm>

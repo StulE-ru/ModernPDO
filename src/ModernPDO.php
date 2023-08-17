@@ -2,224 +2,180 @@
 
 namespace ModernPDO;
 
-//
-// Подключение пространств имен.
-//
-
 use ModernPDO\Actions\Delete;
 use ModernPDO\Actions\Insert;
 use ModernPDO\Actions\Select;
 use ModernPDO\Actions\Update;
 
 /**
- * @brief Класс-обертка над \PDO.
+ * Wrapper over PDO.
+ *
+ * Use ModerPDO::create... methods for create connections.
  */
-final class ModernPDO
+class ModernPDO
 {
-    private \PDO $pdo;
+    /** Default port for MySQL. */
+    public const MYSQL_DEFAULT_PORT = '3306';
+    /** Default port for MariaDB. */
+    public const MARIADB_DEFAULT_PORT = '3306';
+    /** Default port for PostgreSQL. */
+    public const POSTGRESQL_DEFAULT_PORT = '5432';
 
-    /**
-     * @brief Конструктор класса.
-     *
-     * @param string $type     - тип базы данных
-     * @param string $charset  - используемая кодировка
-     * @param string $host     - хост базы данных
-     * @param string $username - имя пользователя базы данных
-     * @param string $password - пароль пользователя базы данных
-     * @param string $database - название базы данных
-     * @param ?array $data     - массив параметров
-     * @param ?\PDO  $pdo      - инициализированный объект \PDO
-     *
-     * @note На данный момент есть 3 варианта инициализации класса:
-     *          1 - через параметры ($type, $charset, $host, ...).
-     *          2 - через массив с параметрами (имена параметров должны совпадать с именами первого способа).
-     *          3 - через инициализированный объект \PDO.
-     *       Выбор способа зависит от переданных параметров в конструктор.
-     *
-     *       + если не указаны $type/$charset/$host, то будут взяты значения по умолчанию.
-     */
-    public function __construct(
-        string $type = '',
-        string $charset = '',
-        string $host = '',
-        string $username = '',
-        string $password = '',
-        string $database = '',
-
-        ?array $data = null,
-
-        ?\PDO $pdo = null,
+    private function __construct(
+        private \PDO $pdo,
     ) {
-        if ($this->initByObject($pdo)) {
-            return;
-        }
-
-        if ($this->initByArray($data)) {
-            return;
-        }
-
-        $this->initByParams($type, $charset, $host, $username, $password, $database);
     }
 
     /**
-     * @brief Инициализация через параметры.
-     *
-     * @param string $type     - тип базы данных
-     * @param string $charset  - используемая кодировка
-     * @param string $host     - хост базы данных
-     * @param string $username - имя пользователя базы данных
-     * @param string $password - пароль пользователя базы данных
-     * @param string $database - название базы данных
+     * Creates and returns ModernPDO object using PDO object.
      */
-    private function initByParams(
-        string $type = '',
+    public static function createByPDO(\PDO $pdo): self
+    {
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
+        $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
+
+        return new self($pdo);
+    }
+
+    /**
+     * Returns ModernPDO object configured with MySQL.
+     *
+     * @param string $host     The hostname on which the database server reside
+     * @param string $username The user name for the DSN string
+     * @param string $password The password for the DSN string
+     * @param string $charset  Connection charset, if empty, default database charset is used
+     * @param string $port     Connection port, if empty, default is used
+     *
+     * @see https://www.php.net/manual/ru/ref.pdo-mysql.php
+     */
+    public static function createMySQL(
+        string $host,
+        string $database,
+        string $username,
+        string $password,
         string $charset = '',
-        string $host = '',
-        string $username = '',
-        string $password = '',
-        string $database = '',
-    ): void {
-        if (empty($type)) {
-            $type = 'mysql';
-        }
-        if (empty($charset)) {
-            $charset = 'utf8mb4';
-        }
-        if (empty($host)) {
-            $host = 'localhost';
+        string $port = self::MYSQL_DEFAULT_PORT,
+    ): self {
+        $pdo = new \PDO(
+            'mysql:host=' . $host . ';dbname=' . $database . ';port=' . $port,
+            $username,
+            $password,
+        );
+
+        if (!empty($charset)) {
+            $pdo->exec('SET NAMES ' . $charset);
         }
 
-        $this->pdo = new \PDO("{$type}:host={$host};dbname={$database}", $username, $password);
-
-        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
-        $this->pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
-
-        $this->pdo->exec("set names {$charset}");
+        return self::createByPDO($pdo);
     }
 
     /**
-     * @brief Инициализация через массив параметров.
+     * Returns ModernPDO object configured with MariaDB.
      *
-     * @param ?array $data - массив параметров
+     * @param string $host     The hostname on which the database server reside
+     * @param string $database The name of the database
+     * @param string $username The user name for the DSN string
+     * @param string $password The password for the DSN string
+     * @param string $charset  Connection charset, if empty, default database charset is used
+     * @param string $port     Connection port, if empty, default is used
      *
-     * @return bool в случае успеха true, иначе false
+     * @see https://www.php.net/manual/ru/ref.pdo-mysql.php
      */
-    private function initByArray(?array $data): bool
-    {
-        if (empty($data)) {
-            return false;
-        }
-
-        call_user_func_array([$this, 'initByParams'], $data);
-
-        return true;
+    public static function createMariaDB(
+        string $host,
+        string $database,
+        string $username,
+        string $password,
+        string $charset = '',
+        string $port = self::MARIADB_DEFAULT_PORT,
+    ): self {
+        return self::createMySQL(
+            host: $host,
+            database: $database,
+            username: $username,
+            password: $password,
+            charset: $charset,
+            port: $port,
+        );
     }
 
     /**
-     * @brief Инициализация через объект \PDO.
+     * Returns ModernPDO object configured with PostgreSQL.
      *
-     * @param ?\PDO $pdo - инициализированный объект \PDO
+     * @param string $host     The hostname on which the database server reside
+     * @param string $database The name of the database
+     * @param string $username The user name for the DSN string
+     * @param string $password The password for the DSN string
+     * @param string $port     Connection port, if empty, default is used
      *
-     * @return bool в случае успеха true, иначе false
+     * @see https://www.php.net/manual/ru/ref.pdo-pgsql.php
      */
-    private function initByObject(?\PDO $pdo): bool
-    {
-        if (empty($pdo)) {
-            return false;
-        }
-
-        $this->pdo = $pdo;
-
-        return true;
+    public static function createPostgreSQL(
+        string $host,
+        string $database,
+        string $username,
+        string $password,
+        string $port = self::POSTGRESQL_DEFAULT_PORT,
+    ): self {
+        return self::createByPDO(
+            new \PDO(
+                'pgsql:host=' . $host . ';dbname=' . $database . ';port=' . $port,
+                $username,
+                $password,
+            ),
+        );
     }
 
     /**
-     * @brief Инициализация транзакции.
+     * Returns ModernPDO object configured with SQLite3.
      *
-     * @return bool в случае успеха true, иначе false
+     * @param string $mode Full path to the database file or :memory: or an empty string
      *
-     * @note Обертка PDO::beginTransaction.
+     * - To access a database on disk, $mode must be full path to the database file.
+     * - To create a database in memory, $mode must be ':memory:'.
+     * - To use a temporary database, which is deleted when the connection is closed, $mode must be an empty string.
+     *
+     * @see https://www.php.net/manual/en/ref.pdo-sqlite.connection.php
      */
-    public function beginTransaction(): bool
-    {
-        return $this->pdo->beginTransaction();
+    public static function createSQLite3(
+        string $mode = '',
+    ): self {
+        return self::createByPDO(
+            new \PDO('sqlite:' . $mode),
+        );
     }
 
     /**
-     * @brief Откат транзакции.
-     *
-     * @return bool в случае успеха true, иначе false
-     *
-     * @note Обертка PDO::rollBack.
+     * Returns Transaction object.
      */
-    public function rollback(): bool
+    public function transaction(): Transaction
     {
-        return $this->pdo->rollBack();
+        return new Transaction($this->pdo);
     }
 
     /**
-     * @brief Фиксация транзакцию.
+     * Execute an SQL statement and return the number of affected rows.
      *
-     * @return bool в случае успеха true, иначе false
+     * @param string $query The SQL statement to execute
      *
-     * @note Обертка PDO::commit.
+     * @see https://www.php.net/manual/en/pdo.exec.php
      */
-    public function commit(): bool
+    public function exec(string $query): int
     {
-        return $this->pdo->commit();
+        $count = $this->pdo->exec($query);
+
+        return $count !== false ? $count : 0;
     }
 
     /**
-     * @brief Начата ли транзакция?
+     * Prepares and executes an SQL statement.
      *
-     * @return bool если начата true, иначе false
+     * @param string  $query  The SQL statement to prepare and execute
+     * @param mixed[] $values Placeholders that will replace '?'
      *
-     * @note Обертка PDO::inTransaction.
-     */
-    public function inTransaction(): bool
-    {
-        return $this->pdo->inTransaction();
-    }
-
-    /**
-     * @brief Получение ID последней вставленной строки или значение последовательност.
-     *
-     * @param ?string $name - имя объекта последовательности, который должен выдать ID
-     *
-     * @return string|false
-     *                      Если объект последовательности для $name не задан, функция вернёт строку,
-     *                      представляющую ID последней добавленной в базу записи.
-     *                      Если же объект последовательности для $name задан, функция вернёт строку,
-     *                      представляющую последнее значение, полученное от этого объекта.
-     *
-     * @note Обертка PDO::lastInsertId.
-     */
-    public function getLastId(?string $name = null): string|false
-    {
-        return $this->pdo->lastInsertId($name);
-    }
-
-    /**
-     * @brief Выполнение "сырых" SQL-запросов.
-     *
-     * @param string $query - SQL-выражение, которое надо выполнить
-     *
-     * @return int|false в случае успеха кол-во затронутых записей, иначе false
-     *
-     * @note Обертка PDO::exec.
-     */
-    public function exec(string $query): int|false
-    {
-        return $this->pdo->exec($query);
-    }
-
-    /**
-     * @brief Выполнение "готовых" SQL-запросов.
-     *
-     * @param string $query  - SQL-выражение, которое надо выполнить
-     * @param array  $values - массив значений, которые будут подставлены вместо всех '?'
-     *
-     * @return Statement объект класса Statement
+     * @see https://www.php.net/manual/en/pdo.query.php
+     * @see https://www.php.net/manual/en/pdo.prepare.php
+     * @see https://www.php.net/manual/en/pdostatement.execute.php
      */
     public function query(string $query, array $values = []): Statement
     {
@@ -227,82 +183,44 @@ final class ModernPDO
             $statement = $this->pdo->query($query);
         } else {
             $statement = $this->pdo->prepare($query);
-            $statement?->execute($values);
+
+            if ($statement !== false) {
+                $statement->execute($values);
+            }
         }
 
-        if (!is_object($statement)) {
-            $statement = null;
-        }
-
-        return new Statement($statement);
+        return new Statement($statement !== false ? $statement : null);
     }
 
     /**
-     * @brief Создание записи(-ей) в таблице.
-     *
-     * @param string $table  - название таблицы
-     * @param array  $values - значения для Insert::values()
-     *
-     * @return Insert объект класса Actions\Insert
+     * Returns Select object.
      */
-    public function insert(string $table, array $values = []): Insert
+    public function select(string $table): Select
     {
-        $object = new Insert($this->pdo, $table);
-
-        if (!empty($values)) {
-            $object->values($values);
-        }
-
-        return $object;
+        return new Select($this, $table);
     }
 
     /**
-     * @brief Получение записи(-ей) из таблицы.
-     *
-     * @param string $table   - название таблицы
-     * @param array  $columns - столбцы для Select::columns()
-     *
-     * @return Select объект класса Actions\Select
+     * Returns Insert object.
      */
-    public function select(string $table, array $columns = []): Select
+    public function insert(string $table): Insert
     {
-        $object = new Select($this->pdo, $table);
-
-        if (!empty($columns)) {
-            $object->columns($columns);
-        }
-
-        return $object;
+        return new Insert($this, $table);
     }
 
     /**
-     * @brief Обновление записи(-ей) в таблице.
-     *
-     * @param string $table  - название таблицы
-     * @param array  $values - значения для Update::values()
-     *
-     * @return Update объект класса Actions\Update
+     * Returns Update object.
      */
-    public function update(string $table, array $values = []): Update
+    public function update(string $table): Update
     {
-        $object = new Update($this->pdo, $table);
-
-        if (!empty($values)) {
-            $object->set($values);
-        }
-
-        return $object;
+        return new Update($this, $table);
     }
 
     /**
-     * @brief Удаление записи(-ей) из таблицы.
-     *
-     * @param string $table - название таблицы
-     *
-     * @return Delete объект класса Actions\Delete
+     * Returns Delete object.
      */
     public function delete(string $table): Delete
     {
-        return new Delete($this->pdo, $table);
+        return new Delete($this, $table);
     }
 }

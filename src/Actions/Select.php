@@ -2,137 +2,104 @@
 
 namespace ModernPDO\Actions;
 
-//
-// Подключение пространств имен.
-//
-
-use ModernPDO\Traits\Columns;
-use ModernPDO\Traits\Where;
+use ModernPDO\Traits\ColumnsTrait;
+use ModernPDO\Traits\WhereTrait;
 
 /**
- * @brief Класс получения записи(-ей) из таблицы.
+ * Class for getting rows from a table.
  */
-final class Select
+class Select extends Action
 {
-    // Подключение трейтов.
-    use Columns;
-    use Where;
+    use ColumnsTrait;
+    use WhereTrait;
 
     /**
-     * @brief Конструктор класса.
-     *
-     * @param \PDO   $pdo   - инициализированный объект класса PDO
-     * @param string $table - название таблицы
+     * Returns base query.
      */
-    public function __construct(
-        private \PDO $pdo,
-        private string $table,
-    ) {
+    protected function buildQuery(): string
+    {
+        return trim('SELECT ' . $this->columns . ' FROM ' . $this->table . ' ' . $this->where);
     }
 
     /**
-     * @brief Получение параметров.
+     * Returns placeholders.
      *
-     * @return array массив параметров
+     * @return mixed[]
      */
-    private function getParams(): array
+    protected function getPlaceholders(): array
     {
         return $this->where_params;
     }
 
     /**
-     * @brief Получение записей из таблицы.
+     * Executes query and returns one row.
      *
-     * @param string $query - SQL-запрос
-     *
-     * @return ?array в случае успеха массив записей, иначе null
+     * @return array<string, mixed>
      */
-    private function getAll(string $query): ?array
+    protected function getOne(): array
     {
-        $statement = $this->pdo->prepare($query);
-
-        if ($statement && $statement->execute($this->getParams())) {
-            $data = $statement->fetchAll();
-
-            if (is_array($data)) {
-                return $data;
-            }
-        }
-
-        return null;
+        return $this->exec()->fetch();
     }
 
     /**
-     * @brief Получение записи из таблицы.
+     * Executes query and returns all rows.
      *
-     * @param string $query - SQL-запрос
-     *
-     * @return ?array в случае успеха массив записи, иначе null
+     * @return list<array<string, mixed>>
      */
-    private function getOne(string $query): ?array
+    protected function getAll(): array
     {
-        $statement = $this->pdo->prepare($query);
-
-        if ($statement && $statement->execute($this->getParams())) {
-            $data = $statement->fetch();
-
-            if (is_array($data)) {
-                return $data;
-            }
-        }
-
-        return null;
+        return $this->exec()->fetchAll();
     }
 
     /**
-     * @brief Получение записей из таблицы.
+     * Returns all rows from table.
      *
-     * @return ?array в случае успеха массив записей, иначе null
+     * @return list<array<string, mixed>>
      */
-    public function all(): ?array
+    public function all(): array
     {
-        return $this->getAll(
-            "SELECT {$this->columns} FROM `{$this->table}` WHERE {$this->where}"
-        );
+        $this->query = $this->buildQuery();
+
+        return $this->getAll();
     }
 
     /**
-     * @brief Получение записи из таблицы.
+     * Returns one row from table.
      *
-     * @return ?array в случае успеха массив записи, иначе null
+     * @return array<string, mixed>
      */
-    public function one(): ?array
+    public function one(): array
     {
-        return $this->getOne(
-            "SELECT {$this->columns} FROM `{$this->table}` WHERE {$this->where} LIMIT 1"
-        );
+        $this->query = $this->buildQuery() . ' LIMIT 1';
+
+        return $this->getOne();
     }
 
     /**
-     * @brief Получение первой записи из таблицы.
+     * Returns first row from table.
      *
-     * @param string $order - столбец, по которому сортировать записи
+     * @param string $order column name to sort rows
      *
-     * @return ?array в случае успеха массив записи, иначе null
+     * @return array<string, mixed>
      */
-    public function firstBy(string $order): ?array
+    public function firstBy(string $order): array
     {
-        return $this->getOne(
-            "SELECT {$this->columns} FROM `{$this->table}` WHERE {$this->where} ORDER BY {$order} ASC LIMIT 1"
-        );
+        $this->query = $this->buildQuery() . ' ORDER BY ' . $order . ' ASC LIMIT 1';
+
+        return $this->getOne();
     }
 
     /**
-     * @brief Получение последней записи из таблицы.
+     * Returns last row from table.
      *
-     * @param string $order - столбец, по которому сортировать записи
+     * @param string $order column name to sort rows
      *
-     * @return ?array в случае успеха массив записи, иначе null
+     * @return array<string, mixed>
      */
-    public function lastBy(string $order): ?array
+    public function lastBy(string $order): array
     {
-        return $this->getOne(
-            "SELECT {$this->columns} FROM `{$this->table}` WHERE {$this->where} ORDER BY {$order} DESC LIMIT 1"
-        );
+        $this->query = $this->buildQuery() . ' ORDER BY ' . $order . ' DESC LIMIT 1';
+
+        return $this->getOne();
     }
 }

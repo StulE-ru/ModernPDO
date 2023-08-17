@@ -1,11 +1,29 @@
+#
+# We know this is bullshit, but right now we think it does not matter.
+#
+
 version: '3.9'
 
 services:
   php:
-    image: modernpdo
+    build:
+      context: .
+      dockerfile: ./.github/docker/php/Dockerfile
+      args:
+        PHP_VERSION: ${PHP_VERSION}
+    image: modernpdo/php:${PHP_VERSION}
     container_name: php
-    restart: on-failure
+    restart: always
     environment:
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_CHARSET: ${MYSQL_CHARSET}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USERNAME: ${POSTGRES_USERNAME}
       MARIADB_HOST: ${MARIADB_HOST}
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       MARIADB_USERNAME: ${MARIADB_USERNAME}
@@ -15,17 +33,54 @@ services:
       XDEBUG_CONFIG: "client_host=${XDEBUG_HOST} client_port=${FORWARD_XDEBUG_PORT}"
       XDEBUG_TRIGGER: ${XDEBUG_TRIGGER}
     depends_on:
-      - db
+      - mysql
+      - postgres
+      - mariadb
     volumes:
-      - ${APP_DIR}:/var/www/data/www
+      - ${APP_DIR}:/var/www
     networks:
       - modernpdo
     extra_hosts:
       - host.docker.internal:host-gateway
 
-  db:
+  mysql:
+    image: mysql:${MYSQL_VERSION}
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_USER: ${MYSQL_USERNAME}
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - modernpdo
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${MYSQL_ROOT_PASSWORD}"]
+      retries: 3
+      timeout: 5s
+
+  postgres:
+    image: postgres:${POSTGRES_VERSION}
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USERNAME}
+    volumes:
+       - postgres:/var/lib/postgres
+    networks:
+      - modernpdo
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U${POSTGRES_USERNAME}", "-d${POSTGRES_PASSWORD}"]
+      retries: 3
+      timeout: 5s
+
+  mariadb:
     image: mariadb:${MARIADB_VERSION}
-    container_name: db
+    container_name: mariadb
     restart: always
     environment:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
@@ -33,7 +88,7 @@ services:
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       MARIADB_USER: ${MARIADB_USERNAME}
     volumes:
-      - database:/var/lib/mysql
+      - mariadb:/var/lib/mariadb
     networks:
       - modernpdo
     healthcheck:
@@ -41,18 +96,10 @@ services:
       retries: 3
       timeout: 5s
 
-  pma:
-    image: phpmyadmin:latest
-    container_name: pma
-    restart: always
-    ports:
-      - 127.0.0.1:${FORWARD_PMA_PORT:-8080}:80
-    networks:
-      - modernpdo
-
 volumes:
-  database:
-  minio:
+  mysql:
+  postgres:
+  mariadb:
 
 networks:
   modernpdo:

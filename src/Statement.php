@@ -2,67 +2,55 @@
 
 namespace ModernPDO;
 
-final class Statement
+/**
+ * Wrapper over PDOStatement.
+ *
+ * Use ModerPDO objects to get this class object.
+ */
+class Statement
 {
-    /**
-     * @brief Конструктор класса.
-     *
-     * @param ?\PDOStatement $statement - инициализированный объект класса PDOStatement или null
-     */
     public function __construct(
         private ?\PDOStatement $statement,
     ) {
     }
 
     /**
-     * @brief Возвращает количество затронутых записей.
+     * Returns the number of rows affected by the last SQL statement.
      *
-     * @return int кол-во затронутых записей
-     *
-     * @note Обертка PDOStatement::rowCount.
+     * @see https://www.php.net/manual/en/pdostatement.rowcount.php
      */
     public function rowCount(): int
     {
-        if (empty($this->statement)) {
-            return 0;
-        }
-
-        return $this->statement->rowCount();
+        return $this->statement?->rowCount() ?? 0;
     }
 
     /**
-     * @brief Получение одной записи.
+     * Fetches the next row from a result set.
      *
-     * @return array в случае успеха массив записи, иначе пустой массив
+     * @return array<string, mixed> If successful, an array of data, otherwise an empty array
      *
-     * @note Обертка PDOStatement::columnCount.
+     * @see https://www.php.net/manual/en/pdostatement.fetch.php
      */
     public function fetch(): array
     {
-        if (empty($this->statement)) {
-            return [];
-        }
+        /** @var array<string, mixed>|false */
+        $row = $this->statement?->fetch() ?? false;
 
-        $row = $this->statement->fetch();
-
-        return is_array($row) ? $row : [];
+        return $row !== false ? $row : [];
     }
 
     /**
-     * @brief Получение всех записей.
+     * Fetches the remaining rows from a result set.
      *
-     * @return array в случае успеха массив записей, иначе пустой массив
+     * @return list<array<string, mixed>> If successful, an array of arrays, otherwise an empty array
      *
-     * @note Обертка PDOStatement::columnCount.
+     * @see https://www.php.net/manual/en/pdostatement.fetchall.php
      */
     public function fetchAll(): array
     {
-        if (empty($this->statement)) {
-            return [];
-        }
+        /** @var list<array<string, mixed>>|false */
+        $rows = $this->statement?->fetchAll() ?? false;
 
-        $rows = $this->statement->fetchAll();
-
-        return is_array($rows) ? $rows : [];
+        return $rows !== false ? $rows : [];
     }
 }

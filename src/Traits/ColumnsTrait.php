@@ -2,20 +2,20 @@
 
 namespace ModernPDO\Traits;
 
-//
-// Подключение пространств имен.
-//
-
 use ModernPDO\Actions\Select;
 
-trait Columns
+/**
+ * Trait for working with 'columns'.
+ */
+trait ColumnsTrait
 {
+    /** List of columns. */
     protected string $columns = '*';
 
     /**
-     * @brief Добавление столбцов в стиле SELECT `col1`, `col2`, etc.
+     * Set columns.
      *
-     * @param array $columns - массив столбцов [$col1, $col2, ...]
+     * @param string[] $columns array of column names
      */
     public function columns(array $columns): Select
     {
@@ -28,7 +28,7 @@ trait Columns
         $last_key = array_key_last($columns);
 
         foreach ($columns as $key => $column) {
-            $this->columns .= "`{$column}`";
+            $this->columns .= $column;
 
             if ($last_key !== $key) {
                 $this->columns .= ', ';

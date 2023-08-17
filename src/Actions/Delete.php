@@ -2,53 +2,40 @@
 
 namespace ModernPDO\Actions;
 
-//
-// Подключение пространств имен.
-//
-
-use ModernPDO\Traits\Where;
+use ModernPDO\Traits\WhereTrait;
 
 /**
- * @brief Класс удаления записи(-ей) из таблицы.
+ * Class for deleting rows from a table.
  */
-final class Delete
+class Delete extends Action
 {
-    // Подключение трейтов.
-    use Where;
+    use WhereTrait;
 
     /**
-     * @brief Конструктор класса.
-     *
-     * @param \PDO   $pdo   - инициализированный объект класса PDO
-     * @param string $table - название таблицы
+     * Returns base query.
      */
-    public function __construct(
-        private \PDO $pdo,
-        private string $table,
-    ) {
+    protected function buildQuery(): string
+    {
+        return trim('DELETE FROM ' . $this->table . ' ' . $this->where);
     }
 
     /**
-     * @brief Получение параметров.
+     * Returns placeholders.
      *
-     * @return array массив параметров
+     * @return mixed[]
      */
-    private function getParams(): array
+    protected function getPlaceholders(): array
     {
         return $this->where_params;
     }
 
     /**
-     * @brief Удаление записи(-ей) из таблицы.
-     *
-     * @return bool в случае успеха true, иначе false
+     * Deletes row from table.
      */
     public function execute(): bool
     {
-        $statement = $this->pdo->prepare(
-            "DELETE FROM `{$this->table}` WHERE {$this->where}"
-        );
+        $this->query = $this->buildQuery();
 
-        return  $statement && $statement->execute($this->getParams());
+        return $this->exec()->rowCount() > 0;
     }
 }
