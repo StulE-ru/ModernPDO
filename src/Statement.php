@@ -34,7 +34,7 @@ class Statement
     public function fetch(): array
     {
         /** @var array<string, mixed>|false */
-        $row = $this->statement?->fetch() ?? false;
+        $row = $this->statement?->fetch(\PDO::FETCH_ASSOC) ?? false;
 
         return $row !== false ? $row : [];
     }
@@ -49,7 +49,7 @@ class Statement
     public function fetchAll(): array
     {
         /** @var list<array<string, mixed>>|false */
-        $rows = $this->statement?->fetchAll() ?? false;
+        $rows = $this->statement?->fetchAll(\PDO::FETCH_ASSOC) ?? false;
 
         return $rows !== false ? $rows : [];
     }
