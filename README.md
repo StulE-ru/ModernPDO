@@ -68,9 +68,13 @@ The library uses composer autoloader for including files, so you need to install
 
 ```php
 use ModernPDO\ModernPDO;
+use ModernPDO\Drivers\MySQLDriver;
+use ModernPDO\Drivers\MariaDBDriver;
+use ModernPDO\Drivers\PostgreSQLDriver;
+use ModernPDO\Drivers\SQLite3Driver;
 
 // Initiolize MySQL
-$mpdo = ModernPDO::createMySQL(
+$mpdo = new MySQLDriver(
     host: getenv('MYSQL_HOST'),
     database: getenv('MYSQL_DATABASE'),
     username: getenv('MYSQL_USERNAME'),
@@ -80,7 +84,7 @@ $mpdo = ModernPDO::createMySQL(
 );
 
 // Initiolize MariaDB
-$mpdo = ModernPDO::createMariaDB(
+$mpdo = new MariaDBDriver(
     host: getenv('MARIADB_HOST'),
     database: getenv('MARIADB_DATABASE'),
     username: getenv('MARIADB_USERNAME'),
@@ -90,7 +94,7 @@ $mpdo = ModernPDO::createMariaDB(
 );
 
 // Initiolize PostgreSQL
-$mpdo = ModernPDO::createPostgreSQL(
+$mpdo = new PostgreSQLDriver(
     host: getenv('POSTGRES_HOST'),
     database: getenv('POSTGRES_DATABASE'),
     username: getenv('POSTGRES_USERNAME'),
@@ -99,12 +103,12 @@ $mpdo = ModernPDO::createPostgreSQL(
 );
 
 // Initiolize SQLite3
-$mpdo = ModernPDO::createSQLite3(
+$mpdo = new SQLite3Driver(
     mode: getenv('SQLITE3_MODE'),
 );
 
 // Initiolize by PDO
-$mpdo = ModernPDO::createByPDO(
+$mpdo = new ModernPDO(
     pdo: $your_pdo_object,
 );
 ```

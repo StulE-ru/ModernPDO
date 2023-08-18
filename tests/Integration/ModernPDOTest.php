@@ -2,7 +2,10 @@
 
 namespace ModernPDO\Tests\Integration;
 
-use ModernPDO\ModernPDO;
+use ModernPDO\Drivers\MariaDBDriver;
+use ModernPDO\Drivers\MySQLDriver;
+use ModernPDO\Drivers\PostgreSQLDriver;
+use ModernPDO\Drivers\SQLite3Driver;
 use PHPUnit\Framework\TestCase;
 
 use function PHPUnit\Framework\assertEquals;
@@ -14,7 +17,7 @@ class ModernPDOTest extends TestCase
 
     public function testCreateMySQL(): void
     {
-        $mpdo = ModernPDO::createMySQL(
+        $mpdo = new MySQLDriver(
             host: getenv('MYSQL_HOST'),
             database: getenv('MYSQL_DATABASE'),
             username: getenv('MYSQL_USERNAME'),
@@ -27,7 +30,7 @@ class ModernPDOTest extends TestCase
 
     public function testCreateMariaDB(): void
     {
-        $mpdo = ModernPDO::createMariaDB(
+        $mpdo = new MariaDBDriver(
             host: getenv('MARIADB_HOST'),
             database: getenv('MARIADB_DATABASE'),
             username: getenv('MARIADB_USERNAME'),
@@ -40,7 +43,7 @@ class ModernPDOTest extends TestCase
 
     public function testCreatePostgreSQL(): void
     {
-        $mpdo = ModernPDO::createPostgreSQL(
+        $mpdo = new PostgreSQLDriver(
             host: getenv('POSTGRES_HOST'),
             database: getenv('POSTGRES_DATABASE'),
             username: getenv('POSTGRES_USERNAME'),
@@ -52,14 +55,14 @@ class ModernPDOTest extends TestCase
 
     public function testCreateSQLite3(): void
     {
-        $mpdo = ModernPDO::createSQLite3();
+        $mpdo = new SQLite3Driver();
 
         assertNotEmpty($mpdo);
     }
 
     public function testExec(): void
     {
-        $mpdo = ModernPDO::createSQLite3();
+        $mpdo = new SQLite3Driver();
 
         assertNotEmpty($mpdo);
 

@@ -2,6 +2,10 @@
 
 namespace ModernPDO\Tests\Integration;
 
+use ModernPDO\Drivers\MariaDBDriver;
+use ModernPDO\Drivers\MySQLDriver;
+use ModernPDO\Drivers\PostgreSQLDriver;
+use ModernPDO\Drivers\SQLite3Driver;
 use ModernPDO\ModernPDO;
 use PHPUnit\Framework\TestCase;
 
@@ -35,7 +39,7 @@ class CRUDTest extends TestCase
         if (empty(self::$mpdos)) {
             self::$mpdos = [
                 [
-                    ModernPDO::createMySQL(
+                    new MySQLDriver(
                         host: getenv('MYSQL_HOST'),
                         database: getenv('MYSQL_DATABASE'),
                         username: getenv('MYSQL_USERNAME'),
@@ -44,7 +48,7 @@ class CRUDTest extends TestCase
                     ),
                 ],
                 [
-                    ModernPDO::createMariaDB(
+                    new MariaDBDriver(
                         host: getenv('MARIADB_HOST'),
                         database: getenv('MARIADB_DATABASE'),
                         username: getenv('MARIADB_USERNAME'),
@@ -53,7 +57,7 @@ class CRUDTest extends TestCase
                     ),
                 ],
                 [
-                    ModernPDO::createPostgreSQL(
+                    new PostgreSQLDriver(
                         host: getenv('POSTGRES_HOST'),
                         database: getenv('POSTGRES_DATABASE'),
                         username: getenv('POSTGRES_USERNAME'),
@@ -61,7 +65,7 @@ class CRUDTest extends TestCase
                     ),
                 ],
                 [
-                    ModernPDO::createSQLite3(':memory:'),
+                    new SQLite3Driver(':memory:'),
                 ],
             ];
         }
