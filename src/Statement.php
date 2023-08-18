@@ -21,7 +21,13 @@ class Statement
      */
     public function rowCount(): int
     {
-        return $this->statement?->rowCount() ?? 0;
+        try {
+            $count = $this->statement?->rowCount() ?? 0;
+        } catch (\Throwable $th) {
+            $count = 0;
+        }
+
+        return $count;
     }
 
     /**
@@ -33,8 +39,12 @@ class Statement
      */
     public function fetch(): array
     {
-        /** @var array<string, mixed>|false */
-        $row = $this->statement?->fetch() ?? false;
+        try {
+            /** @var array<string, mixed>|false */
+            $row = $this->statement?->fetch(\PDO::FETCH_ASSOC) ?? false;
+        } catch (\Throwable $th) {
+            $row = false;
+        }
 
         return $row !== false ? $row : [];
     }
@@ -48,8 +58,12 @@ class Statement
      */
     public function fetchAll(): array
     {
-        /** @var list<array<string, mixed>>|false */
-        $rows = $this->statement?->fetchAll() ?? false;
+        try {
+            /** @var list<array<string, mixed>>|false */
+            $rows = $this->statement?->fetchAll(\PDO::FETCH_ASSOC) ?? false;
+        } catch (\Throwable $th) {
+            $rows = false;
+        }
 
         return $rows !== false ? $rows : [];
     }

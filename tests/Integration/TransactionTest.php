@@ -11,6 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 use function PHPUnit\Framework\assertEmpty;
 use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 
 class TransactionTest extends TestCase
@@ -33,6 +34,15 @@ class TransactionTest extends TestCase
     public function dbsProvider(): array
     {
         if (empty(self::$mpdos)) {
+            $pdo = new \PDO(
+                'pgsql:host=' . getenv('POSTGRES_HOST') . ';dbname=' . getenv('POSTGRES_DATABASE'),
+                getenv('POSTGRES_USERNAME'),
+                getenv('POSTGRES_PASSWORD'),
+            );
+
+            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_SERIALIZE);
+
             self::$mpdos = [
                 [
                     new MySQLDriver(
@@ -63,6 +73,9 @@ class TransactionTest extends TestCase
                 [
                     new SQLite3Driver(':memory:'),
                 ],
+                [
+                    new ModernPDO($pdo),
+                ],
             ];
         }
 
@@ -77,12 +90,14 @@ class TransactionTest extends TestCase
         $tr = $mpdo->transaction();
 
         assertTrue($tr->begin());
+        assertFalse($tr->begin());
 
         assertTrue($tr->isActive());
 
         assertTrue($mpdo->insert(self::TABLE)->values(['id' => 1, 'name' => 'test1'])->execute());
 
         assertTrue($tr->commit());
+        assertFalse($tr->commit());
 
         assertEquals('test1', $mpdo->select(self::TABLE)->where('id', 1)->one()['name']);
     }
@@ -95,12 +110,14 @@ class TransactionTest extends TestCase
         $tr = $mpdo->transaction();
 
         assertTrue($tr->begin());
+        assertFalse($tr->begin());
 
         assertTrue($tr->isActive());
 
         assertTrue($mpdo->insert(self::TABLE)->values(['id' => 1, 'name' => 'test1'])->execute());
 
         assertTrue($tr->rollBack());
+        assertFalse($tr->rollBack());
 
         assertEmpty($mpdo->select(self::TABLE)->where('id', 1)->one());
     }

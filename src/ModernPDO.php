@@ -18,8 +18,6 @@ class ModernPDO
     public function __construct(
         private \PDO $pdo,
     ) {
-        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
-        $this->pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
     }
 
     /**
@@ -39,7 +37,11 @@ class ModernPDO
      */
     public function exec(string $query): int
     {
-        $count = $this->pdo->exec($query);
+        try {
+            $count = $this->pdo->exec($query);
+        } catch (\Throwable $th) {
+            $count = false;
+        }
 
         return $count !== false ? $count : 0;
     }
@@ -56,14 +58,18 @@ class ModernPDO
      */
     public function query(string $query, array $values = []): Statement
     {
-        if (empty($values)) {
-            $statement = $this->pdo->query($query);
-        } else {
-            $statement = $this->pdo->prepare($query);
+        try {
+            if (empty($values)) {
+                $statement = $this->pdo->query($query);
+            } else {
+                $statement = $this->pdo->prepare($query);
 
-            if ($statement !== false) {
-                $statement->execute($values);
+                if ($statement !== false) {
+                    $statement->execute($values);
+                }
             }
+        } catch (\Throwable $th) {
+            $statement = false;
         }
 
         return new Statement($statement !== false ? $statement : null);

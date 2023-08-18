@@ -70,5 +70,7 @@ class ModernPDOTest extends TestCase
         $mpdo->exec('INSERT INTO ' . self::TABLE . ' VALUES (1, \'test\'), (2, \'test\');');
         assertEquals(1, $mpdo->exec('DELETE FROM ' . self::TABLE . ' WHERE id=1;'));
         assertEquals(1, $mpdo->exec('UPDATE ' . self::TABLE . ' SET name=\'unknown\' WHERE id=2;'));
+        assertEquals(0, $mpdo->exec('UPDATE ' . self::TABLE . ' SET name=\'unknown\' WHER id=2;')); // Bad query
+        assertEquals(0, $mpdo->query('UPDATE ' . self::TABLE . ' SET name=\'unknown\' WHER id=2;')->rowCount()); // Bad query
     }
 }

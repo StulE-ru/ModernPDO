@@ -37,6 +37,15 @@ class CRUDTest extends TestCase
     public function dbsProvider(): array
     {
         if (empty(self::$mpdos)) {
+            $pdo = new \PDO(
+                'pgsql:host=' . getenv('POSTGRES_HOST') . ';dbname=' . getenv('POSTGRES_DATABASE'),
+                getenv('POSTGRES_USERNAME'),
+                getenv('POSTGRES_PASSWORD'),
+            );
+
+            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_SERIALIZE);
+
             self::$mpdos = [
                 [
                     new MySQLDriver(
@@ -66,6 +75,9 @@ class CRUDTest extends TestCase
                 ],
                 [
                     new SQLite3Driver(':memory:'),
+                ],
+                [
+                    new ModernPDO($pdo),
                 ],
             ];
         }
