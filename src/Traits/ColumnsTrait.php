@@ -2,7 +2,7 @@
 
 namespace ModernPDO\Traits;
 
-use ModernPDO\Actions\Select;
+use ModernPDO\Actions\Action;
 
 /**
  * Trait for working with 'columns'.
@@ -16,8 +16,10 @@ trait ColumnsTrait
      * Set columns.
      *
      * @param string[] $columns array of column names
+     *
+     * @return $this
      */
-    public function columns(array $columns): Select
+    public function columns(array $columns): Action
     {
         if (empty($columns)) {
             return $this;
