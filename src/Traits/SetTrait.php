@@ -2,7 +2,7 @@
 
 namespace ModernPDO\Traits;
 
-use ModernPDO\Actions\Update;
+use ModernPDO\Actions\Action;
 
 /**
  * Trait for working with 'where'.
@@ -23,8 +23,10 @@ trait SetTrait
      * Set values for SET.
      *
      * @param string[] $values array of values for SET
+     *
+     * @return $this
      */
-    public function set(array $values): Update
+    public function set(array $values): Action
     {
         if (empty($values)) {
             return $this;

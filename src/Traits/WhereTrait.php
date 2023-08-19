@@ -2,9 +2,7 @@
 
 namespace ModernPDO\Traits;
 
-use ModernPDO\Actions\Delete;
-use ModernPDO\Actions\Select;
-use ModernPDO\Actions\Update;
+use ModernPDO\Actions\Action;
 
 /**
  * Trait for working with 'where'.
@@ -23,8 +21,10 @@ trait WhereTrait
 
     /**
      * Set first condition.
+     *
+     * @return $this
      */
-    public function where(string $name, mixed $value, string $sign = '='): Select|Update|Delete
+    public function where(string $name, mixed $value, string $sign = '='): Action
     {
         if (empty($name)) {
             return $this;
@@ -38,8 +38,10 @@ trait WhereTrait
 
     /**
      * Adds 'and' condition.
+     *
+     * @return $this
      */
-    public function and(string $name, mixed $value, string $sign = '='): Select|Update|Delete
+    public function and(string $name, mixed $value, string $sign = '='): Action
     {
         if (empty($name)) {
             return $this;
@@ -57,8 +59,10 @@ trait WhereTrait
 
     /**
      * Adds 'or' condition.
+     *
+     * @return $this
      */
-    public function or(string $name, mixed $value, string $sign = '='): Select|Update|Delete
+    public function or(string $name, mixed $value, string $sign = '='): Action
     {
         if (empty($name)) {
             return $this;

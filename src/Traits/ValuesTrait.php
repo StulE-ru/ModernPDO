@@ -2,7 +2,7 @@
 
 namespace ModernPDO\Traits;
 
-use ModernPDO\Actions\Insert;
+use ModernPDO\Actions\Action;
 
 trait ValuesTrait
 {
@@ -22,8 +22,10 @@ trait ValuesTrait
      * Set values for VALUES.
      *
      * @param string[] $values array of values for VALUES
+     *
+     * @return $this
      */
-    public function values(array $values): Insert
+    public function values(array $values): Action
     {
         if (empty($values)) {
             return $this;
