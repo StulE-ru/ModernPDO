@@ -41,7 +41,7 @@ class InsertTest extends TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testInsert(int $id, string $name): void
+    public function testBasic(int $id, string $name): void
     {
         $this->make('INSERT INTO ' . self::TABLE . ' (id, name) VALUES (?, ?)', [$id, $name])
             ->values(['id' => $id, 'name' => $name])->execute();

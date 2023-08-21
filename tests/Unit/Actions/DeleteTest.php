@@ -41,7 +41,7 @@ class DeleteTest extends TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testDelete(int $id, string $name): void
+    public function testBasic(int $id, string $name): void
     {
         $this->make('DELETE FROM ' . self::TABLE, [])
             ->execute();
