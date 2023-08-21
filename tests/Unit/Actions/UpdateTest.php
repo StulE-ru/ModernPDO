@@ -41,30 +41,41 @@ class UpdateTest extends TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testUpdate(int $id, string $name): void
+    public function testAll(int $id, string $name): void
     {
-        // update all
-
         $this->make('UPDATE ' . self::TABLE . ' SET id=?', [$id])
             ->set(['id' => $id])->execute();
 
         $this->make('UPDATE ' . self::TABLE . ' SET id=?, name=?', [$id, $name])
             ->set(['id' => $id, 'name' => $name])->execute();
+    }
 
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testDoubleSet(int $id, string $name): void
+    {
         $this->make('UPDATE ' . self::TABLE . ' SET id=?, name=?', [$id, $name])
             ->set(['id' => 'unknown'])->set(['id' => $id, 'name' => $name])->execute();
 
         $this->make('UPDATE ' . self::TABLE . ' SET id=?, name=?', [$id, $name])
             ->set([])->set(['id' => $id, 'name' => $name])->execute();
+    }
 
+    public function testIncorrect(): void
+    {
         $this->make('', [], self::never())
             ->execute();
 
         $this->make('UPDATE ' . self::TABLE . ' SET id=?, name=?', [], self::never())
             ->set([])->execute();
+    }
 
-        // update where
-
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testWhere(int $id, string $name): void
+    {
         $this->make('UPDATE ' . self::TABLE . ' SET name=? WHERE id=?', [$name, $id])
             ->set(['name' => $name])->where('id', $id)->execute();
 
