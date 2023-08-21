@@ -32,7 +32,11 @@
     },
     "scripts": {
         "tests": "phpunit",
-        "tests-ca": "phpunit --coverage-text",
+        "i-tests": "phpunit --testsuite Integration",
+        "u-tests": "phpunit --testsuite Unit",
+        "ca-tests": "phpunit --coverage-text",
+        "ica-tests": "phpunit --testsuite Integration --coverage-text",
+        "uca-tests": "phpunit --testsuite Unit --coverage-text",
         "stan": "phpstan analyse --error-format=checkstyle -c phpstan.neon > phpstan-report.xml",
         "stan-bl": "phpstan analyse -c phpstan.neon -b --allow-empty-baseline",
         "salm": "psalm --output-format=checkstyle > psalm-report.xml",
