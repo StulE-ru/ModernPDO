@@ -29,7 +29,7 @@ trait WhereTrait
     /**
      * Returns set placeholders.
      *
-     * @return mixed[]
+     * @return list<mixed>
      */
     protected function wherePlaceholders(): array
     {

@@ -33,7 +33,7 @@ trait ColumnsTrait
     /**
      * Returns empty array.
      *
-     * @return mixed[]
+     * @return list<mixed>
      */
     protected function columnsPlaceholders(): array
     {

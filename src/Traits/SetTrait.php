@@ -29,7 +29,7 @@ trait SetTrait
     /**
      * Returns set placeholders.
      *
-     * @return mixed[]
+     * @return list<mixed>
      */
     protected function setPlaceholders(): array
     {
