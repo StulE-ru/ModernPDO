@@ -7,15 +7,53 @@ namespace ModernPDO\Traits;
  */
 trait WhereTrait
 {
-    /** List of where. */
-    protected string $where = '';
+    /**
+     * @var array<int, array{type: string, name: string, sign: string, value: mixed}> where conditions
+     */
+    protected array $where = [];
 
     /**
-     * Array of placeholders.
-     *
-     * @var mixed[]
+     * Returns set query.
      */
-    protected array $where_params = [];
+    protected function whereQuery(): string
+    {
+        $query = '';
+
+        foreach ($this->where as $condition) {
+            $query .= $condition['type'] . ' ' . $condition['name'] . $condition['sign'] . '? ';
+        }
+
+        return trim($query);
+    }
+
+    /**
+     * Returns set placeholders.
+     *
+     * @return mixed[]
+     */
+    protected function wherePlaceholders(): array
+    {
+        $placeholders = [];
+
+        foreach ($this->where as $condition) {
+            $placeholders[] = $condition['value'];
+        }
+
+        return $placeholders;
+    }
+
+    /**
+     * Adds condition to list.
+     */
+    protected function addCondition(string $type, string $name, string $sign, mixed $value): void
+    {
+        $this->where[] = [
+            'type' => $type,
+            'name' => $name,
+            'sign' => $sign,
+            'value' => $value,
+        ];
+    }
 
     /**
      * Set first condition.
@@ -28,8 +66,7 @@ trait WhereTrait
             return $this;
         }
 
-        $this->where = 'WHERE ' . $name . $sign . '?';
-        $this->where_params = [$value];
+        $this->addCondition('WHERE', $name, $sign, $value);
 
         return $this;
     }
@@ -45,12 +82,11 @@ trait WhereTrait
             return $this;
         }
 
-        if (empty($this->where_params)) {
+        if (empty($this->where)) {
             return $this->where($name, $value, $sign);
         }
 
-        $this->where .= ' AND ' . $name . $sign . '?';
-        $this->where_params[] = $value;
+        $this->addCondition('AND', $name, $sign, $value);
 
         return $this;
     }
@@ -66,12 +102,11 @@ trait WhereTrait
             return $this;
         }
 
-        if (empty($this->where_params)) {
+        if (empty($this->where)) {
             return $this->where($name, $value, $sign);
         }
 
-        $this->where .= ' OR ' . $name . $sign . '?';
-        $this->where_params[] = $value;
+        $this->addCondition('OR', $name, $sign, $value);
 
         return $this;
     }

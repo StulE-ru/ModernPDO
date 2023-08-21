@@ -18,7 +18,7 @@ class Select extends Action
      */
     protected function buildQuery(): string
     {
-        return trim('SELECT ' . $this->columnsQuery() . ' FROM ' . $this->table . ' ' . $this->where);
+        return trim('SELECT ' . $this->columnsQuery() . ' FROM ' . $this->table . ' ' . $this->whereQuery());
     }
 
     /**
@@ -28,7 +28,7 @@ class Select extends Action
      */
     protected function getPlaceholders(): array
     {
-        return array_merge($this->columnsPlaceholders(), $this->where_params);
+        return array_merge($this->columnsPlaceholders(), $this->wherePlaceholders());
     }
 
     /**
