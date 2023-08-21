@@ -8,7 +8,7 @@ namespace ModernPDO\Traits;
 trait ColumnsTrait
 {
     /**
-     * @var string[] column names
+     * @var list<string> column names
      */
     protected array $columns = [];
 
@@ -43,7 +43,7 @@ trait ColumnsTrait
     /**
      * Set columns.
      *
-     * @param string[] $columns array of column names
+     * @param list<string> $columns array of column names
      *
      * @return $this
      */
