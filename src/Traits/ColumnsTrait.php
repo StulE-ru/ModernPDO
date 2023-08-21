@@ -8,7 +8,7 @@ namespace ModernPDO\Traits;
 trait ColumnsTrait
 {
     /**
-     * @var string[] array of column names
+     * @var string[] column names
      */
     protected array $columns = [];
 
@@ -32,6 +32,8 @@ trait ColumnsTrait
 
     /**
      * Returns empty array.
+     *
+     * @return mixed[]
      */
     protected function columnsPlaceholders(): array
     {
