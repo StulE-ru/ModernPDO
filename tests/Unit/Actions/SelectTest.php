@@ -38,18 +38,17 @@ class SelectTest extends TestCase
         ];
     }
 
+    public function testAll(): void
+    {
+        $this->make('SELECT * FROM ' . self::TABLE, [])
+            ->all();
+    }
+
     /**
      * @dataProvider dataProvider
      */
-    public function testSelect(int $id, string $name): void
+    public function testBasic(int $id, string $name): void
     {
-        // test all
-
-        $this->make('SELECT * FROM ' . self::TABLE, [])
-            ->all();
-
-        // test basic
-
         $this->make('SELECT * FROM ' . self::TABLE . ' WHERE id=? LIMIT 1', [$id])
             ->where('id', $id)->one();
 
@@ -58,43 +57,50 @@ class SelectTest extends TestCase
 
         $this->make('SELECT * FROM ' . self::TABLE . ' WHERE id=? OR name=? LIMIT 1', [$id, $name])
             ->where('id', $id)->or('name', $name)->one();
+    }
 
-        // test 'and' or 'or' first
-
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testAndOrFirst(int $id, string $name): void
+    {
         $this->make('SELECT * FROM ' . self::TABLE . ' WHERE id=? LIMIT 1', [$id])
             ->and('id', $id)->one();
 
         $this->make('SELECT * FROM ' . self::TABLE . ' WHERE id=? LIMIT 1', [$id])
             ->or('id', $id)->one();
+    }
 
-        // test broken where name
+    public function testBrokenName(): void
+    {
+        $this->make('SELECT * FROM ' . self::TABLE . ' LIMIT 1', [])
+            ->where('', 'test')->one();
 
         $this->make('SELECT * FROM ' . self::TABLE . ' LIMIT 1', [])
-            ->where('', $id)->one();
+            ->and('', 'test')->one();
 
         $this->make('SELECT * FROM ' . self::TABLE . ' LIMIT 1', [])
-            ->and('', $id)->one();
+            ->or('', 'test')->one();
+    }
 
-        $this->make('SELECT * FROM ' . self::TABLE . ' LIMIT 1', [])
-            ->or('', $id)->one();
+    public function testOrderBy(): void
+    {
+        $this->make('SELECT * FROM ' . self::TABLE . ' ORDER BY id ASC LIMIT 1', [])
+            ->firstBy('id');
 
-        // test (first/last)By
+        $this->make('SELECT * FROM ' . self::TABLE . ' ORDER BY id DESC LIMIT 1', [])
+            ->lastBy('id');
+    }
 
-        $this->make('SELECT * FROM ' . self::TABLE . ' WHERE name=? ORDER BY id ASC LIMIT 1', [$name])
-            ->where('name', $name)->firstBy('id');
+    public function testColumns(): void
+    {
+        $this->make('SELECT name FROM ' . self::TABLE, [])
+            ->columns(['name'])->all();
 
-        $this->make('SELECT * FROM ' . self::TABLE . ' WHERE name=? ORDER BY id DESC LIMIT 1', [$name])
-            ->where('name', $name)->lastBy('id');
+        $this->make('SELECT id, name FROM ' . self::TABLE, [])
+            ->columns(['id', 'name'])->all();
 
-        // test columns
-
-        $this->make('SELECT name FROM ' . self::TABLE . ' WHERE id=? LIMIT 1', [$id])
-            ->columns(['name'])->where('id', $id)->one();
-
-        $this->make('SELECT id, name FROM ' . self::TABLE . ' WHERE id=? LIMIT 1', [$id])
-            ->columns(['id', 'name'])->where('id', $id)->one();
-
-        $this->make('SELECT * FROM ' . self::TABLE . ' WHERE id=? LIMIT 1', [$id])
-            ->columns([])->where('id', $id)->one();
+        $this->make('SELECT * FROM ' . self::TABLE, [])
+            ->columns([])->all();
     }
 }
