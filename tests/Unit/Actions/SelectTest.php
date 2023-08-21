@@ -6,19 +6,20 @@ use ModernPDO\Actions\Select;
 use ModernPDO\ModernPDO;
 use ModernPDO\Statement;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use PHPUnit\Framework\TestCase;
 
 class SelectTest extends TestCase
 {
     public const TABLE = 'unit_tests_select';
 
-    private function make(string $query, array $placeholders): Select
+    private function make(string $query, array $placeholders, ?InvokedCount $count = null): Select
     {
         /** @var MockObject&ModernPDO */
         $mpdo = $this->createMock(ModernPDO::class);
 
         $mpdo
-            ->expects(self::once())
+            ->expects($count ?? self::once())
             ->method('query')
             ->with($query, $placeholders)
             ->willReturn(new Statement(null));

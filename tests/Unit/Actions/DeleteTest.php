@@ -6,19 +6,20 @@ use ModernPDO\Actions\Delete;
 use ModernPDO\ModernPDO;
 use ModernPDO\Statement;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use PHPUnit\Framework\TestCase;
 
 class DeleteTest extends TestCase
 {
     public const TABLE = 'unit_tests_delete';
 
-    private function make(string $query, array $placeholders): Delete
+    private function make(string $query, array $placeholders, ?InvokedCount $count = null): Delete
     {
         /** @var MockObject&ModernPDO */
         $mpdo = $this->createMock(ModernPDO::class);
 
         $mpdo
-            ->expects(self::once())
+            ->expects($count ?? self::once())
             ->method('query')
             ->with($query, $placeholders)
             ->willReturn(new Statement(null));
