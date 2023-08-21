@@ -5,7 +5,7 @@
 ![Downloads](https://img.shields.io/packagist/dt/stule-ru/modernpdo
 )
 ![Release](https://img.shields.io/github/v/release/StulE-ru/ModernPDO)
-![Code Coverage Badge](./.github/badge.svg) 
+![Code Coverage Badge](./.github/badge.svg)
 ![Forks](https://img.shields.io/github/forks/StulE-ru/ModernPDO)
 ![Stars](https://img.shields.io/github/stars/StulE-ru/ModernPDO)
 ![License](https://img.shields.io/github/license/StulE-ru/ModernPDO)
@@ -132,7 +132,16 @@ $modernPDO->query("SELECT * FROM table_name WHERE id=?", [$id])->fetch();
 ```php
 // Insert example
 
-$mpdo->insert('table_name')->values(['id' => 10, 'name' => 'test'])->execute();
+$mpdo->insert('table_name')->columns([
+    'id', 'name',
+])->values([
+    [10, 'test'],
+    [11, 'test'],
+])->execute();
+
+$mpdo->insert('table_name')->values([
+    [12, 'test'],
+])->execute();
 
 // Select examples
 
@@ -147,7 +156,7 @@ $mpdo->update('table_name')->set(['name' => 'Mr. Gorski'])->where('id', 10)->exe
 
 // Delete example
 
-$mpdo->delete('table_name')->where('id', 10)->execute();
+$mpdo->delete('table_name')->where('id', 10)->or('id', 11)->or('id', 12)->execute();
 ```
 
 ### Transaction Example <a name = "usage_transaction"></a>
@@ -177,40 +186,22 @@ try {
 There are many tools for testing: Integration/Unit tests (PHPUnit), PHPStan, PSalm and CSFixer. <br>
 If you want to start them you need to run [composer scripts](#tests_composer_scripts) in terminal <br>
 
-> **_NOTE:_** If you want to start integration tests you must <br>
-1 - install [docker/docker-compose](https://www.docker.com/get-started/) <br>
-2 - build php image using `docker build --file ./.github/docker/php/Dockerfile --tag php8.1 --build-arg PHP_VERSION=8.1 .` <br>
-3 - start docker container using `docker compose up -d`
+> **_NOTE:_** You can not start integration tests
 
-### Coverage/Levels
+### Levels
 
-- **Integration tests**
-> Code Coverage Report (2023-08-17 12:46:09) <br>
-Summary: <br>
-\- Classes: 100.00% (12/12) <br>
-\- Methods: 100.00% (48/48) <br>
-\- Lines:   100.00% (139/139)
-
-- **Unit tests**
-> Code Coverage Report (2023-08-17 12:46:43) <br>
-Summary: <br>
-\- Classes: 91.67% (11/12) <br>
-\- Methods: 72.92% (35/48) <br>
-\- Lines:   69.06% (96/139)
-
-- PHPStan
-> Level: 9 <br>
-Erros: 0
-
-- PSalm
-> Level: 1 <br>
-Erros: 0
+- PHPStan: Level 9
+- PSalm: Level 1
 
 ### Composer scripts <a name = "tests_composer_scripts"></a>
 
 #### Tests
-- `composer tests` - runs all PHPUnit tests (run in docker)
-- `composer tests-ca` - defines test coverage (run in docker)
+- `composer tests` - runs all PHPUnit tests (do not run it)
+- `composer i-tests` - runs integration PHPUnit tests (do not run it)
+- `composer u-tests` - runs unit PHPUnit tests
+- `composer ca-tests` - defines all tests coverage (do not run it)
+- `composer ica-tests` - defines integration tests coverage (do not run it)
+- `composer uca-tests` - defines unit tests coverage
 
 #### PHPStan
 - `composer stan` - writes errors to phpstan-report.xml
