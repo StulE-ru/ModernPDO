@@ -314,6 +314,8 @@ jobs:
 
   unit-tests:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     strategy:
       fail-fast: true
@@ -344,13 +346,20 @@ jobs:
       with:
         php-version: ${{ matrix.php }}
         extensions: dom, libxml, mbstring
-        coverage: none
+        coverage: xdebug
 
     - name: Install dependencies
       run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
 
     - name: Execute unit tests
-      run: composer u-tests
+      run: XDEBUG_MODE_COVERAGE=coverage composer u-tests
+
+    - name: Generate test coverage badge
+      uses: timkrase/phpunit-coverage-badge@v1.2.1
+      with:
+        coverage_badge_path: '.github/badge.svg'
+        push_badge: true
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
 
   php-salm:
     runs-on: ubuntu-latest

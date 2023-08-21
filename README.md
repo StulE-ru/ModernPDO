@@ -5,6 +5,7 @@
 ![Downloads](https://img.shields.io/packagist/dt/stule-ru/modernpdo
 )
 ![Release](https://img.shields.io/github/v/release/StulE-ru/ModernPDO)
+![Code Coverage Badge](./.github/badge.svg) 
 ![Forks](https://img.shields.io/github/forks/StulE-ru/ModernPDO)
 ![Stars](https://img.shields.io/github/stars/StulE-ru/ModernPDO)
 ![License](https://img.shields.io/github/license/StulE-ru/ModernPDO)
