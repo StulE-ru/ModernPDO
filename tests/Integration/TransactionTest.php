@@ -20,7 +20,7 @@ class TransactionTest extends IntegrationTestCase
 
         assertTrue($tr->isActive());
 
-        assertTrue($this->mpdo->insert(self::TABLE)->values(['id' => 1, 'name' => 'test1'])->execute());
+        assertTrue($this->mpdo->insert(self::TABLE)->values([[1, 'test1']])->execute());
 
         assertTrue($tr->commit());
         assertFalse($tr->commit());
@@ -37,7 +37,7 @@ class TransactionTest extends IntegrationTestCase
 
         assertTrue($tr->isActive());
 
-        assertTrue($this->mpdo->insert(self::TABLE)->values(['id' => 1, 'name' => 'test1'])->execute());
+        assertTrue($this->mpdo->insert(self::TABLE)->values([[1, 'test1']])->execute());
 
         assertTrue($tr->rollBack());
         assertFalse($tr->rollBack());

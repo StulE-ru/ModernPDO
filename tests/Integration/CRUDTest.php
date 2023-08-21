@@ -16,18 +16,25 @@ class CRUDTest extends IntegrationTestCase
 
     public function testInsert(): void
     {
-        assertTrue($this->mpdo->insert(self::TABLE)->values(['id' => 1, 'name' => 'test1'])->execute());
-        assertTrue($this->mpdo->insert(self::TABLE)->values(['id' => 2, 'name' => 'test2'])->execute());
-        assertTrue($this->mpdo->insert(self::TABLE)->values(['id' => 3, 'name' => 'test3'])->execute());
-        assertTrue($this->mpdo->insert(self::TABLE)->values(['id' => 4, 'name' => 'test4'])->execute());
-        assertTrue($this->mpdo->insert(self::TABLE)->values(['id' => 5, 'name' => 'test5'])->execute());
-        assertTrue($this->mpdo->insert(self::TABLE)->values(['id' => 6, 'name' => 'test6'])->execute());
+        assertTrue($this->mpdo->insert(self::TABLE)->columns([
+            'id', 'name',
+        ])->values([
+            [1, 'test1'],
+            [2, 'test2'],
+            [3, 'test3'],
+            [4, 'test4'],
+            [5, 'test5'],
+            [6, 'test6'],
+        ])->execute());
 
-        assertTrue($this->mpdo->insert(self::TABLE)->values(['id' => 100, 'name' => 'test100'])->values(['id' => 10, 'name' => 'test10'])->execute());
+        assertTrue($this->mpdo->insert(self::TABLE)->columns(['id', 'name'])->values([[100, 'test100']])->values([[10, 'test10']])->execute());
         assertEquals('test10', $this->mpdo->select(self::TABLE)->where('id', 10)->one()['name']);
 
-        assertTrue($this->mpdo->insert(self::TABLE)->values([])->values(['id' => 11, 'name' => 'test11'])->execute());
+        assertTrue($this->mpdo->insert(self::TABLE)->columns(['id', 'name'])->values([[]])->values([[11, 'test11']])->execute());
         assertEquals('test11', $this->mpdo->select(self::TABLE)->where('id', 11)->one()['name']);
+
+        assertTrue($this->mpdo->insert(self::TABLE)->values([[]])->values([[12, 'test12']])->execute());
+        assertEquals('test12', $this->mpdo->select(self::TABLE)->where('id', 12)->one()['name']);
     }
 
     public function testSelect(): void
