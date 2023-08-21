@@ -6,24 +6,23 @@ use ModernPDO\Actions\Delete;
 use ModernPDO\ModernPDO;
 use ModernPDO\Statement;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use PHPUnit\Framework\TestCase;
 
 class DeleteTest extends TestCase
 {
-    public const TABLE = 'table_for_tests';
+    public const TABLE = 'unit_tests_delete';
 
-    private function helperCreateMock(): MockObject
+    private function make(string $query, array $placeholders, ?InvokedCount $count = null): Delete
     {
-        /** @var MockObject */
-        $mock = $this->createMock(ModernPDO::class);
+        /** @var MockObject&ModernPDO */
+        $mpdo = $this->createMock(ModernPDO::class);
 
-        return $mock;
-    }
-
-    private function helperCreateDelete(MockObject $mock): Delete
-    {
-        /** @var ModernPDO */
-        $mpdo = $mock;
+        $mpdo
+            ->expects($count ?? self::once())
+            ->method('query')
+            ->with($query, $placeholders)
+            ->willReturn(new Statement(null));
 
         return new Delete($mpdo, self::TABLE);
     }
@@ -31,58 +30,29 @@ class DeleteTest extends TestCase
     public function dataProvider(): array
     {
         return [
-            [1, 'test1'],
-            [2, 'test2'],
-            [3, 'test3'],
-            [4, 'test4'],
-            [5, 'test5'],
-            [6, 'test6'],
+            [1, 'Gail Kerr'],
+            [2, 'Flora Harvey'],
+            [3, 'Khalil Allison'],
+            [4, 'Chaya Schneider'],
+            [5, 'Bibi Blackburn'],
         ];
     }
 
     /**
      * @dataProvider dataProvider
      */
-    public function testDelete(int $id, string $name): void
+    public function testBasic(int $id, string $name): void
     {
-        $mock = $this->helperCreateMock();
+        $this->make('DELETE FROM ' . self::TABLE, [])
+            ->execute();
 
-        $mock
-            ->expects(self::once())
-            ->method('query')
-            ->with('DELETE FROM ' . self::TABLE . '', [])
-            ->willReturn(new Statement(null));
+        $this->make('DELETE FROM ' . self::TABLE . ' WHERE id=?', [$id])
+            ->where('id', $id)->execute();
 
-        $this->helperCreateDelete($mock)->execute();
+        $this->make('DELETE FROM ' . self::TABLE . ' WHERE id=? OR name=?', [$id, $name])
+            ->where('id', $id)->or('name', $name)->execute();
 
-        $mock = $this->helperCreateMock();
-
-        $mock
-            ->expects(self::once())
-            ->method('query')
-            ->with('DELETE FROM ' . self::TABLE . ' WHERE id=?', [$id])
-            ->willReturn(new Statement(null));
-
-        $this->helperCreateDelete($mock)->where('id', $id)->execute();
-
-        $mock = $this->helperCreateMock();
-
-        $mock
-            ->expects(self::once())
-            ->method('query')
-            ->with('DELETE FROM ' . self::TABLE . ' WHERE id=? OR name=?', [$id, $name])
-            ->willReturn(new Statement(null));
-
-        $this->helperCreateDelete($mock)->where('id', $id)->or('name', $name)->execute();
-
-        $mock = $this->helperCreateMock();
-
-        $mock
-            ->expects(self::once())
-            ->method('query')
-            ->with('DELETE FROM ' . self::TABLE . ' WHERE id=? AND name=?', [$id, $name])
-            ->willReturn(new Statement(null));
-
-        $this->helperCreateDelete($mock)->where('id', $id)->and('name', $name)->execute();
+        $this->make('DELETE FROM ' . self::TABLE . ' WHERE id=? AND name=?', [$id, $name])
+            ->where('id', $id)->and('name', $name)->execute();
     }
 }

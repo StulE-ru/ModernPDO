@@ -10,75 +10,42 @@ use function PHPUnit\Framework\assertTrue;
 
 class TransactionTest extends TestCase
 {
-    private function helperCreateMock(): MockObject
+    private function make(): Transaction
     {
-        /** @var MockObject */
-        $mock = $this->createMock(\PDO::class);
+        /** @var MockObject&\PDO */
+        $pdo = $this->createMock(\PDO::class);
 
-        return $mock;
-    }
+        $pdo
+            ->expects(self::once())
+            ->method('beginTransaction')
+            ->willReturn(true);
 
-    private function helperCreateTransaction(MockObject $mock): Transaction
-    {
-        /** @var \PDO */
-        $pdo = $mock;
+        $pdo
+            ->expects(self::once())
+            ->method('inTransaction')
+            ->willReturn(true);
+
+        $pdo->method('commit')->willReturn(true);
+        $pdo->method('rollBack')->willReturn(true);
 
         return new Transaction($pdo);
     }
 
     public function testCommit(): void
     {
-        $mock = $this->helperCreateMock();
-
-        $mock
-            ->expects(self::once())
-            ->method('beginTransaction')
-            ->willReturn(true);
-
-        $mock
-            ->expects(self::once())
-            ->method('inTransaction')
-            ->willReturn(true);
-
-        $mock
-            ->expects(self::once())
-            ->method('commit')
-            ->willReturn(true);
-
-        $tr = $this->helperCreateTransaction($mock);
+        $tr = $this->make();
 
         assertTrue($tr->begin());
-
         assertTrue($tr->isActive());
-
         assertTrue($tr->commit());
     }
 
     public function testRollback(): void
     {
-        $mock = $this->helperCreateMock();
-
-        $mock
-            ->expects(self::once())
-            ->method('beginTransaction')
-            ->willReturn(true);
-
-        $mock
-            ->expects(self::once())
-            ->method('inTransaction')
-            ->willReturn(true);
-
-        $mock
-            ->expects(self::once())
-            ->method('rollBack')
-            ->willReturn(true);
-
-        $tr = $this->helperCreateTransaction($mock);
+        $tr = $this->make();
 
         assertTrue($tr->begin());
-
         assertTrue($tr->isActive());
-
         assertTrue($tr->rollBack());
     }
 }
