@@ -43,13 +43,64 @@ class InsertTest extends TestCase
      */
     public function testBasic(int $id, string $name): void
     {
+        $this->make('INSERT INTO ' . self::TABLE . ' VALUES (?, ?)', [$id, $name])
+            ->values([
+                [$id, $name],
+            ])->execute();
+
+        $this->make('INSERT INTO ' . self::TABLE . ' VALUES (?, ?)', [$id, $name])
+            ->values([
+                ['unknown'],
+            ])->values([
+                [$id, $name],
+            ])->execute();
+
+        $this->make('INSERT INTO ' . self::TABLE . ' VALUES (?, ?), (?, ?)', [$id, $name, $id, $name])
+            ->values([
+                [],
+            ])->values([
+            ])->values([
+                [$id, $name],
+                [$id, $name],
+            ])->execute();
+    }
+
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testColumns(int $id, string $name): void
+    {
         $this->make('INSERT INTO ' . self::TABLE . ' (id, name) VALUES (?, ?)', [$id, $name])
-            ->values(['id' => $id, 'name' => $name])->execute();
+            ->columns([
+                'id', 'name',
+            ])->values([
+                [$id, $name],
+            ])->execute();
 
         $this->make('INSERT INTO ' . self::TABLE . ' (id, name) VALUES (?, ?)', [$id, $name])
-            ->values(['name' => 'unknown'])->values(['id' => $id, 'name' => $name])->execute();
+            ->columns([
+                'id', 'name',
+            ])->values([
+                ['unknown'],
+            ])->values([
+                [$id, $name],
+            ])->execute();
 
-        $this->make('INSERT INTO ' . self::TABLE . ' (id, name) VALUES (?, ?)', [$id, $name])
-            ->values([])->values(['id' => $id, 'name' => $name])->execute();
+        $this->make('INSERT INTO ' . self::TABLE . ' (id, name) VALUES (?, ?), (?, ?)', [$id, $name, $id, $name])
+            ->columns([
+                'id', 'name',
+            ])->values([
+                [],
+            ])->values([
+            ])->values([
+                [$id, $name],
+                [$id, $name],
+            ])->execute();
+
+        $this->make('INSERT INTO ' . self::TABLE . ' (id, name) VALUES (?, ?), (?, ?)', [$id, $name, $id, $name], self::never())
+            ->columns([
+                'id', 'name',
+            ])->values([
+            ])->execute();
     }
 }

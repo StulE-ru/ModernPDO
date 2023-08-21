@@ -18,7 +18,7 @@ class Update extends Action
      */
     protected function buildQuery(): string
     {
-        return trim('UPDATE ' . $this->table . ' SET ' . $this->set . ' ' . $this->where);
+        return trim('UPDATE ' . $this->table . ' SET ' . $this->setQuery() . ' ' . $this->whereQuery());
     }
 
     /**
@@ -28,7 +28,7 @@ class Update extends Action
      */
     protected function getPlaceholders(): array
     {
-        return array_merge($this->set_params, $this->where_params);
+        return array_merge($this->setPlaceholders(), $this->wherePlaceholders());
     }
 
     /**

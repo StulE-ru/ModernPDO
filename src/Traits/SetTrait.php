@@ -7,20 +7,45 @@ namespace ModernPDO\Traits;
  */
 trait SetTrait
 {
-    /** List of set. */
-    protected string $set = '';
+    /**
+     * @var array<string, mixed> values for SET
+     */
+    protected array $set = [];
 
     /**
-     * Array of placeholders.
-     *
-     * @var mixed[]
+     * Returns set query.
      */
-    protected array $set_params = [];
+    protected function setQuery(): string
+    {
+        $query = '';
+
+        foreach ($this->set as $column => $value) {
+            $query .= $column . '=?, ';
+        }
+
+        return mb_substr($query, 0, -2);
+    }
+
+    /**
+     * Returns set placeholders.
+     *
+     * @return list<mixed>
+     */
+    protected function setPlaceholders(): array
+    {
+        $placeholders = [];
+
+        foreach ($this->set as $value) {
+            $placeholders[] = $value;
+        }
+
+        return $placeholders;
+    }
 
     /**
      * Set values for SET.
      *
-     * @param string[] $values array of values for SET
+     * @param array<string, mixed> $values array of values for SET
      *
      * @return $this
      */
@@ -30,20 +55,7 @@ trait SetTrait
             return $this;
         }
 
-        $this->set = '';
-        $this->set_params = [];
-
-        $last_key = array_key_last($values);
-
-        foreach ($values as $column => $value) {
-            $this->set .= $column . '=?';
-
-            $this->set_params[] = $value;
-
-            if ($last_key !== $column) {
-                $this->set .= ', ';
-            }
-        }
+        $this->set = $values;
 
         return $this;
     }

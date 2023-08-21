@@ -7,33 +7,49 @@ namespace ModernPDO\Traits;
  */
 trait ColumnsTrait
 {
-    /** List of columns. */
-    protected string $columns = '*';
+    /**
+     * @var list<string> column names
+     */
+    protected array $columns = [];
+
+    /**
+     * Returns list of columns.
+     */
+    protected function columnsQuery(): string
+    {
+        if (empty($this->columns)) {
+            return '*';
+        }
+
+        $query = '';
+
+        foreach ($this->columns as $column) {
+            $query .= $column . ', ';
+        }
+
+        return mb_substr($query, 0, -2);
+    }
+
+    /**
+     * Returns empty array.
+     *
+     * @return list<mixed>
+     */
+    protected function columnsPlaceholders(): array
+    {
+        return [];
+    }
 
     /**
      * Set columns.
      *
-     * @param string[] $columns array of column names
+     * @param list<string> $columns array of column names
      *
      * @return $this
      */
     public function columns(array $columns): object
     {
-        if (empty($columns)) {
-            return $this;
-        }
-
-        $this->columns = '';
-
-        $last_key = array_key_last($columns);
-
-        foreach ($columns as $key => $column) {
-            $this->columns .= $column;
-
-            if ($last_key !== $key) {
-                $this->columns .= ', ';
-            }
-        }
+        $this->columns = $columns;
 
         return $this;
     }
