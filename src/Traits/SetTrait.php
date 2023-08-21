@@ -2,8 +2,6 @@
 
 namespace ModernPDO\Traits;
 
-use ModernPDO\Actions\Action;
-
 /**
  * Trait for working with 'where'.
  */
@@ -26,7 +24,7 @@ trait SetTrait
      *
      * @return $this
      */
-    public function set(array $values): Action
+    public function set(array $values): object
     {
         if (empty($values)) {
             return $this;

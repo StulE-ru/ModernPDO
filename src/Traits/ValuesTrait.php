@@ -2,8 +2,6 @@
 
 namespace ModernPDO\Traits;
 
-use ModernPDO\Actions\Action;
-
 trait ValuesTrait
 {
     /** List of columns. */
@@ -25,7 +23,7 @@ trait ValuesTrait
      *
      * @return $this
      */
-    public function values(array $values): Action
+    public function values(array $values): object
     {
         if (empty($values)) {
             return $this;

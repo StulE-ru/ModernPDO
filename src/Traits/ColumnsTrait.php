@@ -2,8 +2,6 @@
 
 namespace ModernPDO\Traits;
 
-use ModernPDO\Actions\Action;
-
 /**
  * Trait for working with 'columns'.
  */
@@ -19,7 +17,7 @@ trait ColumnsTrait
      *
      * @return $this
      */
-    public function columns(array $columns): Action
+    public function columns(array $columns): object
     {
         if (empty($columns)) {
             return $this;

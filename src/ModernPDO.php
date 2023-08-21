@@ -17,7 +17,11 @@ class ModernPDO
      */
     public function __construct(
         private \PDO $pdo,
+        private ?Factory $factory = null,
     ) {
+        if ($this->factory === null) {
+            $this->factory = new Factory($pdo, $this);
+        }
     }
 
     /**
@@ -25,7 +29,7 @@ class ModernPDO
      */
     public function transaction(): Transaction
     {
-        return new Transaction($this->pdo);
+        return $this->factory->transaction();
     }
 
     /**
@@ -72,7 +76,7 @@ class ModernPDO
             $statement = false;
         }
 
-        return new Statement($statement !== false ? $statement : null);
+        return $this->factory->statement($statement !== false ? $statement : null);
     }
 
     /**
@@ -80,7 +84,7 @@ class ModernPDO
      */
     public function select(string $table): Select
     {
-        return new Select($this, $table);
+        return $this->factory->select($table);
     }
 
     /**
@@ -88,7 +92,7 @@ class ModernPDO
      */
     public function insert(string $table): Insert
     {
-        return new Insert($this, $table);
+        return $this->factory->insert($table);
     }
 
     /**
@@ -96,7 +100,7 @@ class ModernPDO
      */
     public function update(string $table): Update
     {
-        return new Update($this, $table);
+        return $this->factory->update($table);
     }
 
     /**
@@ -104,6 +108,6 @@ class ModernPDO
      */
     public function delete(string $table): Delete
     {
-        return new Delete($this, $table);
+        return $this->factory->delete($table);
     }
 }

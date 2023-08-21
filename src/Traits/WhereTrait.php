@@ -2,8 +2,6 @@
 
 namespace ModernPDO\Traits;
 
-use ModernPDO\Actions\Action;
-
 /**
  * Trait for working with 'where'.
  */
@@ -24,7 +22,7 @@ trait WhereTrait
      *
      * @return $this
      */
-    public function where(string $name, mixed $value, string $sign = '='): Action
+    public function where(string $name, mixed $value, string $sign = '='): object
     {
         if (empty($name)) {
             return $this;
@@ -41,7 +39,7 @@ trait WhereTrait
      *
      * @return $this
      */
-    public function and(string $name, mixed $value, string $sign = '='): Action
+    public function and(string $name, mixed $value, string $sign = '='): object
     {
         if (empty($name)) {
             return $this;
@@ -62,7 +60,7 @@ trait WhereTrait
      *
      * @return $this
      */
-    public function or(string $name, mixed $value, string $sign = '='): Action
+    public function or(string $name, mixed $value, string $sign = '='): object
     {
         if (empty($name)) {
             return $this;
