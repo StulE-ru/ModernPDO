@@ -32,15 +32,17 @@ class MySQLDriver extends ModernPDO
         string $charset = '',
         string $port = self::DEFAULT_PORT,
     ) {
+        $dsn = 'mysql:host=' . $host . ';dbname=' . $database . ';port=' . $port;
+
+        if (!empty($charset)) {
+            $dsn .= ';charset=' . $charset;
+        }
+
         $pdo = new \PDO(
-            'mysql:host=' . $host . ';dbname=' . $database . ';port=' . $port,
+            $dsn,
             $username,
             $password,
         );
-
-        if (!empty($charset)) {
-            $pdo->exec('SET NAMES ' . $charset);
-        }
 
         parent::__construct($pdo);
     }
