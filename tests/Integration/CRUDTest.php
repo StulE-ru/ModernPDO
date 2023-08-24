@@ -2,6 +2,11 @@
 
 namespace ModernPDO\Tests\Integration;
 
+use ModernPDO\Functions\Aggregate\Count;
+use ModernPDO\Functions\Aggregate\Max;
+use ModernPDO\Functions\Aggregate\Min;
+use ModernPDO\Functions\Aggregate\Sum;
+
 use function PHPUnit\Framework\assertArrayHasKey;
 use function PHPUnit\Framework\assertArrayNotHasKey;
 use function PHPUnit\Framework\assertEmpty;
@@ -70,6 +75,14 @@ class CRUDTest extends IntegrationTestCase
         assertArrayNotHasKey('id', $this->mpdo->select(self::TABLE)->columns(['name'])->where('id', 1)->one());
         assertArrayHasKey('id', $this->mpdo->select(self::TABLE)->columns(['id', 'name'])->where('id', 1)->one());
         assertArrayHasKey('id', $this->mpdo->select(self::TABLE)->columns([])->where('id', 1)->one());
+
+        // test aggregate functions with AS operator
+        assertEquals(['count' => 2], $this->mpdo->select(self::TABLE)->columns(['count' => new Count()])->where('id', 1)->or('id', 2)->one());
+        assertEquals(['sum' => 3], $this->mpdo->select(self::TABLE)->columns(['sum' => new Sum('id')])->where('id', 1)->or('id', 2)->one());
+        assertEquals(['min' => 1, 'max' => '2'], $this->mpdo->select(self::TABLE)->columns([
+            'min' => new Min('id'),
+            'max' => new Max('id'),
+        ])->where('id', 1)->or('id', 2)->one());
     }
 
     public function testUpdate(): void

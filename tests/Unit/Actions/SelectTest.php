@@ -3,6 +3,10 @@
 namespace ModernPDO\Tests\Unit\Actions;
 
 use ModernPDO\Actions\Select;
+use ModernPDO\Functions\Aggregate\Count;
+use ModernPDO\Functions\Aggregate\Max;
+use ModernPDO\Functions\Aggregate\Min;
+use ModernPDO\Functions\Aggregate\Sum;
 use ModernPDO\ModernPDO;
 use ModernPDO\Statement;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -102,5 +106,35 @@ class SelectTest extends TestCase
 
         $this->make('SELECT * FROM ' . self::TABLE, [])
             ->columns([])->all();
+    }
+
+    public function testAggregateFunctions(): void
+    {
+        $this->make('SELECT COUNT(*) FROM ' . self::TABLE, [])
+            ->columns([new Count()])->all();
+
+        $this->make('SELECT SUM(id) FROM ' . self::TABLE, [])
+            ->columns([new Sum('id')])->all();
+
+        $this->make('SELECT MIN(id), MAX(id) FROM ' . self::TABLE, [])
+            ->columns([
+                new Min('id'),
+                new Max('id'),
+            ])->all();
+    }
+
+    public function testAsWithColumns(): void
+    {
+        $this->make('SELECT COUNT(*) AS count FROM ' . self::TABLE, [])
+            ->columns(['count' => new Count()])->all();
+
+        $this->make('SELECT SUM(id) AS sum FROM ' . self::TABLE, [])
+            ->columns(['sum' => new Sum('id')])->all();
+
+        $this->make('SELECT MIN(id) AS min, MAX(id) AS max FROM ' . self::TABLE, [])
+            ->columns([
+                'min' => new Min('id'),
+                'max' => new Max('id'),
+            ])->all();
     }
 }
