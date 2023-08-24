@@ -2,7 +2,7 @@
 
 namespace ModernPDO\Traits;
 
-use ModernPDO\Functions\Aggregate\AggregateFunction;
+use ModernPDO\Functions\BaseFunction;
 
 /**
  * Trait for working with 'columns'.
@@ -10,7 +10,7 @@ use ModernPDO\Functions\Aggregate\AggregateFunction;
 trait ColumnsTrait
 {
     /**
-     * @var string|AggregateFunction[] column names
+     * @var string|BaseFunction[] column names
      */
     protected array $columns = [];
 
@@ -26,7 +26,7 @@ trait ColumnsTrait
         $query = '';
 
         foreach ($this->columns as $key => $column) {
-            if ($column instanceof AggregateFunction) {
+            if ($column instanceof BaseFunction) {
                 $column = $column->build();
             }
 
@@ -55,7 +55,7 @@ trait ColumnsTrait
     /**
      * Set columns.
      *
-     * @param string|AggregateFunction[] $columns array of column names
+     * @param string|BaseFunction[] $columns array of column names
      *
      * @return $this
      */

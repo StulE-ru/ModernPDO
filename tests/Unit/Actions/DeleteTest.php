@@ -3,6 +3,9 @@
 namespace ModernPDO\Tests\Unit\Actions;
 
 use ModernPDO\Actions\Delete;
+use ModernPDO\Functions\Scalar\String\Lower;
+use ModernPDO\Functions\Scalar\String\Reverse;
+use ModernPDO\Functions\Scalar\String\Upper;
 use ModernPDO\ModernPDO;
 use ModernPDO\Statement;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -54,5 +57,20 @@ class DeleteTest extends TestCase
 
         $this->make('DELETE FROM ' . self::TABLE . ' WHERE id=? AND name=?', [$id, $name])
             ->where('id', $id)->and('name', $name)->execute();
+    }
+
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testScalarStringFunctions(int $id, string $name): void
+    {
+        $this->make('DELETE FROM ' . self::TABLE . ' WHERE id=? AND name=LOWER(?)', [$id, $name])
+            ->where('id', $id)->and('name', new Lower($name))->execute();
+
+        $this->make('DELETE FROM ' . self::TABLE . ' WHERE id=? AND name=UPPER(?)', [$id, $name])
+            ->where('id', $id)->and('name', new Upper($name))->execute();
+
+        $this->make('DELETE FROM ' . self::TABLE . ' WHERE id=? AND name=REVERSE(?)', [$id, $name])
+            ->where('id', $id)->and('name', new Reverse($name))->execute();
     }
 }

@@ -2,6 +2,8 @@
 
 namespace ModernPDO\Traits;
 
+use ModernPDO\Functions\Scalar\ScalarFunction;
+
 /**
  * Trait for working with 'where'.
  */
@@ -20,7 +22,13 @@ trait WhereTrait
         $query = '';
 
         foreach ($this->where as $condition) {
-            $query .= $condition['type'] . ' ' . $condition['name'] . $condition['sign'] . '? ';
+            if ($condition['value'] instanceof ScalarFunction) {
+                $condition['value'] = $condition['value']->buildQuery();
+            } else {
+                $condition['value'] = '?';
+            }
+
+            $query .= $condition['type'] . ' ' . $condition['name'] . $condition['sign'] . $condition['value'] . ' ';
         }
 
         return trim($query);
@@ -36,7 +44,11 @@ trait WhereTrait
         $placeholders = [];
 
         foreach ($this->where as $condition) {
-            $placeholders[] = $condition['value'];
+            if ($condition['value'] instanceof ScalarFunction) {
+                $placeholders = array_merge($placeholders, $condition['value']->buildParams());
+            } else {
+                $placeholders[] = $condition['value'];
+            }
         }
 
         return $placeholders;

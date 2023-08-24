@@ -7,6 +7,9 @@ use ModernPDO\Functions\Aggregate\Count;
 use ModernPDO\Functions\Aggregate\Max;
 use ModernPDO\Functions\Aggregate\Min;
 use ModernPDO\Functions\Aggregate\Sum;
+use ModernPDO\Functions\Scalar\String\Lenght;
+use ModernPDO\Functions\Scalar\String\Lower;
+use ModernPDO\Functions\Scalar\String\Upper;
 use ModernPDO\ModernPDO;
 use ModernPDO\Statement;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -120,6 +123,21 @@ class SelectTest extends TestCase
             ->columns([
                 new Min('id'),
                 new Max('id'),
+            ])->all();
+    }
+
+    public function testScalarStringFunctions(): void
+    {
+        $this->make('SELECT LOWER(name) FROM ' . self::TABLE, [])
+            ->columns([new Lower('name')])->all();
+
+        $this->make('SELECT UPPER(name) FROM ' . self::TABLE, [])
+            ->columns([new Upper('name')])->all();
+
+        $this->make('SELECT LOWER(name), LENGTH(name) FROM ' . self::TABLE, [])
+            ->columns([
+                new Lower('name'),
+                new Lenght('name'),
             ])->all();
     }
 

@@ -6,6 +6,10 @@ use ModernPDO\Functions\Aggregate\Count;
 use ModernPDO\Functions\Aggregate\Max;
 use ModernPDO\Functions\Aggregate\Min;
 use ModernPDO\Functions\Aggregate\Sum;
+use ModernPDO\Functions\Scalar\String\Lenght;
+use ModernPDO\Functions\Scalar\String\Lower;
+use ModernPDO\Functions\Scalar\String\Reverse;
+use ModernPDO\Functions\Scalar\String\Upper;
 
 use function PHPUnit\Framework\assertArrayHasKey;
 use function PHPUnit\Framework\assertArrayNotHasKey;
@@ -40,6 +44,22 @@ class CRUDTest extends IntegrationTestCase
 
         assertTrue($this->mpdo->insert(self::TABLE)->values([[]])->values([[12, 'test12']])->execute());
         assertEquals('test12', $this->mpdo->select(self::TABLE)->where('id', 12)->one()['name']);
+    }
+
+    public function testDetailedInsert(): void
+    {
+        // test scalar functions
+        assertTrue($this->mpdo->insert(self::TABLE)->values([
+            [1, new Lower('Name')],
+            [2, new Upper('Name')],
+            [3, new Reverse('Name')],
+        ])->execute());
+
+        assertEquals([
+            ['name' => 'name'],
+            ['name' => 'NAME'],
+            ['name' => 'emaN'],
+        ], $this->mpdo->select(self::TABLE)->columns(['name'])->all());
     }
 
     public function testSelect(): void
@@ -83,6 +103,12 @@ class CRUDTest extends IntegrationTestCase
             'min' => new Min('id'),
             'max' => new Max('id'),
         ])->where('id', 1)->or('id', 2)->one());
+
+        // test scalar functions with AS operator
+        assertEquals(['lower' => 'test1'], $this->mpdo->select(self::TABLE)->columns(['lower' => new Lower('name')])->where('id', 1)->one());
+        assertEquals(['upper' => 'TEST1'], $this->mpdo->select(self::TABLE)->columns(['upper' => new Upper('name')])->where('id', 1)->one());
+        assertEquals(['rev' => '1tset'], $this->mpdo->select(self::TABLE)->columns(['rev' => new Reverse('name')])->where('id', 1)->one());
+        assertEquals(['len' => 5], $this->mpdo->select(self::TABLE)->columns(['len' => new Lenght('name')])->where('id', 1)->one());
     }
 
     public function testUpdate(): void
@@ -103,6 +129,19 @@ class CRUDTest extends IntegrationTestCase
         assertEquals('test', $this->mpdo->select(self::TABLE)->where('id', 102)->one()['name']);
         assertEquals('test', $this->mpdo->select(self::TABLE)->where('id', 103)->one()['name']);
         assertEquals('test104', $this->mpdo->select(self::TABLE)->where('id', 104)->one()['name']);
+
+        // test scalar functions
+        assertTrue($this->mpdo->update(self::TABLE)->set(['name' => new Upper('Name')])->where('id', 101)->execute());
+        assertEquals('NAME', $this->mpdo->select(self::TABLE)->where('id', 101)->one()['name']);
+
+        assertTrue($this->mpdo->update(self::TABLE)->set(['name' => new Lower('Name')])->where('id', 101)->execute());
+        assertEquals('name', $this->mpdo->select(self::TABLE)->where('id', 101)->one()['name']);
+
+        assertTrue($this->mpdo->update(self::TABLE)->set(['name' => new Reverse('Name')])->where('id', 101)->execute());
+        assertEquals('emaN', $this->mpdo->select(self::TABLE)->where('id', 101)->one()['name']);
+
+        assertTrue($this->mpdo->update(self::TABLE)->set(['name' => new Lenght('Name')])->where('id', 101)->execute());
+        assertEquals(4, $this->mpdo->select(self::TABLE)->where('id', 101)->one()['name']);
 
         // test broken set
         assertFalse($this->mpdo->update(self::TABLE)->execute());

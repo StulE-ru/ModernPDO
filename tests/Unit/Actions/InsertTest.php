@@ -3,6 +3,9 @@
 namespace ModernPDO\Tests\Unit\Actions;
 
 use ModernPDO\Actions\Insert;
+use ModernPDO\Functions\Scalar\String\Lower;
+use ModernPDO\Functions\Scalar\String\Reverse;
+use ModernPDO\Functions\Scalar\String\Upper;
 use ModernPDO\ModernPDO;
 use ModernPDO\Statement;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -101,6 +104,21 @@ class InsertTest extends TestCase
             ->columns([
                 'id', 'name',
             ])->values([
+            ])->execute();
+    }
+
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testScalarStringFunctions(int $id, string $name): void
+    {
+        $this->make('INSERT INTO ' . self::TABLE . ' (id, name) VALUES (?, LOWER(?)), (?, UPPER(?)), (?, REVERSE(?))', [$id, $name, $id, $name, $id, $name])
+            ->columns([
+                'id', 'name',
+            ])->values([
+                [$id, new Lower($name)],
+                [$id, new Upper($name)],
+                [$id, new Reverse($name)],
             ])->execute();
     }
 }
