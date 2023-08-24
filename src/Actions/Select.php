@@ -32,6 +32,16 @@ class Select extends Action
     }
 
     /**
+     * Executes query and returns all rows.
+     *
+     * @return list<array<string, mixed>>
+     */
+    protected function getAll(): array
+    {
+        return $this->exec()->fetchAll();
+    }
+
+    /**
      * Executes query and returns one row.
      *
      * @return array<string, mixed>
@@ -42,13 +52,11 @@ class Select extends Action
     }
 
     /**
-     * Executes query and returns all rows.
-     *
-     * @return list<array<string, mixed>>
+     * Executes query and returns one row cell.
      */
-    protected function getAll(): array
+    protected function getCell(int $column): mixed
     {
-        return $this->exec()->fetchAll();
+        return $this->exec()->fetchColumn($column);
     }
 
     /**
@@ -73,6 +81,16 @@ class Select extends Action
         $this->query = $this->buildQuery() . ' LIMIT 1';
 
         return $this->getOne();
+    }
+
+    /**
+     * Returns one row cell from table.
+     */
+    public function cell(int $column = 0): mixed
+    {
+        $this->query = $this->buildQuery() . ' LIMIT 1';
+
+        return $this->getCell($column);
     }
 
     /**

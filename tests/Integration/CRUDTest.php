@@ -109,6 +109,10 @@ class CRUDTest extends IntegrationTestCase
         assertEquals(['upper' => 'TEST1'], $this->mpdo->select(self::TABLE)->columns(['upper' => new Upper('name')])->where('id', 1)->one());
         assertEquals(['rev' => '1tset'], $this->mpdo->select(self::TABLE)->columns(['rev' => new Reverse('name')])->where('id', 1)->one());
         assertEquals(['len' => 5], $this->mpdo->select(self::TABLE)->columns(['len' => new Lenght('name')])->where('id', 1)->one());
+
+        // test get cell
+        assertEquals(9, $this->mpdo->select(self::TABLE)->columns([new Count()])->cell());
+        assertEquals('test1', $this->mpdo->select(self::TABLE)->where('id', 1)->cell(1));
     }
 
     public function testUpdate(): void
