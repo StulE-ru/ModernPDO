@@ -23,8 +23,14 @@ trait ColumnsTrait
 
         $query = '';
 
-        foreach ($this->columns as $column) {
-            $query .= $column . ', ';
+        foreach ($this->columns as $key => $column) {
+            $query .= $column;
+
+            if (is_string($key)) {
+                $query .= ' AS ' . $key;
+            }
+
+            $query .= ', ';
         }
 
         return mb_substr($query, 0, -2);
