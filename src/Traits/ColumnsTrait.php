@@ -2,13 +2,15 @@
 
 namespace ModernPDO\Traits;
 
+use ModernPDO\Functions\BaseFunction;
+
 /**
  * Trait for working with 'columns'.
  */
 trait ColumnsTrait
 {
     /**
-     * @var list<string> column names
+     * @var string|BaseFunction[] column names
      */
     protected array $columns = [];
 
@@ -23,8 +25,18 @@ trait ColumnsTrait
 
         $query = '';
 
-        foreach ($this->columns as $column) {
-            $query .= $column . ', ';
+        foreach ($this->columns as $key => $column) {
+            if ($column instanceof BaseFunction) {
+                $column = $column->build();
+            }
+
+            $query .= $column;
+
+            if (is_string($key)) {
+                $query .= ' AS ' . $key;
+            }
+
+            $query .= ', ';
         }
 
         return mb_substr($query, 0, -2);
@@ -43,7 +55,7 @@ trait ColumnsTrait
     /**
      * Set columns.
      *
-     * @param list<string> $columns array of column names
+     * @param string|BaseFunction[] $columns array of column names
      *
      * @return $this
      */

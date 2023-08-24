@@ -3,6 +3,9 @@
 namespace ModernPDO\Tests\Unit\Actions;
 
 use ModernPDO\Actions\Update;
+use ModernPDO\Functions\Scalar\String\Lower;
+use ModernPDO\Functions\Scalar\String\Reverse;
+use ModernPDO\Functions\Scalar\String\Upper;
 use ModernPDO\ModernPDO;
 use ModernPDO\Statement;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -84,5 +87,26 @@ class UpdateTest extends TestCase
 
         $this->make('UPDATE ' . self::TABLE . ' SET id=?, name=? WHERE id=? OR name=?', [$id, $name, $id, $name])
             ->set(['id' => $id, 'name' => $name])->where('id', $id)->or('name', $name)->execute();
+    }
+
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testScalarStringFunctions(int $id, string $name): void
+    {
+        $this->make('UPDATE ' . self::TABLE . ' SET name=LOWER(?) WHERE id=?', [$name, $id])
+            ->set([
+                'name' => new Lower($name),
+            ])->where('id', $id)->execute();
+
+        $this->make('UPDATE ' . self::TABLE . ' SET name=UPPER(?) WHERE id=?', [$name, $id])
+            ->set([
+                'name' => new Upper($name),
+            ])->where('id', $id)->execute();
+
+        $this->make('UPDATE ' . self::TABLE . ' SET name=REVERSE(?) WHERE id=?', [$name, $id])
+            ->set([
+                'name' => new Reverse($name),
+            ])->where('id', $id)->execute();
     }
 }
