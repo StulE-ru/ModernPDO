@@ -31,6 +31,58 @@ class Statement
     }
 
     /**
+     * Returns the number of columns in the result set.
+     *
+     * @see https://www.php.net/manual/ru/pdostatement.columncount.php
+     */
+    public function columnCount(): int
+    {
+        try {
+            $count = $this->statement?->columnCount() ?? 0;
+        } catch (\Throwable $th) {
+            $count = 0;
+        }
+
+        return $count;
+    }
+
+    /**
+     * Returns a single column from the next row of a result set.
+     *
+     * @return mixed If successful, a value, otherwise false
+     *
+     * @see https://www.php.net/manual/en/pdostatement.fetchall.php
+     */
+    public function fetchColumn(int $column = 0): mixed
+    {
+        try {
+            $column = $this->statement?->fetchColumn($column) ?? false;
+        } catch (\Throwable $th) {
+            $column = false;
+        }
+
+        return $column;
+    }
+
+    /**
+     * Fetches the next row and returns it as an object.
+     *
+     * @return object|false If successful, an object, otherwise false
+     *
+     * @see https://www.php.net/manual/en/pdostatement.fetchobject.php
+     */
+    public function fetchObject(): object|false
+    {
+        try {
+            $object = $this->statement?->fetchObject() ?? false;
+        } catch (\Throwable $th) {
+            $object = false;
+        }
+
+        return $object;
+    }
+
+    /**
      * Fetches the next row from a result set.
      *
      * @return array<string, mixed> If successful, an array of data, otherwise an empty array
