@@ -48,10 +48,18 @@ class Escaper
     }
 
     /**
-     * Escapes and returns field value.
+     * Escapes and returns string field value.
      */
-    public function value(string $name): string
+    public function stringValue(string $value): string
     {
-        return $this->string($name);
+        return $this->string($value);
+    }
+
+    /**
+     * Escapes and returns bool field value.
+     */
+    public function boolValue(bool $value): string
+    {
+        return $value ? '1' : '0';
     }
 }

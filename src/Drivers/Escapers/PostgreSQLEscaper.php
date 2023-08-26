@@ -39,10 +39,18 @@ class PostgreSQLEscaper extends Escaper
     }
 
     /**
-     * Escapes and returns field value.
+     * Escapes and returns string field value.
      */
-    public function value(string $name): string
+    public function stringValue(string $value): string
     {
-        return '\'' . parent::key($name) . '\'';
+        return '\'' . parent::stringValue($value) . '\'';
+    }
+
+    /**
+     * Escapes and returns bool field value.
+     */
+    public function boolValue(bool $value): string
+    {
+        return '\'' . parent::boolValue($value) . '\'';
     }
 }
