@@ -46,4 +46,12 @@ class Escaper
     {
         return $this->string($name);
     }
+
+    /**
+     * Escapes and returns field value.
+     */
+    public function value(string $name): string
+    {
+        return $this->string($name);
+    }
 }

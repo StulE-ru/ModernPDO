@@ -37,4 +37,12 @@ class PostgreSQLEscaper extends Escaper
     {
         return self::QUOTE . parent::key($name) . self::QUOTE;
     }
+
+    /**
+     * Escapes and returns field value.
+     */
+    public function value(string $name): string
+    {
+        return '\'' . parent::key($name) . '\'';
+    }
 }
