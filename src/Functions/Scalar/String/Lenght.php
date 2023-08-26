@@ -2,6 +2,7 @@
 
 namespace ModernPDO\Functions\Scalar\String;
 
+use ModernPDO\Escaper;
 use ModernPDO\Functions\Scalar\ScalarFunction;
 
 /**
@@ -20,9 +21,9 @@ class Lenght extends ScalarFunction
     /**
      * Returns lenght function query.
      */
-    public function build(): string
+    public function build(Escaper $escaper): string
     {
-        return 'LENGTH(' . $this->column . ')';
+        return 'LENGTH(' . $escaper->column($this->column) . ')';
     }
 
     /**

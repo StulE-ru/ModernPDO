@@ -2,6 +2,7 @@
 
 namespace ModernPDO\Traits;
 
+use ModernPDO\Escaper;
 use ModernPDO\Functions\Scalar\ScalarFunction;
 
 trait ValuesTrait
@@ -14,7 +15,7 @@ trait ValuesTrait
     /**
      * Returns set query.
      */
-    protected function valuesQuery(): string
+    protected function valuesQuery(Escaper $escaper): string
     {
         $query = '';
 

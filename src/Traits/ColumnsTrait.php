@@ -2,6 +2,7 @@
 
 namespace ModernPDO\Traits;
 
+use ModernPDO\Escaper;
 use ModernPDO\Functions\BaseFunction;
 
 /**
@@ -17,7 +18,7 @@ trait ColumnsTrait
     /**
      * Returns list of columns.
      */
-    protected function columnsQuery(): string
+    protected function columnsQuery(Escaper $escaper): string
     {
         if (empty($this->columns)) {
             return '*';
@@ -27,13 +28,13 @@ trait ColumnsTrait
 
         foreach ($this->columns as $key => $column) {
             if ($column instanceof BaseFunction) {
-                $column = $column->build();
+                $query .= $column->build($escaper);
+            } else {
+                $query .= $escaper->column($column);
             }
 
-            $query .= $column;
-
             if (is_string($key)) {
-                $query .= ' AS ' . $key;
+                $query .= ' AS ' . $escaper->column($key);
             }
 
             $query .= ', ';

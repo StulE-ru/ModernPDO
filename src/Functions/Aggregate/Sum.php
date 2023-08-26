@@ -2,6 +2,8 @@
 
 namespace ModernPDO\Functions\Aggregate;
 
+use ModernPDO\Escaper;
+
 /**
  * Function to get sum.
  */
@@ -18,8 +20,8 @@ class Sum extends AggregateFunction
     /**
      * Returns sum function query.
      */
-    public function build(): string
+    public function build(Escaper $escaper): string
     {
-        return 'SUM(' . $this->column . ')';
+        return 'SUM(' . $escaper->column($this->column) . ')';
     }
 }

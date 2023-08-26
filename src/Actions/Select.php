@@ -18,7 +18,9 @@ class Select extends Action
      */
     protected function buildQuery(): string
     {
-        return trim('SELECT ' . $this->columnsQuery() . ' FROM ' . $this->table . ' ' . $this->whereQuery());
+        $escaper = $this->mpdo->escaper();
+
+        return trim('SELECT ' . $this->columnsQuery($escaper) . ' FROM ' . $escaper->table($this->table) . ' ' . $this->whereQuery($escaper));
     }
 
     /**
@@ -102,7 +104,7 @@ class Select extends Action
      */
     public function firstBy(string $order): array
     {
-        $this->query = $this->buildQuery() . ' ORDER BY ' . $order . ' ASC LIMIT 1';
+        $this->query = $this->buildQuery() . ' ORDER BY ' . $this->mpdo->escaper()->column($order) . ' ASC LIMIT 1';
 
         return $this->getOne();
     }
@@ -116,7 +118,7 @@ class Select extends Action
      */
     public function lastBy(string $order): array
     {
-        $this->query = $this->buildQuery() . ' ORDER BY ' . $order . ' DESC LIMIT 1';
+        $this->query = $this->buildQuery() . ' ORDER BY ' . $this->mpdo->escaper()->column($order) . ' DESC LIMIT 1';
 
         return $this->getOne();
     }

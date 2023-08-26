@@ -2,6 +2,7 @@
 
 namespace ModernPDO\Functions\Scalar\String;
 
+use ModernPDO\Escaper;
 use ModernPDO\Functions\Scalar\ScalarFunction;
 
 /**
@@ -20,9 +21,9 @@ class Lower extends ScalarFunction
     /**
      * Returns lower function query.
      */
-    public function build(): string
+    public function build(Escaper $escaper): string
     {
-        return 'LOWER(' . $this->column . ')';
+        return 'LOWER(' . $escaper->column($this->column) . ')';
     }
 
     /**

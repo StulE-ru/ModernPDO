@@ -21,7 +21,7 @@ class SelectTest extends TestCase
 {
     public const TABLE = 'unit_tests_select';
 
-    private function make(string $query, array $placeholders, ?InvokedCount $count = null): Select
+    private function make(string $query, array $placeholders, ?InvokedCount $count = null, ?Escaper $escaper = null): Select
     {
         /** @var MockObject&ModernPDO */
         $mpdo = $this->createMock(ModernPDO::class);
@@ -32,16 +32,18 @@ class SelectTest extends TestCase
             ->with($query, $placeholders)
             ->willReturn(new Statement(null));
 
-        /** @var MockObject&Escaper */
-        $escaper = $this->createMock(Escaper::class);
+        if ($escaper === null) {
+            /** @var MockObject&Escaper */
+            $escaper = $this->createMock(Escaper::class);
 
-        $escaper
-            ->method('table')
-            ->willReturnArgument(0);
+            $escaper
+                ->method('table')
+                ->willReturnArgument(0);
 
-        $escaper
-            ->method('column')
-            ->willReturnArgument(0);
+            $escaper
+                ->method('column')
+                ->willReturnArgument(0);
+        }
 
         $mpdo
             ->method('escaper')
@@ -170,5 +172,37 @@ class SelectTest extends TestCase
                 'min' => new Min('id'),
                 'max' => new Max('id'),
             ])->all();
+    }
+
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testEscaper(int $id, string $name): void
+    {
+        /** @var MockObject&Escaper */
+        $escaper = $this->createMock(Escaper::class);
+
+        $escaper
+            ->method('table')
+            ->willReturn('[table]');
+
+        $escaper
+            ->method('column')
+            ->willReturn('[column]');
+
+        $this->make('SELECT [column] AS [column] FROM [table] WHERE [column]=?', [$id], escaper: $escaper)
+            ->columns(['name' => 'name'])->where('id', $id)->all();
+
+        $this->make('SELECT COUNT(*) AS [column], MAX([column]) AS [column] FROM [table] WHERE [column]=? ORDER BY [column] ASC LIMIT 1', [$id], escaper: $escaper)
+            ->columns([
+                'count' => new Count(),
+                'max' => new Max('id')
+            ])->where('id', $id)->firstBy('id');
+
+        $this->make('SELECT COUNT(*) AS [column], MAX([column]) AS [column] FROM [table] WHERE [column]=? ORDER BY [column] DESC LIMIT 1', [$id], escaper: $escaper)
+            ->columns([
+                'count' => new Count(),
+                'max' => new Max('id')
+            ])->where('id', $id)->lastBy('id');
     }
 }

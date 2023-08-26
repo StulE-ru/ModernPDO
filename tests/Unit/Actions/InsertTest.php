@@ -17,7 +17,7 @@ class InsertTest extends TestCase
 {
     public const TABLE = 'unit_tests_insert';
 
-    private function make(string $query, array $placeholders, ?InvokedCount $count = null): Insert
+    private function make(string $query, array $placeholders, ?InvokedCount $count = null, ?Escaper $escaper = null): Insert
     {
         /** @var MockObject&ModernPDO */
         $mpdo = $this->createMock(ModernPDO::class);
@@ -28,16 +28,18 @@ class InsertTest extends TestCase
             ->with($query, $placeholders)
             ->willReturn(new Statement(null));
 
-        /** @var MockObject&Escaper */
-        $escaper = $this->createMock(Escaper::class);
+        if ($escaper === null) {
+            /** @var MockObject&Escaper */
+            $escaper = $this->createMock(Escaper::class);
 
-        $escaper
-            ->method('table')
-            ->willReturnArgument(0);
+            $escaper
+                ->method('table')
+                ->willReturnArgument(0);
 
-        $escaper
-            ->method('column')
-            ->willReturnArgument(0);
+            $escaper
+                ->method('column')
+                ->willReturnArgument(0);
+        }
 
         $mpdo
             ->method('escaper')
@@ -135,6 +137,30 @@ class InsertTest extends TestCase
                 [$id, new Lower($name)],
                 [$id, new Upper($name)],
                 [$id, new Reverse($name)],
+            ])->execute();
+    }
+
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testEscaper(int $id, string $name): void
+    {
+        /** @var MockObject&Escaper */
+        $escaper = $this->createMock(Escaper::class);
+
+        $escaper
+            ->method('table')
+            ->willReturn('[table]');
+
+        $escaper
+            ->method('column')
+            ->willReturn('[column]');
+
+        $this->make('INSERT INTO [table] ([column], [column]) VALUES (?, ?)', [$id, $name], escaper: $escaper)
+            ->columns([
+                'id', 'name',
+            ])->values([
+                [$id, $name],
             ])->execute();
     }
 }

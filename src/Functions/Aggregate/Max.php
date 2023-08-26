@@ -2,6 +2,8 @@
 
 namespace ModernPDO\Functions\Aggregate;
 
+use ModernPDO\Escaper;
+
 /**
  * Function to get max.
  */
@@ -18,8 +20,8 @@ class Max extends AggregateFunction
     /**
      * Returns max function query.
      */
-    public function build(): string
+    public function build(Escaper $escaper): string
     {
-        return 'MAX(' . $this->column . ')';
+        return 'MAX(' . $escaper->column($this->column) . ')';
     }
 }

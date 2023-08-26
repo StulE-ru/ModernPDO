@@ -2,6 +2,7 @@
 
 namespace ModernPDO\Functions\Scalar\String;
 
+use ModernPDO\Escaper;
 use ModernPDO\Functions\Scalar\ScalarFunction;
 
 /**
@@ -20,9 +21,9 @@ class Reverse extends ScalarFunction
     /**
      * Returns Reverse function query.
      */
-    public function build(): string
+    public function build(Escaper $escaper): string
     {
-        return 'REVERSE(' . $this->column . ')';
+        return 'REVERSE(' . $escaper->column($this->column) . ')';
     }
 
     /**
