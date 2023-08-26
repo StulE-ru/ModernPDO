@@ -2,11 +2,15 @@
 
 namespace ModernPDO\Actions;
 
+use ModernPDO\Traits\CheckIfExistsTrait;
+
 /**
  * Class for creating tables.
  */
 class CreateTable extends Action
 {
+    use CheckIfExistsTrait;
+
     /**
      * Returns base query.
      */

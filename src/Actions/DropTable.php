@@ -2,11 +2,15 @@
 
 namespace ModernPDO\Actions;
 
+use ModernPDO\Traits\CheckIfExistsTrait;
+
 /**
  * Class for deleting tables.
  */
 class DropTable extends Action
 {
+    use CheckIfExistsTrait;
+
     /**
      * Returns base query.
      */
