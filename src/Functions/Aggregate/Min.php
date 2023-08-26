@@ -2,6 +2,8 @@
 
 namespace ModernPDO\Functions\Aggregate;
 
+use ModernPDO\Escaper;
+
 /**
  * Function to get min.
  */
@@ -18,8 +20,8 @@ class Min extends AggregateFunction
     /**
      * Returns min function query.
      */
-    public function build(): string
+    public function build(Escaper $escaper): string
     {
-        return 'MIN(' . $this->column . ')';
+        return 'MIN(' . $escaper->column($this->column) . ')';
     }
 }

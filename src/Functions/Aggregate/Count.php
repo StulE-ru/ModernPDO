@@ -2,6 +2,8 @@
 
 namespace ModernPDO\Functions\Aggregate;
 
+use ModernPDO\Escaper;
+
 /**
  * Function to get count.
  */
@@ -18,8 +20,8 @@ class Count extends AggregateFunction
     /**
      * Returns count function query.
      */
-    public function build(): string
+    public function build(Escaper $escaper): string
     {
-        return 'COUNT(' . ($this->column !== '' ? $this->column : '*') . ')';
+        return 'COUNT(' . ($this->column !== '' ? $escaper->column($this->column) : '*') . ')';
     }
 }

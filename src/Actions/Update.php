@@ -18,7 +18,9 @@ class Update extends Action
      */
     protected function buildQuery(): string
     {
-        return trim('UPDATE ' . $this->table . ' SET ' . $this->setQuery() . ' ' . $this->whereQuery());
+        $escaper = $this->mpdo->escaper();
+
+        return trim('UPDATE ' . $escaper->table($this->table) . ' SET ' . $this->setQuery($escaper) . ' ' . $this->whereQuery($escaper));
     }
 
     /**

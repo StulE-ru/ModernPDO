@@ -2,6 +2,7 @@
 
 namespace ModernPDO\Traits;
 
+use ModernPDO\Escaper;
 use ModernPDO\Functions\Scalar\ScalarFunction;
 
 /**
@@ -17,7 +18,7 @@ trait WhereTrait
     /**
      * Returns set query.
      */
-    protected function whereQuery(): string
+    protected function whereQuery(Escaper $escaper): string
     {
         $query = '';
 
@@ -28,7 +29,7 @@ trait WhereTrait
                 $condition['value'] = '?';
             }
 
-            $query .= $condition['type'] . ' ' . $condition['name'] . $condition['sign'] . $condition['value'] . ' ';
+            $query .= $condition['type'] . ' ' . $escaper->column($condition['name']) . $condition['sign'] . $condition['value'] . ' ';
         }
 
         return trim($query);

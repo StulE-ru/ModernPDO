@@ -2,6 +2,8 @@
 
 namespace ModernPDO\Functions\Aggregate;
 
+use ModernPDO\Escaper;
+
 /**
  * Function to get avg.
  */
@@ -18,8 +20,8 @@ class Avg extends AggregateFunction
     /**
      * Returns avg function query.
      */
-    public function build(): string
+    public function build(Escaper $escaper): string
     {
-        return 'AVG(' . $this->column . ')';
+        return 'AVG(' . $escaper->column($this->column) . ')';
     }
 }

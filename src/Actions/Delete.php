@@ -16,7 +16,9 @@ class Delete extends Action
      */
     protected function buildQuery(): string
     {
-        return trim('DELETE FROM ' . $this->table . ' ' . $this->whereQuery());
+        $escaper = $this->mpdo->escaper();
+
+        return trim('DELETE FROM ' . $escaper->table($this->table) . ' ' . $this->whereQuery($escaper));
     }
 
     /**

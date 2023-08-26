@@ -17,11 +17,24 @@ class ModernPDO
      */
     public function __construct(
         private \PDO $pdo,
+        private ?Escaper $escaper = null,
         private ?Factory $factory = null,
     ) {
+        if ($this->escaper === null) {
+            $this->escaper = new Escaper($pdo);
+        }
+
         if ($this->factory === null) {
             $this->factory = new Factory($pdo, $this);
         }
+    }
+
+    /**
+     * Returns Escaper object.
+     */
+    public function escaper(): Escaper
+    {
+        return $this->escaper;
     }
 
     /**

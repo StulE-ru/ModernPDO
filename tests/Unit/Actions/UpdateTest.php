@@ -3,6 +3,7 @@
 namespace ModernPDO\Tests\Unit\Actions;
 
 use ModernPDO\Actions\Update;
+use ModernPDO\Escaper;
 use ModernPDO\Functions\Scalar\String\Lower;
 use ModernPDO\Functions\Scalar\String\Reverse;
 use ModernPDO\Functions\Scalar\String\Upper;
@@ -16,7 +17,7 @@ class UpdateTest extends TestCase
 {
     public const TABLE = 'unit_tests_update';
 
-    private function make(string $query, array $placeholders, ?InvokedCount $count = null): Update
+    private function make(string $query, array $placeholders, ?InvokedCount $count = null, ?Escaper $escaper = null): Update
     {
         /** @var MockObject&ModernPDO */
         $mpdo = $this->createMock(ModernPDO::class);
@@ -26,6 +27,23 @@ class UpdateTest extends TestCase
             ->method('query')
             ->with($query, $placeholders)
             ->willReturn(new Statement(null));
+
+        if ($escaper === null) {
+            /** @var MockObject&Escaper */
+            $escaper = $this->createMock(Escaper::class);
+
+            $escaper
+                ->method('table')
+                ->willReturnArgument(0);
+
+            $escaper
+                ->method('column')
+                ->willReturnArgument(0);
+        }
+
+        $mpdo
+            ->method('escaper')
+            ->willReturn($escaper);
 
         return new Update($mpdo, self::TABLE);
     }
@@ -108,5 +126,25 @@ class UpdateTest extends TestCase
             ->set([
                 'name' => new Reverse($name),
             ])->where('id', $id)->execute();
+    }
+
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testEscaper(int $id, string $name): void
+    {
+        /** @var MockObject&Escaper */
+        $escaper = $this->createMock(Escaper::class);
+
+        $escaper
+            ->method('table')
+            ->willReturn('[table]');
+
+        $escaper
+            ->method('column')
+            ->willReturn('[column]');
+
+        $this->make('UPDATE [table] SET [column]=? WHERE [column]=?', [$name, $id], escaper: $escaper)
+            ->set(['name' => $name])->where('id', $id)->execute();
     }
 }

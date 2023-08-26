@@ -3,6 +3,7 @@
 namespace ModernPDO\Tests\Unit\Actions;
 
 use ModernPDO\Actions\Delete;
+use ModernPDO\Escaper;
 use ModernPDO\Functions\Scalar\String\Lower;
 use ModernPDO\Functions\Scalar\String\Reverse;
 use ModernPDO\Functions\Scalar\String\Upper;
@@ -16,7 +17,7 @@ class DeleteTest extends TestCase
 {
     public const TABLE = 'unit_tests_delete';
 
-    private function make(string $query, array $placeholders, ?InvokedCount $count = null): Delete
+    private function make(string $query, array $placeholders, ?InvokedCount $count = null, ?Escaper $escaper = null): Delete
     {
         /** @var MockObject&ModernPDO */
         $mpdo = $this->createMock(ModernPDO::class);
@@ -26,6 +27,23 @@ class DeleteTest extends TestCase
             ->method('query')
             ->with($query, $placeholders)
             ->willReturn(new Statement(null));
+
+        if ($escaper === null) {
+            /** @var MockObject&Escaper */
+            $escaper = $this->createMock(Escaper::class);
+
+            $escaper
+                ->method('table')
+                ->willReturnArgument(0);
+
+            $escaper
+                ->method('column')
+                ->willReturnArgument(0);
+        }
+
+        $mpdo
+            ->method('escaper')
+            ->willReturn($escaper);
 
         return new Delete($mpdo, self::TABLE);
     }
@@ -71,6 +89,29 @@ class DeleteTest extends TestCase
             ->where('id', $id)->and('name', new Upper($name))->execute();
 
         $this->make('DELETE FROM ' . self::TABLE . ' WHERE id=? AND name=REVERSE(?)', [$id, $name])
+            ->where('id', $id)->and('name', new Reverse($name))->execute();
+    }
+
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testEscaper(int $id, string $name): void
+    {
+        /** @var MockObject&Escaper */
+        $escaper = $this->createMock(Escaper::class);
+
+        $escaper
+            ->method('table')
+            ->willReturn('[table]');
+
+        $escaper
+            ->method('column')
+            ->willReturn('[column]');
+
+        $this->make('DELETE FROM [table] WHERE [column]=?', [$id], escaper: $escaper)
+            ->where('id', $id)->execute();
+
+        $this->make('DELETE FROM [table] WHERE [column]=? AND [column]=REVERSE(?)', [$id, $name], escaper: $escaper)
             ->where('id', $id)->and('name', new Reverse($name))->execute();
     }
 }

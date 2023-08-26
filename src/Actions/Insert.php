@@ -18,13 +18,15 @@ class Insert extends Action
      */
     protected function buildQuery(): string
     {
-        $query = 'INSERT INTO ' . $this->table;
+        $escaper = $this->mpdo->escaper();
+
+        $query = 'INSERT INTO ' . $escaper->table($this->table);
 
         if (!empty($this->columns)) {
-            $query .= ' (' . $this->columnsQuery() . ')';
+            $query .= ' (' . $this->columnsQuery($escaper) . ')';
         }
 
-        $query .= ' VALUES ' . $this->valuesQuery();
+        $query .= ' VALUES ' . $this->valuesQuery($escaper);
 
         return trim($query);
     }
