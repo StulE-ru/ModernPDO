@@ -9,6 +9,9 @@ namespace ModernPDO;
  */
 class Transaction
 {
+    /**
+     * Transaction constructor.
+     */
     public function __construct(
         private \PDO $pdo,
     ) {
