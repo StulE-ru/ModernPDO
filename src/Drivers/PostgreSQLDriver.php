@@ -2,6 +2,7 @@
 
 namespace ModernPDO\Drivers;
 
+use ModernPDO\Drivers\Escapers\PostgreSQLEscaper;
 use ModernPDO\ModernPDO;
 
 /**
@@ -30,12 +31,12 @@ class PostgreSQLDriver extends ModernPDO
         string $password,
         string $port = self::DEFAULT_PORT,
     ) {
-        parent::__construct(
-            new \PDO(
-                'pgsql:host=' . $host . ';dbname=' . $database . ';port=' . $port,
-                $username,
-                $password,
-            ),
+        $pdo = new \PDO(
+            'pgsql:host=' . $host . ';dbname=' . $database . ';port=' . $port,
+            $username,
+            $password,
         );
+
+        parent::__construct($pdo, new PostgreSQLEscaper($pdo));
     }
 }

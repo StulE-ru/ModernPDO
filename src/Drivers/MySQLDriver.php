@@ -2,6 +2,7 @@
 
 namespace ModernPDO\Drivers;
 
+use ModernPDO\Drivers\Escapers\MySQLEscaper;
 use ModernPDO\ModernPDO;
 
 /**
@@ -44,6 +45,6 @@ class MySQLDriver extends ModernPDO
             $password,
         );
 
-        parent::__construct($pdo);
+        parent::__construct($pdo, new MySQLEscaper($pdo));
     }
 }
