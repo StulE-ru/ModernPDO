@@ -3,6 +3,7 @@
 namespace ModernPDO\Tests\Unit\Actions;
 
 use ModernPDO\Actions\Delete;
+use ModernPDO\Escaper;
 use ModernPDO\Functions\Scalar\String\Lower;
 use ModernPDO\Functions\Scalar\String\Reverse;
 use ModernPDO\Functions\Scalar\String\Upper;
@@ -27,7 +28,18 @@ class DeleteTest extends TestCase
             ->with($query, $placeholders)
             ->willReturn(new Statement(null));
 
-        return new Delete($mpdo, self::TABLE);
+        /** @var MockObject&Escaper */
+        $escaper = $this->createMock(Escaper::class);
+
+        $escaper
+            ->method('table')
+            ->willReturnArgument(0);
+
+        $escaper
+            ->method('column')
+            ->willReturnArgument(0);
+
+        return new Delete($mpdo, $escaper, self::TABLE);
     }
 
     public function dataProvider(): array

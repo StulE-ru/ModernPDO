@@ -3,6 +3,7 @@
 namespace ModernPDO\Tests\Unit\Actions;
 
 use ModernPDO\Actions\Select;
+use ModernPDO\Escaper;
 use ModernPDO\Functions\Aggregate\Count;
 use ModernPDO\Functions\Aggregate\Max;
 use ModernPDO\Functions\Aggregate\Min;
@@ -31,7 +32,18 @@ class SelectTest extends TestCase
             ->with($query, $placeholders)
             ->willReturn(new Statement(null));
 
-        return new Select($mpdo, self::TABLE);
+        /** @var MockObject&Escaper */
+        $escaper = $this->createMock(Escaper::class);
+
+        $escaper
+            ->method('table')
+            ->willReturnArgument(0);
+
+        $escaper
+            ->method('column')
+            ->willReturnArgument(0);
+
+        return new Select($mpdo, $escaper, self::TABLE);
     }
 
     public function dataProvider(): array

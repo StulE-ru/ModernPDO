@@ -2,6 +2,7 @@
 
 namespace ModernPDO\Actions;
 
+use ModernPDO\Escaper;
 use ModernPDO\ModernPDO;
 use ModernPDO\Statement;
 
@@ -15,6 +16,7 @@ abstract class Action
 
     public function __construct(
         protected ModernPDO $mpdo,
+        protected Escaper $escaper,
         protected string $table,
     ) {
     }

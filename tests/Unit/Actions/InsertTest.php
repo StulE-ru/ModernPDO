@@ -3,6 +3,7 @@
 namespace ModernPDO\Tests\Unit\Actions;
 
 use ModernPDO\Actions\Insert;
+use ModernPDO\Escaper;
 use ModernPDO\Functions\Scalar\String\Lower;
 use ModernPDO\Functions\Scalar\String\Reverse;
 use ModernPDO\Functions\Scalar\String\Upper;
@@ -27,7 +28,18 @@ class InsertTest extends TestCase
             ->with($query, $placeholders)
             ->willReturn(new Statement(null));
 
-        return new Insert($mpdo, self::TABLE);
+        /** @var MockObject&Escaper */
+        $escaper = $this->createMock(Escaper::class);
+
+        $escaper
+            ->method('table')
+            ->willReturnArgument(0);
+
+        $escaper
+            ->method('column')
+            ->willReturnArgument(0);
+
+        return new Insert($mpdo, $escaper, self::TABLE);
     }
 
     public function dataProvider(): array

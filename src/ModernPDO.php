@@ -17,8 +17,13 @@ class ModernPDO
      */
     public function __construct(
         private \PDO $pdo,
+        private ?Escaper $escaper = null,
         private ?Factory $factory = null,
     ) {
+        if ($this->escaper === null) {
+            $this->escaper = new Escaper($pdo);
+        }
+
         if ($this->factory === null) {
             $this->factory = new Factory($pdo, $this);
         }
@@ -84,7 +89,7 @@ class ModernPDO
      */
     public function select(string $table): Select
     {
-        return $this->factory->select($table);
+        return $this->factory->select($this->escaper, $table);
     }
 
     /**
@@ -92,7 +97,7 @@ class ModernPDO
      */
     public function insert(string $table): Insert
     {
-        return $this->factory->insert($table);
+        return $this->factory->insert($this->escaper, $table);
     }
 
     /**
@@ -100,7 +105,7 @@ class ModernPDO
      */
     public function update(string $table): Update
     {
-        return $this->factory->update($table);
+        return $this->factory->update($this->escaper, $table);
     }
 
     /**
@@ -108,6 +113,6 @@ class ModernPDO
      */
     public function delete(string $table): Delete
     {
-        return $this->factory->delete($table);
+        return $this->factory->delete($this->escaper, $table);
     }
 }
