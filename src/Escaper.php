@@ -38,4 +38,12 @@ class Escaper
     {
         return $this->string($name);
     }
+
+    /**
+     * Escapes and returns key name.
+     */
+    public function key(string $name): string
+    {
+        return $this->string($name);
+    }
 }
