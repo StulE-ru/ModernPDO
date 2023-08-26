@@ -22,7 +22,7 @@ class Statement
      */
     public function status(): bool
     {
-        return $this->statement === null;
+        return $this->statement !== null;
     }
 
     /**
