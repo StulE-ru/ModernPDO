@@ -18,7 +18,7 @@ class Escaper
     /**
      * Escapes and returns string.
      */
-    protected function string(string $string): string
+    private function string(string $string): string
     {
         return mb_substr($this->pdo->quote($string), 1, -1);
     }
