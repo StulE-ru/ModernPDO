@@ -43,7 +43,11 @@ class SelectTest extends TestCase
             ->method('column')
             ->willReturnArgument(0);
 
-        return new Select($mpdo, $escaper, self::TABLE);
+        $mpdo
+            ->method('escaper')
+            ->willReturn($escaper);
+
+        return new Select($mpdo, self::TABLE);
     }
 
     public function dataProvider(): array

@@ -39,7 +39,11 @@ class UpdateTest extends TestCase
             ->method('column')
             ->willReturnArgument(0);
 
-        return new Update($mpdo, $escaper, self::TABLE);
+        $mpdo
+            ->method('escaper')
+            ->willReturn($escaper);
+
+        return new Update($mpdo, self::TABLE);
     }
 
     public function dataProvider(): array

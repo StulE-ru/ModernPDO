@@ -40,32 +40,32 @@ class Factory
     /**
      * Returns Select object.
      */
-    public function select(Escaper $escaper, string $table): Select
+    public function select(string $table): Select
     {
-        return new Select($this->mpdo, $escaper, $table);
+        return new Select($this->mpdo, $table);
     }
 
     /**
      * Returns Insert object.
      */
-    public function insert(Escaper $escaper, string $table): Insert
+    public function insert(string $table): Insert
     {
-        return new Insert($this->mpdo, $escaper, $table);
+        return new Insert($this->mpdo, $table);
     }
 
     /**
      * Returns Update object.
      */
-    public function update(Escaper $escaper, string $table): Update
+    public function update(string $table): Update
     {
-        return new Update($this->mpdo, $escaper, $table);
+        return new Update($this->mpdo, $table);
     }
 
     /**
      * Returns Delete object.
      */
-    public function delete(Escaper $escaper, string $table): Delete
+    public function delete(string $table): Delete
     {
-        return new Delete($this->mpdo, $escaper, $table);
+        return new Delete($this->mpdo, $table);
     }
 }

@@ -39,7 +39,11 @@ class InsertTest extends TestCase
             ->method('column')
             ->willReturnArgument(0);
 
-        return new Insert($mpdo, $escaper, self::TABLE);
+        $mpdo
+            ->method('escaper')
+            ->willReturn($escaper);
+
+        return new Insert($mpdo, self::TABLE);
     }
 
     public function dataProvider(): array

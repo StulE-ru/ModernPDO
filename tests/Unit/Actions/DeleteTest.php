@@ -39,7 +39,11 @@ class DeleteTest extends TestCase
             ->method('column')
             ->willReturnArgument(0);
 
-        return new Delete($mpdo, $escaper, self::TABLE);
+        $mpdo
+            ->method('escaper')
+            ->willReturn($escaper);
+
+        return new Delete($mpdo, self::TABLE);
     }
 
     public function dataProvider(): array
