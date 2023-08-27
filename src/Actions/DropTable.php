@@ -40,7 +40,7 @@ class DropTable extends Action
     }
 
     /**
-     * Inserts row into table.
+     * Deletes table.
      */
     public function execute(): bool
     {

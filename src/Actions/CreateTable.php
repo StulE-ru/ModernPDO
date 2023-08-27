@@ -88,7 +88,7 @@ class CreateTable extends Action
     }
 
     /**
-     * Inserts row into table.
+     * Creates table.
      */
     public function execute(): bool
     {
