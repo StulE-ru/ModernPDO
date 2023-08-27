@@ -7,9 +7,13 @@ use ModernPDO\Fields\IntField;
 use ModernPDO\Fields\RealField;
 use ModernPDO\Fields\TextField;
 use ModernPDO\Fields\VarcharField;
+use ModernPDO\Keys\ForeignKey;
+use ModernPDO\Keys\PrimaryKey;
+use ModernPDO\Keys\UniqueKey;
 use ModernPDO\Tests\Integration\IntegrationTestCase;
 
 use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 
 class CreateTableTest extends IntegrationTestCase
@@ -68,5 +72,82 @@ class CreateTableTest extends IntegrationTestCase
             'amount' => 10.5,
             'is_active' => false,
         ], $this->mpdo->select('test')->where('id', 2)->one());
+    }
+
+    public function testKeys(): void
+    {
+        $foreignTable = 'foreign_test';
+        $table = 'test';
+
+        $this->mpdo->exec('DROP TABLE IF EXISTS ' . $foreignTable);
+        $this->mpdo->exec('DROP TABLE IF EXISTS ' . $table);
+
+        assertTrue(
+            $this->mpdo->createTable($foreignTable)
+                ->checkIfExists()
+                ->fields([
+                    new IntField('id'),
+                ])->keys([
+                    new PrimaryKey('id'),
+                ])->execute()
+        );
+
+        assertTrue(
+            $this->mpdo->insert($foreignTable)
+                ->values([[1]])->execute()
+        );
+
+        assertTrue(
+            $this->mpdo->createTable($table)
+                ->checkIfExists()
+                ->fields([
+                    new IntField('primary'),
+                    new IntField('unique_1'),
+                    new IntField('unique_2'),
+                    new IntField('foreign'),
+                ])->keys([
+                    new PrimaryKey('primary'),
+                    new UniqueKey('unique_1'),
+                    new UniqueKey('unique_2'),
+                    new ForeignKey('foreign', $foreignTable, 'id'),
+                ])->execute()
+        );
+
+        // Try insert values
+
+        assertTrue(
+            $this->mpdo->insert($table)
+                ->values([
+                    [1, 1, 1, 1],
+                ])->execute()
+        );
+
+        assertFalse(
+            $this->mpdo->insert($table)
+                ->values([
+                    [1, 2, 2, 1],
+                ])->execute()
+        );
+
+        assertFalse(
+            $this->mpdo->insert($table)
+                ->values([
+                    [2, 1, 2, 1],
+                ])->execute()
+        );
+
+        assertFalse(
+            $this->mpdo->insert($table)
+                ->values([
+                    [2, 2, 1, 1],
+                ])->execute()
+        );
+
+        assertTrue(
+            $this->mpdo->insert($table)
+                ->values([
+                    [2, 2, 2, 1],
+                ])->execute()
+        );
     }
 }

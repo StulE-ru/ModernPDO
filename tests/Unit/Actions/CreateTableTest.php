@@ -9,6 +9,9 @@ use ModernPDO\Fields\IntField;
 use ModernPDO\Fields\RealField;
 use ModernPDO\Fields\TextField;
 use ModernPDO\Fields\VarcharField;
+use ModernPDO\Keys\ForeignKey;
+use ModernPDO\Keys\PrimaryKey;
+use ModernPDO\Keys\UniqueKey;
 use ModernPDO\ModernPDO;
 use ModernPDO\Statement;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -163,6 +166,59 @@ class CreateTableTest extends TestCase
             ->fields([
                 new VarcharField('varchar1', 16),
                 new VarcharField('varchar2', 32),
+            ])->execute();
+    }
+
+    public function testKeys(): void
+    {
+        // Primary
+
+        $this->make('CREATE TABLE ' . self::TABLE . ' (id INT NOT NULL, PRIMARY KEY (id))', [])
+            ->fields([
+                new IntField('id'),
+            ])->keys([
+                new PrimaryKey('id'),
+            ])->execute();
+
+        $this->make('CREATE TABLE ' . self::TABLE . ' (id INT NOT NULL, CONSTRAINT key PRIMARY KEY (id))', [])
+            ->fields([
+                new IntField('id'),
+            ])->keys([
+                new PrimaryKey('id', 'key'),
+            ])->execute();
+
+        // Unique
+
+        $this->make('CREATE TABLE ' . self::TABLE . ' (id INT NOT NULL, UNIQUE (id))', [])
+            ->fields([
+                new IntField('id'),
+            ])->keys([
+                new UniqueKey('id'),
+            ])->execute();
+
+        $this->make('CREATE TABLE ' . self::TABLE . ' (id INT NOT NULL, CONSTRAINT key UNIQUE (id))', [])
+            ->fields([
+                new IntField('id'),
+            ])->keys([
+                new UniqueKey('id', 'key'),
+            ])->execute();
+
+        // Foreign
+
+        $this->make('CREATE TABLE ' . self::TABLE . ' (id INT NOT NULL, foreign_id INT NOT NULL, FOREIGN KEY (foreign_id) REFERENCES foreign_table(id))', [])
+            ->fields([
+                new IntField('id'),
+                new IntField('foreign_id'),
+            ])->keys([
+                new ForeignKey('foreign_id', 'foreign_table', 'id'),
+            ])->execute();
+
+        $this->make('CREATE TABLE ' . self::TABLE . ' (id INT NOT NULL, foreign_id INT NOT NULL, CONSTRAINT key FOREIGN KEY (foreign_id) REFERENCES foreign_table(id))', [])
+            ->fields([
+                new IntField('id'),
+                new IntField('foreign_id'),
+            ])->keys([
+                new ForeignKey('foreign_id', 'foreign_table', 'id', 'key'),
             ])->execute();
     }
 }
