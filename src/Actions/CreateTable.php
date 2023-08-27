@@ -14,12 +14,12 @@ class CreateTable extends Action
     use CheckIfExistsTrait;
 
     /**
-     * @var Field[] $fields table fields
+     * @var Field[] table fields
      */
     protected array $fields = [];
 
     /**
-     * @var Key[] $keys table keys
+     * @var Key[] table keys
      */
     protected array $keys = [];
 
