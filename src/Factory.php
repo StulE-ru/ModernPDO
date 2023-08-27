@@ -19,8 +19,8 @@ class Factory
      * Factory constructor.
      */
     public function __construct(
-        private \PDO $pdo,
-        private ModernPDO $mpdo,
+        protected \PDO $pdo,
+        protected ModernPDO $mpdo,
     ) {
     }
 
