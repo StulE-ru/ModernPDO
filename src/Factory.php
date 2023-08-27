@@ -2,7 +2,10 @@
 
 namespace ModernPDO;
 
+use ModernPDO\Actions\AlterTable;
+use ModernPDO\Actions\CreateTable;
 use ModernPDO\Actions\Delete;
+use ModernPDO\Actions\DropTable;
 use ModernPDO\Actions\Insert;
 use ModernPDO\Actions\Select;
 use ModernPDO\Actions\Update;
@@ -16,8 +19,8 @@ class Factory
      * Factory constructor.
      */
     public function __construct(
-        private \PDO $pdo,
-        private ModernPDO $mpdo,
+        protected \PDO $pdo,
+        protected ModernPDO $mpdo,
     ) {
     }
 
@@ -35,6 +38,30 @@ class Factory
     public function statement(?\PDOStatement $statement): Statement
     {
         return new Statement($statement);
+    }
+
+    /**
+     * Returns CreateTable object.
+     */
+    public function createTable(string $table): CreateTable
+    {
+        return new CreateTable($this->mpdo, $table);
+    }
+
+    /**
+     * Returns AlterTable object.
+     */
+    public function alterTable(string $table): AlterTable
+    {
+        return new AlterTable($this->mpdo, $table);
+    }
+
+    /**
+     * Returns DropTable object.
+     */
+    public function dropTable(string $table): DropTable
+    {
+        return new DropTable($this->mpdo, $table);
     }
 
     /**

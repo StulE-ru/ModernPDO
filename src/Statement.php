@@ -9,9 +9,20 @@ namespace ModernPDO;
  */
 class Statement
 {
+    /**
+     * Statement constructor.
+     */
     public function __construct(
         private ?\PDOStatement $statement,
     ) {
+    }
+
+    /**
+     * Returns statement status.
+     */
+    public function status(): bool
+    {
+        return $this->statement !== null;
     }
 
     /**

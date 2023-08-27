@@ -38,4 +38,28 @@ class Escaper
     {
         return $this->string($name);
     }
+
+    /**
+     * Escapes and returns key name.
+     */
+    public function key(string $name): string
+    {
+        return $this->string($name);
+    }
+
+    /**
+     * Escapes and returns string field value.
+     */
+    public function stringValue(string $value): string
+    {
+        return $this->string($value);
+    }
+
+    /**
+     * Escapes and returns bool field value.
+     */
+    public function boolValue(bool $value): string
+    {
+        return $value === true ? '1' : '0';
+    }
 }

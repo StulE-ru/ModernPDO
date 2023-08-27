@@ -3,6 +3,7 @@
 namespace ModernPDO\Drivers;
 
 use ModernPDO\Drivers\Escapers\SQLite3Escaper;
+use ModernPDO\Drivers\Factories\SQLite3Factory;
 use ModernPDO\ModernPDO;
 
 /**
@@ -26,6 +27,6 @@ class SQLite3Driver extends ModernPDO
     ) {
         $pdo = new \PDO('sqlite:' . $mode);
 
-        parent::__construct($pdo, new SQLite3Escaper($pdo));
+        parent::__construct($pdo, new SQLite3Escaper($pdo), new SQLite3Factory($pdo, $this));
     }
 }
