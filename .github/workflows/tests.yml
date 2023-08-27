@@ -5,6 +5,7 @@ on:
     branches:
       - 'release'
       - 'hotfix'
+      - 'feature/workflow-tests'
 
 permissions:
   contents: read
@@ -16,7 +17,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.1]
+        php: [8.1, 8.2]
 
     name: PHP-PHPStan
 
@@ -56,7 +57,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.1]
+        php: [8.1, 8.2]
         database: ["mariadb:10.5.19"]
     services:
       mariadb:
@@ -104,15 +105,15 @@ jobs:
       run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
 
     - name: Integration tests
-      run: composer i-tests    
-      
+      run: composer i-tests
+
   mysql:
     name: Integration Tests
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
-        php: [8.1]
+        php: [8.1, 8.2]
         database: ["mysql:8.1.0"]
     services:
       mysql:
@@ -160,7 +161,7 @@ jobs:
       run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
 
     - name: Integration tests
-      run: composer i-tests 
+      run: composer i-tests
 
   postgres:
     name: Integration Tests
@@ -168,7 +169,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.1]
+        php: [8.1, 8.2]
         database: ["postgres:15.4"]
     services:
       postgres:
@@ -223,7 +224,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.1]
+        php: [8.1, 8.2]
         database: ["postgres:15.4"]
     services:
       postgres:
@@ -278,7 +279,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.1]
+        php: [8.1, 8.2]
     env:
       DB_TYPE: SQLite3
       DB_MODE: memory
@@ -320,7 +321,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.1]
+        php: [8.1, 8.2]
 
     name: Unit Tests
 
@@ -367,7 +368,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.1]
+        php: [8.1, 8.2]
 
     name: PHP-PSalm ${{ matrix.php }}
 
