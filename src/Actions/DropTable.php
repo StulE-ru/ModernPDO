@@ -16,7 +16,17 @@ class DropTable extends Action
      */
     protected function buildQuery(): string
     {
-        return '';
+        $escaper = $this->mpdo->escaper();
+
+        $query = 'DROP TABLE';
+
+        if ($this->checkIfExists) {
+            $query .= ' IF EXISTS';
+        }
+
+        $query .= ' ' . $escaper->table($this->table);
+
+        return $query;
     }
 
     /**
