@@ -37,13 +37,13 @@ class CRUDTest extends IntegrationTestCase
         ])->execute());
 
         assertTrue($this->mpdo->insert(self::TABLE)->columns(['id', 'name'])->values([[100, 'test100']])->values([[10, 'test10']])->execute());
-        assertEquals('test10', $this->mpdo->select(self::TABLE)->where('id', 10)->one()['name']);
+        assertEquals('test10', $this->mpdo->select(self::TABLE)->where('id', 10)->row()['name']);
 
         assertTrue($this->mpdo->insert(self::TABLE)->columns(['id', 'name'])->values([[]])->values([[11, 'test11']])->execute());
-        assertEquals('test11', $this->mpdo->select(self::TABLE)->where('id', 11)->one()['name']);
+        assertEquals('test11', $this->mpdo->select(self::TABLE)->where('id', 11)->row()['name']);
 
         assertTrue($this->mpdo->insert(self::TABLE)->values([[]])->values([[12, 'test12']])->execute());
-        assertEquals('test12', $this->mpdo->select(self::TABLE)->where('id', 12)->one()['name']);
+        assertEquals('test12', $this->mpdo->select(self::TABLE)->where('id', 12)->row()['name']);
     }
 
     public function testDetailedInsert(): void
@@ -59,7 +59,7 @@ class CRUDTest extends IntegrationTestCase
             ['name' => 'name'],
             ['name' => 'NAME'],
             ['name' => 'emaN'],
-        ], $this->mpdo->select(self::TABLE)->columns(['name'])->all());
+        ], $this->mpdo->select(self::TABLE)->columns(['name'])->rows());
     }
 
     public function testSelect(): void
@@ -67,48 +67,48 @@ class CRUDTest extends IntegrationTestCase
         $this->testInsert();
 
         // test basic
-        assertEquals('test1', $this->mpdo->select(self::TABLE)->where('id', 1)->one()['name']);
-        assertEmpty($this->mpdo->select(self::TABLE)->where('name', 'unknown')->one());
-        assertEquals('test1', $this->mpdo->select(self::TABLE)->where('id', 1)->and('name', 'test1')->one()['name']);
-        assertEmpty($this->mpdo->select(self::TABLE)->where('id', 1)->and('name', 'unknown')->one());
-        assertEquals('test1', $this->mpdo->select(self::TABLE)->where('id', 1)->or('name', 'unknown')->one()['name']);
-        assertEmpty($this->mpdo->select(self::TABLE)->where('id', 1000)->or('name', 'unknown')->one());
+        assertEquals('test1', $this->mpdo->select(self::TABLE)->where('id', 1)->row()['name']);
+        assertEmpty($this->mpdo->select(self::TABLE)->where('name', 'unknown')->row());
+        assertEquals('test1', $this->mpdo->select(self::TABLE)->where('id', 1)->and('name', 'test1')->row()['name']);
+        assertEmpty($this->mpdo->select(self::TABLE)->where('id', 1)->and('name', 'unknown')->row());
+        assertEquals('test1', $this->mpdo->select(self::TABLE)->where('id', 1)->or('name', 'unknown')->row()['name']);
+        assertEmpty($this->mpdo->select(self::TABLE)->where('id', 1000)->or('name', 'unknown')->row());
 
         // test 'and' or 'or' first
-        assertEquals('test1', $this->mpdo->select(self::TABLE)->and('id', 1)->one()['name']);
-        assertEquals('test1', $this->mpdo->select(self::TABLE)->or('id', 1)->one()['name']);
+        assertEquals('test1', $this->mpdo->select(self::TABLE)->and('id', 1)->row()['name']);
+        assertEquals('test1', $this->mpdo->select(self::TABLE)->or('id', 1)->row()['name']);
 
         // test broken where name
-        assertEquals('test2', $this->mpdo->select(self::TABLE)->where('', 1)->and('id', 2)->one()['name']);
-        assertEquals('test2', $this->mpdo->select(self::TABLE)->and('', 1)->and('id', 2)->one()['name']);
-        assertEquals('test2', $this->mpdo->select(self::TABLE)->or('', 1)->and('id', 2)->one()['name']);
+        assertEquals('test2', $this->mpdo->select(self::TABLE)->where('', 1)->and('id', 2)->row()['name']);
+        assertEquals('test2', $this->mpdo->select(self::TABLE)->and('', 1)->and('id', 2)->row()['name']);
+        assertEquals('test2', $this->mpdo->select(self::TABLE)->or('', 1)->and('id', 2)->row()['name']);
 
         // test all
-        assertGreaterThan(0, \count($this->mpdo->select(self::TABLE)->all()));
+        assertGreaterThan(0, \count($this->mpdo->select(self::TABLE)->rows()));
 
         // test (first/last)By
-        assertEquals('test1', $this->mpdo->select(self::TABLE)->where('id', 1)->or('id', 2)->firstBy('id')['name']);
-        assertEquals('test2', $this->mpdo->select(self::TABLE)->where('id', 1)->or('id', 2)->lastBy('id')['name']);
+        assertEquals('test1', $this->mpdo->select(self::TABLE)->where('id', 1)->or('id', 2)->orderBy('id')->row()['name']);
+        assertEquals('test2', $this->mpdo->select(self::TABLE)->where('id', 1)->or('id', 2)->orderBy('id', false)->row()['name']);
 
         // test columns
-        assertEquals('test1', $this->mpdo->select(self::TABLE)->columns(['name'])->where('id', 1)->one()['name']);
-        assertArrayNotHasKey('id', $this->mpdo->select(self::TABLE)->columns(['name'])->where('id', 1)->one());
-        assertArrayHasKey('id', $this->mpdo->select(self::TABLE)->columns(['id', 'name'])->where('id', 1)->one());
-        assertArrayHasKey('id', $this->mpdo->select(self::TABLE)->columns([])->where('id', 1)->one());
+        assertEquals('test1', $this->mpdo->select(self::TABLE)->columns(['name'])->where('id', 1)->row()['name']);
+        assertArrayNotHasKey('id', $this->mpdo->select(self::TABLE)->columns(['name'])->where('id', 1)->row());
+        assertArrayHasKey('id', $this->mpdo->select(self::TABLE)->columns(['id', 'name'])->where('id', 1)->row());
+        assertArrayHasKey('id', $this->mpdo->select(self::TABLE)->columns([])->where('id', 1)->row());
 
         // test aggregate functions with AS operator
-        assertEquals(['count' => 2], $this->mpdo->select(self::TABLE)->columns(['count' => new Count()])->where('id', 1)->or('id', 2)->one());
-        assertEquals(['sum' => 3], $this->mpdo->select(self::TABLE)->columns(['sum' => new Sum('id')])->where('id', 1)->or('id', 2)->one());
+        assertEquals(['count' => 2], $this->mpdo->select(self::TABLE)->columns(['count' => new Count()])->where('id', 1)->or('id', 2)->row());
+        assertEquals(['sum' => 3], $this->mpdo->select(self::TABLE)->columns(['sum' => new Sum('id')])->where('id', 1)->or('id', 2)->row());
         assertEquals(['min' => 1, 'max' => '2'], $this->mpdo->select(self::TABLE)->columns([
             'min' => new Min('id'),
             'max' => new Max('id'),
-        ])->where('id', 1)->or('id', 2)->one());
+        ])->where('id', 1)->or('id', 2)->row());
 
         // test scalar functions with AS operator
-        assertEquals(['lower' => 'test1'], $this->mpdo->select(self::TABLE)->columns(['lower' => new Lower('name')])->where('id', 1)->one());
-        assertEquals(['upper' => 'TEST1'], $this->mpdo->select(self::TABLE)->columns(['upper' => new Upper('name')])->where('id', 1)->one());
-        assertEquals(['rev' => '1tset'], $this->mpdo->select(self::TABLE)->columns(['rev' => new Reverse('name')])->where('id', 1)->one());
-        assertEquals(['len' => 5], $this->mpdo->select(self::TABLE)->columns(['len' => new Lenght('name')])->where('id', 1)->one());
+        assertEquals(['lower' => 'test1'], $this->mpdo->select(self::TABLE)->columns(['lower' => new Lower('name')])->where('id', 1)->row());
+        assertEquals(['upper' => 'TEST1'], $this->mpdo->select(self::TABLE)->columns(['upper' => new Upper('name')])->where('id', 1)->row());
+        assertEquals(['rev' => '1tset'], $this->mpdo->select(self::TABLE)->columns(['rev' => new Reverse('name')])->where('id', 1)->row());
+        assertEquals(['len' => 5], $this->mpdo->select(self::TABLE)->columns(['len' => new Lenght('name')])->where('id', 1)->row());
 
         // test get cell
         assertEquals(9, $this->mpdo->select(self::TABLE)->columns([new Count()])->cell());
@@ -129,23 +129,23 @@ class CRUDTest extends IntegrationTestCase
         assertTrue($this->mpdo->update(self::TABLE)->set(['id' => 104, 'name' => 'test104'])->where('id', 4)->execute());
 
         // check updates
-        assertEquals('test', $this->mpdo->select(self::TABLE)->where('id', 101)->one()['name']);
-        assertEquals('test', $this->mpdo->select(self::TABLE)->where('id', 102)->one()['name']);
-        assertEquals('test', $this->mpdo->select(self::TABLE)->where('id', 103)->one()['name']);
-        assertEquals('test104', $this->mpdo->select(self::TABLE)->where('id', 104)->one()['name']);
+        assertEquals('test', $this->mpdo->select(self::TABLE)->where('id', 101)->row()['name']);
+        assertEquals('test', $this->mpdo->select(self::TABLE)->where('id', 102)->row()['name']);
+        assertEquals('test', $this->mpdo->select(self::TABLE)->where('id', 103)->row()['name']);
+        assertEquals('test104', $this->mpdo->select(self::TABLE)->where('id', 104)->row()['name']);
 
         // test scalar functions
         assertTrue($this->mpdo->update(self::TABLE)->set(['name' => new Upper('Name')])->where('id', 101)->execute());
-        assertEquals('NAME', $this->mpdo->select(self::TABLE)->where('id', 101)->one()['name']);
+        assertEquals('NAME', $this->mpdo->select(self::TABLE)->where('id', 101)->row()['name']);
 
         assertTrue($this->mpdo->update(self::TABLE)->set(['name' => new Lower('Name')])->where('id', 101)->execute());
-        assertEquals('name', $this->mpdo->select(self::TABLE)->where('id', 101)->one()['name']);
+        assertEquals('name', $this->mpdo->select(self::TABLE)->where('id', 101)->row()['name']);
 
         assertTrue($this->mpdo->update(self::TABLE)->set(['name' => new Reverse('Name')])->where('id', 101)->execute());
-        assertEquals('emaN', $this->mpdo->select(self::TABLE)->where('id', 101)->one()['name']);
+        assertEquals('emaN', $this->mpdo->select(self::TABLE)->where('id', 101)->row()['name']);
 
         assertTrue($this->mpdo->update(self::TABLE)->set(['name' => new Lenght('Name')])->where('id', 101)->execute());
-        assertEquals(4, $this->mpdo->select(self::TABLE)->where('id', 101)->one()['name']);
+        assertEquals(4, $this->mpdo->select(self::TABLE)->where('id', 101)->row()['name']);
 
         // test broken set
         assertFalse($this->mpdo->update(self::TABLE)->execute());
@@ -160,8 +160,8 @@ class CRUDTest extends IntegrationTestCase
         assertTrue($this->mpdo->delete(self::TABLE)->where('id', 2)->or('name', 'test')->execute());
         assertTrue($this->mpdo->delete(self::TABLE)->where('id', 3)->and('name', 'test3')->execute());
 
-        assertTrue($this->mpdo->select(self::TABLE)->where('id', 1)->one() === []);
-        assertTrue($this->mpdo->select(self::TABLE)->where('id', 2)->one() === []);
-        assertTrue($this->mpdo->select(self::TABLE)->where('id', 3)->one() === []);
+        assertTrue($this->mpdo->select(self::TABLE)->where('id', 1)->row() === []);
+        assertTrue($this->mpdo->select(self::TABLE)->where('id', 2)->row() === []);
+        assertTrue($this->mpdo->select(self::TABLE)->where('id', 3)->row() === []);
     }
 }

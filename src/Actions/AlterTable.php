@@ -10,22 +10,22 @@ use ModernPDO\Fields\Field;
 class AlterTable extends Action
 {
     /**
-     * @var string $newName new table name
+     * @var string new table name
      */
     protected string $newName = '';
 
     /**
-     * @var Field[] $addFields array of new fields
+     * @var Field[] array of new fields
      */
     protected array $addFields = [];
 
     /**
-     * @var array<string, string> $renameFields array of rename fields
+     * @var array<string, string> array of rename fields
      */
     protected array $renameFields = [];
 
     /**
-     * @var string[] $dropFields array of drop names
+     * @var string[] array of drop names
      */
     protected array $dropFields = [];
 

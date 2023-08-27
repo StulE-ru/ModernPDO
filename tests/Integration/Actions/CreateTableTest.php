@@ -54,7 +54,7 @@ class CreateTableTest extends IntegrationTestCase
             'email' => null,
             'amount' => 0.0,
             'is_active' => true,
-        ], $this->mpdo->select('test')->where('id', 1)->one());
+        ], $this->mpdo->select('test')->where('id', 1)->row());
 
         // Custom values
 
@@ -71,7 +71,7 @@ class CreateTableTest extends IntegrationTestCase
             'email' => 'fake@email.lol',
             'amount' => 10.5,
             'is_active' => false,
-        ], $this->mpdo->select('test')->where('id', 2)->one());
+        ], $this->mpdo->select('test')->where('id', 2)->row());
     }
 
     public function testKeys(): void

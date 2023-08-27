@@ -25,7 +25,7 @@ class TransactionTest extends IntegrationTestCase
         assertTrue($tr->commit());
         assertFalse($tr->commit());
 
-        assertEquals('test1', $this->mpdo->select(self::TABLE)->where('id', 1)->one()['name']);
+        assertEquals('test1', $this->mpdo->select(self::TABLE)->where('id', 1)->row()['name']);
     }
 
     public function testRollback(): void
@@ -42,6 +42,6 @@ class TransactionTest extends IntegrationTestCase
         assertTrue($tr->rollBack());
         assertFalse($tr->rollBack());
 
-        assertEmpty($this->mpdo->select(self::TABLE)->where('id', 1)->one());
+        assertEmpty($this->mpdo->select(self::TABLE)->where('id', 1)->row());
     }
 }
