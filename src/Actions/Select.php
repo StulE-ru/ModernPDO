@@ -3,6 +3,7 @@
 namespace ModernPDO\Actions;
 
 use ModernPDO\Traits\ColumnsTrait;
+use ModernPDO\Traits\JoinsTrait;
 use ModernPDO\Traits\LimitTrait;
 use ModernPDO\Traits\OrderByTrait;
 use ModernPDO\Traits\WhereTrait;
@@ -13,6 +14,7 @@ use ModernPDO\Traits\WhereTrait;
 class Select extends Action
 {
     use ColumnsTrait;
+    use JoinsTrait;
     use WhereTrait;
     use OrderByTrait;
     use LimitTrait;
@@ -25,6 +27,10 @@ class Select extends Action
         $escaper = $this->mpdo->escaper();
 
         $query = 'SELECT ' . $this->columnsQuery($escaper) . ' FROM ' . $escaper->table($this->table);
+
+        if ($this->joinsTable !== '') {
+            $query .= ' ' . $this->joinsQuery($escaper);
+        }
 
         if (!empty($this->where)) {
             $query .= ' ' . $this->whereQuery($escaper);
@@ -50,8 +56,9 @@ class Select extends Action
     {
         return array_merge(
             $this->columnsPlaceholders(),
-            $this->orderByPlaceholders(),
+            $this->joinsPlaceholders(),
             $this->wherePlaceholders(),
+            $this->orderByPlaceholders(),
         );
     }
 
