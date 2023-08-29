@@ -15,7 +15,7 @@ use ModernPDO\Functions\Scalar\ScalarFunction;
 trait OnTrait
 {
     /**
-     * @var array<int, array{type: string, name: string, sign: string, value: mixed}> on conditions
+     * @var list<array{type: string, name: string, sign: string, value: scalar|null|ScalarFunction|Condition}> on conditions
      */
     protected array $on = [];
 
@@ -41,7 +41,7 @@ trait OnTrait
                 $value = '?';
             }*/
 
-            $query .= $type . ' ' . $escaper->column($name) . $sign . $value . ' ';
+            $query .= $type . ' ' . $escaper->column($name) . $sign . $escaper->column(strval($value)) . ' ';
         }
 
         return trim($query);
@@ -73,8 +73,13 @@ trait OnTrait
 
     /**
      * Adds condition to list.
+     *
+     * @param string $type
+     * @param string $name
+     * @param string $sign
+     * @param scalar|null|ScalarFunction|Condition $value
      */
-    protected function addOnCondition(string $type, string $name, string $sign, mixed $value): void
+    protected function addOnCondition(string $type, string $name, string $sign, string|int|float|bool|null|ScalarFunction|Condition $value): void
     {
         $this->on[] = [
             'type' => $type,
@@ -87,6 +92,10 @@ trait OnTrait
     /**
      * Set first condition.
      *
+     * @param string $name
+     * @param scalar|null|ScalarFunction|Condition $value
+     * @param string $sign
+     *
      * !!! ATTENTION !!!
      * Method think that $value is name of table like 'join_table.id'
      * and do not prepare it. So be careful with sql-injections.
@@ -96,7 +105,7 @@ trait OnTrait
      *
      * @return $this
      */
-    public function on(string $name, mixed $value, string $sign = '='): object
+    public function on(string $name, string|int|float|bool|null|ScalarFunction|Condition $value, string $sign = '='): object
     {
         if (empty($name)) {
             return $this;
@@ -110,6 +119,10 @@ trait OnTrait
     /**
      * Adds 'and' condition.
      *
+     * @param string $name
+     * @param scalar|null|ScalarFunction|Condition $value
+     * @param string $sign
+     *
      * !!! ATTENTION !!!
      * Method think that $value is name of table like 'join_table.id'
      * and do not prepare it. So be careful with sql-injections.
@@ -119,7 +132,7 @@ trait OnTrait
      *
      * @return $this
      */
-    public function onAnd(string $name, mixed $value, string $sign = '='): object
+    public function onAnd(string $name, string|int|float|bool|null|ScalarFunction|Condition $value, string $sign = '='): object
     {
         if (empty($name)) {
             return $this;
@@ -146,7 +159,7 @@ trait OnTrait
      *
      * @return $this
      */
-    public function onOr(string $name, mixed $value, string $sign = '='): object
+    public function onOr(string $name, string|int|float|bool|null|ScalarFunction|Condition $value, string $sign = '='): object
     {
         if (empty($name)) {
             return $this;
