@@ -16,20 +16,31 @@ use ModernPDO\Actions\Update;
 class ModernPDO
 {
     /**
+     * @var \PDO pdo object
+     */
+    private \PDO $pdo;
+
+    /**
+     * @var Escaper escaper object
+     */
+    private Escaper $escaper;
+
+    /**
+     * @var Factory factory object
+     */
+    private Factory $factory;
+
+    /**
      * ModernPDO constructor.
      */
     public function __construct(
-        private \PDO $pdo,
-        private ?Escaper $escaper = null,
-        private ?Factory $factory = null,
+        \PDO $pdo,
+        Escaper $escaper = null,
+        Factory $factory = null,
     ) {
-        if ($this->escaper === null) {
-            $this->escaper = new Escaper($pdo);
-        }
-
-        if ($this->factory === null) {
-            $this->factory = new Factory($pdo, $this);
-        }
+        $this->pdo = $pdo;
+        $this->escaper = $escaper ?? new Escaper($pdo);
+        $this->factory = $factory ?? new Factory($pdo, $this);
     }
 
     /**

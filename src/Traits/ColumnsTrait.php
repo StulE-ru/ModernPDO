@@ -11,7 +11,7 @@ use ModernPDO\Functions\BaseFunction;
 trait ColumnsTrait
 {
     /**
-     * @var string|BaseFunction[] column names
+     * @var (string|BaseFunction)[] column names
      */
     protected array $columns = [];
 
@@ -56,7 +56,7 @@ trait ColumnsTrait
     /**
      * Set columns.
      *
-     * @param string|BaseFunction[] $columns array of column names
+     * @param (string|BaseFunction)[] $columns array of column names
      *
      * @return $this
      */
