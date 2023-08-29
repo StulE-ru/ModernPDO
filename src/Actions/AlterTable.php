@@ -84,7 +84,7 @@ class AlterTable extends Action
     /**
      * Renames table.
      */
-    public function rename(string $newName): AlterTable
+    public function rename(string $newName): self
     {
         $this->newName = $newName;
 
@@ -96,7 +96,7 @@ class AlterTable extends Action
      *
      * @param Field[] $fields array of fields
      */
-    public function addColumns(array $fields): AlterTable
+    public function addColumns(array $fields): self
     {
         $this->addFields = $fields;
 
@@ -108,7 +108,7 @@ class AlterTable extends Action
      *
      * @param string[] $names array of names
      */
-    public function renameColumns(array $names): AlterTable
+    public function renameColumns(array $names): self
     {
         $this->renameFields = $names;
 
@@ -120,7 +120,7 @@ class AlterTable extends Action
      *
      * @param string[] $names array of names
      */
-    public function dropColumns(array $names): AlterTable
+    public function dropColumns(array $names): self
     {
         $this->dropFields = $names;
 
@@ -133,10 +133,10 @@ class AlterTable extends Action
     public function execute(): bool
     {
         if (
-            $this->newName === '' &&
-            empty($this->addFields) &&
-            empty($this->renameFields) &&
-            empty ($this->dropFields)
+            $this->newName === ''
+            && empty($this->addFields)
+            && empty($this->renameFields)
+            && empty($this->dropFields)
         ) {
             return false;
         }

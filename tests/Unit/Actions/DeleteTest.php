@@ -17,7 +17,7 @@ class DeleteTest extends TestCase
 {
     public const TABLE = 'unit_tests_delete';
 
-    private function make(string $query, array $placeholders, ?InvokedCount $count = null, ?Escaper $escaper = null): Delete
+    private function make(string $query, array $placeholders, InvokedCount $count = null, Escaper $escaper = null): Delete
     {
         /** @var MockObject&ModernPDO */
         $mpdo = $this->createMock(ModernPDO::class);

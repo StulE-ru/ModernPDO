@@ -12,9 +12,9 @@ class BoolField extends Field
     /**
      * BoolField constructor.
      *
-     * @param string $name field name
-     * @param bool $canBeNull field value can be null
-     * @param bool|null|int $default default field value
+     * @param string        $name      field name
+     * @param bool          $canBeNull field value can be null
+     * @param bool|int|null $default   default field value
      *
      * If $canBeNull is false $default must be bool, 0, 1 or -1.
      * If $default is 0 or 1, it will be converted to bool.
@@ -54,7 +54,7 @@ class BoolField extends Field
             default => $this->default,
         };
 
-        if (!is_int($this->default)) {
+        if (!\is_int($this->default)) {
             $query .= ' DEFAULT ';
 
             if ($this->default === null) {

@@ -68,7 +68,7 @@ class CreateTable extends Action
      *
      * @param Field[] $fields table fields
      */
-    public function fields(array $fields): CreateTable
+    public function fields(array $fields): self
     {
         $this->fields = $fields;
 
@@ -80,7 +80,7 @@ class CreateTable extends Action
      *
      * @param Key[] $keys table keys
      */
-    public function keys(array $keys): CreateTable
+    public function keys(array $keys): self
     {
         $this->keys = $keys;
 

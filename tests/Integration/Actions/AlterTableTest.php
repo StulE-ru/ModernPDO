@@ -7,7 +7,6 @@ use ModernPDO\Fields\TextField;
 use ModernPDO\Fields\VarcharField;
 use ModernPDO\Tests\Integration\IntegrationTestCase;
 
-use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 

@@ -12,9 +12,9 @@ class RealField extends Field
     /**
      * Real constructor.
      *
-     * @param string $name field name
-     * @param bool $canBeNull field value can be null
-     * @param float|null|false $default default field value
+     * @param string           $name      field name
+     * @param bool             $canBeNull field value can be null
+     * @param float|false|null $default   default field value
      *
      * If $canBeNull is false $default must be float or false.
      * If $default is false, it means that no default value will be set.

@@ -175,52 +175,60 @@ class CRUDTest extends IntegrationTestCase
         assertEquals(4, $this->mpdo->select(self::TABLE)->columns([new Count()])->rightJoin($table)->on(self::TABLE . '.id', $table . '.id')->cell());
         assertEquals(6, $this->mpdo->select(self::TABLE)->columns([new Count()])->fullJoin($table)->on(self::TABLE . '.id', $table . '.id')->cell());
 
-        assertEquals([
-            ['id' => 1, 'name' => 'l1'],
-            ['id' => 2, 'name' => 'l2'],
-        ], $this->mpdo->select(self::TABLE)
-            ->columns([
-                self::TABLE . '.id' => 'id',
-                self::TABLE . '.name' => 'name',
-            ])->innerJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
+        assertEquals(
+            [
+                ['id' => 1, 'name' => 'l1'],
+                ['id' => 2, 'name' => 'l2'],
+            ],
+            $this->mpdo->select(self::TABLE)
+                ->columns([
+                    self::TABLE . '.id' => 'id',
+                    self::TABLE . '.name' => 'name',
+                ])->innerJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
         );
 
-        assertEquals([
-            ['id' => 1, 'name' => 'l1'],
-            ['id' => 2, 'name' => 'l2'],
-            ['id' => 3, 'name' => 'l3'],
-            ['id' => 4, 'name' => 'l4'],
-        ], $this->mpdo->select(self::TABLE)
-            ->columns([
-                self::TABLE . '.id' => 'id',
-                self::TABLE . '.name' => 'name',
-            ])->leftJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
+        assertEquals(
+            [
+                ['id' => 1, 'name' => 'l1'],
+                ['id' => 2, 'name' => 'l2'],
+                ['id' => 3, 'name' => 'l3'],
+                ['id' => 4, 'name' => 'l4'],
+            ],
+            $this->mpdo->select(self::TABLE)
+                ->columns([
+                    self::TABLE . '.id' => 'id',
+                    self::TABLE . '.name' => 'name',
+                ])->leftJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
         );
 
-        assertEquals([
-            ['id' => 1, 'name' => 'l1'],
-            ['id' => 2, 'name' => 'l2'],
-            ['id' => null, 'name' => null],
-            ['id' => null, 'name' => null],
-        ], $this->mpdo->select(self::TABLE)
-            ->columns([
-                self::TABLE . '.id' => 'id',
-                self::TABLE . '.name' => 'name',
-            ])->rightJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
+        assertEquals(
+            [
+                ['id' => 1, 'name' => 'l1'],
+                ['id' => 2, 'name' => 'l2'],
+                ['id' => null, 'name' => null],
+                ['id' => null, 'name' => null],
+            ],
+            $this->mpdo->select(self::TABLE)
+                ->columns([
+                    self::TABLE . '.id' => 'id',
+                    self::TABLE . '.name' => 'name',
+                ])->rightJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
         );
 
-        assertEquals([
-            ['id' => 1, 'name' => 'l1'],
-            ['id' => 2, 'name' => 'l2'],
-            ['id' => 3, 'name' => 'l3'],
-            ['id' => 4, 'name' => 'l4'],
-            ['id' => null, 'name' => null],
-            ['id' => null, 'name' => null],
-        ], $this->mpdo->select(self::TABLE)
-            ->columns([
-                self::TABLE . '.id' => 'id',
-                self::TABLE . '.name' => 'name',
-            ])->fullJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
+        assertEquals(
+            [
+                ['id' => 1, 'name' => 'l1'],
+                ['id' => 2, 'name' => 'l2'],
+                ['id' => 3, 'name' => 'l3'],
+                ['id' => 4, 'name' => 'l4'],
+                ['id' => null, 'name' => null],
+                ['id' => null, 'name' => null],
+            ],
+            $this->mpdo->select(self::TABLE)
+                ->columns([
+                    self::TABLE . '.id' => 'id',
+                    self::TABLE . '.name' => 'name',
+                ])->fullJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
         );
     }
 

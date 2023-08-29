@@ -2,10 +2,7 @@
 
 namespace ModernPDO\Tests\Integration;
 
-use stdClass;
-
 use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertNotEmpty;
 
 class ModernPDOTest extends IntegrationTestCase
 {

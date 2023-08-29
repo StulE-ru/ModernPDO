@@ -33,7 +33,7 @@ trait ColumnsTrait
                 $query .= $escaper->column($column);
             }
 
-            if (is_string($key)) {
+            if (\is_string($key)) {
                 $query .= ' AS ' . $escaper->column($key);
             }
 

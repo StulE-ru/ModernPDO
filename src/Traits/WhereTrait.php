@@ -31,7 +31,7 @@ trait WhereTrait
         ]) {
             if ($value instanceof ScalarFunction) {
                 $value = $value->buildQuery();
-            } else if ($value instanceof Condition) {
+            } elseif ($value instanceof Condition) {
                 $sign = ' ' . $value->buildSign() . ' ';
                 $value = $value->buildQuery();
             } else {
@@ -58,7 +58,7 @@ trait WhereTrait
         ]) {
             if ($value instanceof ScalarFunction) {
                 $placeholders = array_merge($placeholders, $value->buildParams());
-            } else if ($value instanceof Condition) {
+            } elseif ($value instanceof Condition) {
                 $placeholders = array_merge($placeholders, $value->buildParams());
             } else {
                 $placeholders[] = $value;

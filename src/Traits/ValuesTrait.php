@@ -8,7 +8,7 @@ use ModernPDO\Functions\Scalar\ScalarFunction;
 trait ValuesTrait
 {
     /**
-     * @var list<list<mixed>> $values values for VALUES
+     * @var list<list<mixed>> values for VALUES
      */
     protected array $values = [];
 

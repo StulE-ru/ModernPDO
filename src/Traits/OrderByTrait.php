@@ -48,8 +48,8 @@ trait OrderByTrait
     /**
      * Set values for order by.
      *
-     * @param string $column column name
-     * @param bool $smallerIsFirst sort type. If true smaller values are returned first
+     * @param string $column         column name
+     * @param bool   $smallerIsFirst sort type. If true smaller values are returned first
      *
      * @return $this
      */
