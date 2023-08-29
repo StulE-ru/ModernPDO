@@ -357,6 +357,7 @@ jobs:
 
     - name: Generate test coverage badge
       uses: timkrase/phpunit-coverage-badge@v1.2.1
+      if: github.ref_name == 'release'
       with:
         coverage_badge_path: '.github/badge.svg'
         push_badge: true
