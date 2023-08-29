@@ -22,14 +22,19 @@ trait WhereTrait
     {
         $query = '';
 
-        foreach ($this->where as $condition) {
-            if ($condition['value'] instanceof ScalarFunction) {
-                $condition['value'] = $condition['value']->buildQuery();
+        foreach ($this->where as [
+            'type' => $type,
+            'name' => $name,
+            'sign' => $sign,
+            'value' => $value,
+        ]) {
+            if ($value instanceof ScalarFunction) {
+                $value = $value->buildQuery();
             } else {
-                $condition['value'] = '?';
+                $value = '?';
             }
 
-            $query .= $condition['type'] . ' ' . $escaper->column($condition['name']) . $condition['sign'] . $condition['value'] . ' ';
+            $query .= $type . ' ' . $escaper->column($name) . $sign . $value . ' ';
         }
 
         return trim($query);
@@ -44,11 +49,13 @@ trait WhereTrait
     {
         $placeholders = [];
 
-        foreach ($this->where as $condition) {
-            if ($condition['value'] instanceof ScalarFunction) {
-                $placeholders = array_merge($placeholders, $condition['value']->buildParams());
+        foreach ($this->where as [
+            'value' => $value,
+        ]) {
+            if ($value instanceof ScalarFunction) {
+                $placeholders = array_merge($placeholders, $value->buildParams());
             } else {
-                $placeholders[] = $condition['value'];
+                $placeholders[] = $value;
             }
         }
 
