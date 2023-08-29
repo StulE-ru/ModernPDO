@@ -13,7 +13,7 @@ class VarcharField extends Field
      * Varchar constructor.
      *
      * @param string            $name      field name
-     * @param string            $size      max value size
+     * @param int               $size      max value size
      * @param bool              $canBeNull field value can be null
      * @param string|false|null $default   default field value
      *
