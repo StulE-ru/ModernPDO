@@ -2,6 +2,7 @@
 
 namespace ModernPDO\Traits;
 
+use ModernPDO\Conditions\Condition;
 use ModernPDO\Escaper;
 use ModernPDO\Functions\Scalar\ScalarFunction;
 
@@ -30,6 +31,9 @@ trait WhereTrait
         ]) {
             if ($value instanceof ScalarFunction) {
                 $value = $value->buildQuery();
+            } else if ($value instanceof Condition) {
+                $sign = ' ' . $value->buildSign() . ' ';
+                $value = $value->buildQuery();
             } else {
                 $value = '?';
             }
@@ -53,6 +57,8 @@ trait WhereTrait
             'value' => $value,
         ]) {
             if ($value instanceof ScalarFunction) {
+                $placeholders = array_merge($placeholders, $value->buildParams());
+            } else if ($value instanceof Condition) {
                 $placeholders = array_merge($placeholders, $value->buildParams());
             } else {
                 $placeholders[] = $value;
@@ -78,6 +84,9 @@ trait WhereTrait
     /**
      * Set first condition.
      *
+     * $value can be subclass of Condition (In, Beetween, etc.)
+     * If $value is subclass of Condition $sign will be ignored.
+     *
      * @return $this
      */
     public function where(string $name, mixed $value, string $sign = '='): object
@@ -93,6 +102,9 @@ trait WhereTrait
 
     /**
      * Adds 'and' condition.
+     *
+     * $value can be subclass of Condition (In, Beetween, etc.)
+     * If $value is subclass of Condition $sign will be ignored.
      *
      * @return $this
      */
@@ -113,6 +125,9 @@ trait WhereTrait
 
     /**
      * Adds 'or' condition.
+     *
+     * $value can be subclass of Condition (In, Beetween, etc.)
+     * If $value is subclass of Condition $sign will be ignored.
      *
      * @return $this
      */

@@ -3,6 +3,10 @@
 namespace ModernPDO\Tests\Unit\Actions;
 
 use ModernPDO\Actions\Select;
+use ModernPDO\Conditions\Between;
+use ModernPDO\Conditions\In;
+use ModernPDO\Conditions\NotBetween;
+use ModernPDO\Conditions\NotIn;
 use ModernPDO\Escaper;
 use ModernPDO\Functions\Aggregate\Count;
 use ModernPDO\Functions\Aggregate\Max;
@@ -157,6 +161,24 @@ class SelectTest extends TestCase
                 new Lower('name'),
                 new Lenght('name'),
             ])->rows();
+    }
+
+    public function testConditions(): void
+    {
+        $this->make('SELECT * FROM ' . self::TABLE . ' WHERE id BETWEEN ? AND ?', [1, 100])
+            ->where('id', new Between(1, 100))->rows();
+
+        $this->make('SELECT * FROM ' . self::TABLE . ' WHERE id NOT BETWEEN ? AND ?', [1, 100])
+            ->where('id', new NotBetween(1, 100))->rows();
+
+        $this->make('SELECT * FROM ' . self::TABLE . ' WHERE id IN (?, ?, ?)', [1, 2, 3])
+            ->where('id', new In([1, 2, 3]))->rows();
+
+        $this->make('SELECT * FROM ' . self::TABLE . ' WHERE id NOT IN (?, ?, ?)', [1, 2, 3])
+            ->where('id', new NotIn([1, 2, 3]))->rows();
+
+        $this->make('SELECT * FROM ' . self::TABLE . ' WHERE id NOT IN (?, ?, ?) AND id BETWEEN ? AND ?', [1, 2, 3, 3, 6])
+            ->where('id', new NotIn([1, 2, 3]))->and('id', new Between(3, 6))->rows();
     }
 
     public function testAsWithColumns(): void

@@ -2,6 +2,8 @@
 
 namespace ModernPDO\Tests\Integration;
 
+use ModernPDO\Conditions\Between;
+use ModernPDO\Conditions\In;
 use ModernPDO\Functions\Aggregate\Count;
 use ModernPDO\Functions\Aggregate\Max;
 use ModernPDO\Functions\Aggregate\Min;
@@ -109,6 +111,10 @@ class CRUDTest extends IntegrationTestCase
         assertEquals(['upper' => 'TEST1'], $this->mpdo->select(self::TABLE)->columns(['upper' => new Upper('name')])->where('id', 1)->row());
         assertEquals(['rev' => '1tset'], $this->mpdo->select(self::TABLE)->columns(['rev' => new Reverse('name')])->where('id', 1)->row());
         assertEquals(['len' => 5], $this->mpdo->select(self::TABLE)->columns(['len' => new Lenght('name')])->where('id', 1)->row());
+
+        // test conditions
+        assertEquals([['id' => 1, 'id' => 3]], $this->mpdo->select(self::TABLE)->columns(['id'])->where('id', new In([1, 3]))->rows());
+        assertEquals([['id' => 1, 'id' => 2, 'id' => 3]], $this->mpdo->select(self::TABLE)->columns(['id'])->where('id', new Between(1, 3))->rows());
 
         // test get cell
         assertEquals(9, $this->mpdo->select(self::TABLE)->columns([new Count()])->cell());
