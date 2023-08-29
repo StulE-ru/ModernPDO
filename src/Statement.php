@@ -67,12 +67,13 @@ class Statement
     public function fetchColumn(int $column = 0): mixed
     {
         try {
-            $column = $this->statement?->fetchColumn($column) ?? false;
+            /** @var mixed */
+            $result = $this->statement?->fetchColumn($column) ?? false;
         } catch (\Throwable $th) {
-            $column = false;
+            $result = false;
         }
 
-        return $column;
+        return $result;
     }
 
     /**

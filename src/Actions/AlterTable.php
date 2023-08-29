@@ -106,7 +106,7 @@ class AlterTable extends Action
     /**
      * Adds fields to rename.
      *
-     * @param string[] $names array of names
+     * @param array<string, string> $names array of names
      */
     public function renameColumns(array $names): self
     {

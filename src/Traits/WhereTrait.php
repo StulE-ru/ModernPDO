@@ -12,7 +12,7 @@ use ModernPDO\Functions\Scalar\ScalarFunction;
 trait WhereTrait
 {
     /**
-     * @var array<int, array{type: string, name: string, sign: string, value: mixed}> where conditions
+     * @var list<array{type: string, name: string, sign: string, value: scalar|null|ScalarFunction|Condition}> where conditions
      */
     protected array $where = [];
 
@@ -70,8 +70,13 @@ trait WhereTrait
 
     /**
      * Adds condition to list.
+     *
+     * @param string $type
+     * @param string $name
+     * @param string $sign
+     * @param scalar|null|ScalarFunction|Condition $value
      */
-    protected function addCondition(string $type, string $name, string $sign, mixed $value): void
+    protected function addCondition(string $type, string $name, string $sign, string|int|float|bool|null|ScalarFunction|Condition $value): void
     {
         $this->where[] = [
             'type' => $type,
@@ -84,12 +89,16 @@ trait WhereTrait
     /**
      * Set first condition.
      *
+     * @param string $name
+     * @param scalar|null|ScalarFunction|Condition $value
+     * @param string $sign
+     *
      * $value can be subclass of Condition (In, Beetween, etc.)
      * If $value is subclass of Condition $sign will be ignored.
      *
      * @return $this
      */
-    public function where(string $name, mixed $value, string $sign = '='): object
+    public function where(string $name, string|int|float|bool|null|ScalarFunction|Condition $value, string $sign = '='): object
     {
         if (empty($name)) {
             return $this;
@@ -103,12 +112,16 @@ trait WhereTrait
     /**
      * Adds 'and' condition.
      *
+     * @param string $name
+     * @param scalar|null|ScalarFunction|Condition $value
+     * @param string $sign
+     *
      * $value can be subclass of Condition (In, Beetween, etc.)
      * If $value is subclass of Condition $sign will be ignored.
      *
      * @return $this
      */
-    public function and(string $name, mixed $value, string $sign = '='): object
+    public function and(string $name, string|int|float|bool|null|ScalarFunction|Condition $value, string $sign = '='): object
     {
         if (empty($name)) {
             return $this;
@@ -126,12 +139,16 @@ trait WhereTrait
     /**
      * Adds 'or' condition.
      *
+     * @param string $name
+     * @param scalar|null|ScalarFunction|Condition $value
+     * @param string $sign
+     *
      * $value can be subclass of Condition (In, Beetween, etc.)
      * If $value is subclass of Condition $sign will be ignored.
      *
      * @return $this
      */
-    public function or(string $name, mixed $value, string $sign = '='): object
+    public function or(string $name, string|int|float|bool|null|ScalarFunction|Condition $value, string $sign = '='): object
     {
         if (empty($name)) {
             return $this;
