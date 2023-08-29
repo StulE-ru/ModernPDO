@@ -25,7 +25,7 @@ class SelectTest extends TestCase
 {
     public const TABLE = 'unit_tests_select';
 
-    private function make(string $query, array $placeholders, ?InvokedCount $count = null, ?Escaper $escaper = null): Select
+    private function make(string $query, array $placeholders, InvokedCount $count = null, Escaper $escaper = null): Select
     {
         /** @var MockObject&ModernPDO */
         $mpdo = $this->createMock(ModernPDO::class);
@@ -257,13 +257,13 @@ class SelectTest extends TestCase
         $this->make('SELECT COUNT(*) AS [column], MAX([column]) AS [column] FROM [table] WHERE [column]=? ORDER BY [column] ASC LIMIT 1', [$id], escaper: $escaper)
             ->columns([
                 'count' => new Count(),
-                'max' => new Max('id')
+                'max' => new Max('id'),
             ])->where('id', $id)->orderBy('id')->row();
 
         $this->make('SELECT COUNT(*) AS [column], MAX([column]) AS [column] FROM [table] WHERE [column]=? ORDER BY [column] DESC LIMIT 1', [$id], escaper: $escaper)
             ->columns([
                 'count' => new Count(),
-                'max' => new Max('id')
+                'max' => new Max('id'),
             ])->where('id', $id)->orderBy('id', false)->row();
     }
 }

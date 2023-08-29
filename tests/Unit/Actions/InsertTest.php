@@ -17,7 +17,7 @@ class InsertTest extends TestCase
 {
     public const TABLE = 'unit_tests_insert';
 
-    private function make(string $query, array $placeholders, ?InvokedCount $count = null, ?Escaper $escaper = null): Insert
+    private function make(string $query, array $placeholders, InvokedCount $count = null, Escaper $escaper = null): Insert
     {
         /** @var MockObject&ModernPDO */
         $mpdo = $this->createMock(ModernPDO::class);

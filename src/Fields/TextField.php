@@ -12,9 +12,9 @@ class TextField extends Field
     /**
      * Text constructor.
      *
-     * @param string $name field name
-     * @param bool $canBeNull field value can be null
-     * @param string|null|false $default default field value
+     * @param string            $name      field name
+     * @param bool              $canBeNull field value can be null
+     * @param string|false|null $default   default field value
      *
      * If $canBeNull is false $default must be string or false.
      * If $default is false, it means that no default value will be set.

@@ -17,7 +17,7 @@ class UpdateTest extends TestCase
 {
     public const TABLE = 'unit_tests_update';
 
-    private function make(string $query, array $placeholders, ?InvokedCount $count = null, ?Escaper $escaper = null): Update
+    private function make(string $query, array $placeholders, InvokedCount $count = null, Escaper $escaper = null): Update
     {
         /** @var MockObject&ModernPDO */
         $mpdo = $this->createMock(ModernPDO::class);

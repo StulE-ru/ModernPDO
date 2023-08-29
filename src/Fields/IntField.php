@@ -12,10 +12,10 @@ class IntField extends Field
     /**
      * Int constructor.
      *
-     * @param string $name field name
-     * @param bool $unsigned field value is positive
-     * @param bool $canBeNull field value can be null
-     * @param int|null|false $default default field value
+     * @param string         $name      field name
+     * @param bool           $unsigned  field value is positive
+     * @param bool           $canBeNull field value can be null
+     * @param int|false|null $default   default field value
      *
      * If $canBeNull is false $default must be integer or false.
      * If $default is false, it means that no default value will be set.

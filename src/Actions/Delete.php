@@ -11,9 +11,9 @@ use ModernPDO\Traits\WhereTrait;
  */
 class Delete extends Action
 {
-    use WhereTrait;
-    use OrderByTrait;
     use LimitTrait;
+    use OrderByTrait;
+    use WhereTrait;
 
     /**
      * Returns base query.

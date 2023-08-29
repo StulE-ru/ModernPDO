@@ -15,9 +15,9 @@ class Select extends Action
 {
     use ColumnsTrait;
     use JoinsTrait;
-    use WhereTrait;
-    use OrderByTrait;
     use LimitTrait;
+    use OrderByTrait;
+    use WhereTrait;
 
     /**
      * Returns base query.

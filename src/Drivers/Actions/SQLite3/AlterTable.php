@@ -19,10 +19,10 @@ class AlterTable extends BaseAlterTable
         // So we will run them separately in transaction
 
         if (
-            $this->newName === '' &&
-            empty($this->addFields) &&
-            empty($this->renameFields) &&
-            empty ($this->dropFields)
+            $this->newName === ''
+            && empty($this->addFields)
+            && empty($this->renameFields)
+            && empty($this->dropFields)
         ) {
             return false;
         }

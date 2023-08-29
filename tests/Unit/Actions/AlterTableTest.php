@@ -15,7 +15,7 @@ class AlterTableTest extends TestCase
 {
     public const TABLE = 'unit_tests_alter_table';
 
-    private function make(string $query, array $placeholders, ?InvokedCount $count = null, ?Escaper $escaper = null): AlterTable
+    private function make(string $query, array $placeholders, InvokedCount $count = null, Escaper $escaper = null): AlterTable
     {
         /** @var MockObject&ModernPDO */
         $mpdo = $this->createMock(ModernPDO::class);

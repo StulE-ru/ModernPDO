@@ -22,7 +22,7 @@ class CreateTableTest extends TestCase
 {
     public const TABLE = 'unit_tests_create_table';
 
-    private function make(string $query, array $placeholders, ?InvokedCount $count = null, ?Escaper $escaper = null): CreateTable
+    private function make(string $query, array $placeholders, InvokedCount $count = null, Escaper $escaper = null): CreateTable
     {
         /** @var MockObject&ModernPDO */
         $mpdo = $this->createMock(ModernPDO::class);

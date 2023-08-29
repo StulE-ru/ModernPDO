@@ -14,7 +14,7 @@ class DropTableTest extends TestCase
 {
     public const TABLE = 'unit_tests_drop_table';
 
-    private function make(string $query, array $placeholders, ?InvokedCount $count = null, ?Escaper $escaper = null): DropTable
+    private function make(string $query, array $placeholders, InvokedCount $count = null, Escaper $escaper = null): DropTable
     {
         /** @var MockObject&ModernPDO */
         $mpdo = $this->createMock(ModernPDO::class);

@@ -12,10 +12,10 @@ use ModernPDO\Traits\WhereTrait;
  */
 class Update extends Action
 {
+    use LimitTrait;
+    use OrderByTrait;
     use SetTrait;
     use WhereTrait;
-    use OrderByTrait;
-    use LimitTrait;
 
     /**
      * Returns base query.

@@ -10,7 +10,7 @@ use ModernPDO\Escaper;
 class SQLite3Escaper extends Escaper
 {
     /**
-     * @var string character for quote.
+     * @var string character for quote
      */
     private const QUOTE = '"';
 

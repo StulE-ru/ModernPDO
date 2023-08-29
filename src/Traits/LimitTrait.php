@@ -50,7 +50,7 @@ trait LimitTrait
     /**
      * Set values for limit.
      *
-     * @param int $count count of rows. It must be greater than 0
+     * @param int $count  count of rows. It must be greater than 0
      * @param int $offset start rows offset. It must be greater than 0
      *
      * @return $this

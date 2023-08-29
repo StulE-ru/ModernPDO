@@ -34,7 +34,7 @@ class In extends Condition
             return '';
         }
 
-        return '(' . str_repeat('?, ', count($this->values) - 1) . '?)';
+        return '(' . str_repeat('?, ', \count($this->values) - 1) . '?)';
     }
 
     /**
