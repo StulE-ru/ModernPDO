@@ -4,6 +4,8 @@ namespace ModernPDO\Tests\Integration;
 
 use ModernPDO\Conditions\Between;
 use ModernPDO\Conditions\In;
+use ModernPDO\Fields\IntField;
+use ModernPDO\Fields\VarcharField;
 use ModernPDO\Functions\Aggregate\Count;
 use ModernPDO\Functions\Aggregate\Max;
 use ModernPDO\Functions\Aggregate\Min;
@@ -119,6 +121,107 @@ class CRUDTest extends IntegrationTestCase
         // test get cell
         assertEquals(9, $this->mpdo->select(self::TABLE)->columns([new Count()])->cell());
         assertEquals('test1', $this->mpdo->select(self::TABLE)->where('id', 1)->cell(1));
+    }
+
+    public function testJoins(): void
+    {
+        $table = 'test_joins';
+
+        // Drop tables
+
+        $this->mpdo->dropTable(self::TABLE)->checkIfExists()->execute();
+        $this->mpdo->dropTable($table)->checkIfExists()->execute();
+
+        // Create tables
+
+        $this->mpdo->createTable(self::TABLE)
+            ->checkIfExists()
+            ->fields([
+                new IntField('id'),
+                new VarcharField('name', '32'),
+            ])->execute();
+
+        $this->mpdo->createTable($table)
+            ->checkIfExists()
+            ->fields([
+                new IntField('id'),
+                new VarcharField('name', '32'),
+            ])->execute();
+
+        // Insert values
+
+        assertTrue($this->mpdo->insert(self::TABLE)->columns([
+            'id', 'name',
+        ])->values([
+            [1, 'l1'],
+            [2, 'l2'],
+            [3, 'l3'],
+            [4, 'l4'],
+        ])->execute());
+
+        assertTrue($this->mpdo->insert($table)->columns([
+            'id', 'name',
+        ])->values([
+            [1, 'l1'],
+            [2, 'r2'],
+            [5, 'l3'],
+            [6, 'r6'],
+        ])->execute());
+
+        // Test joins
+
+        assertEquals(2, $this->mpdo->select(self::TABLE)->columns([new Count()])->innerJoin($table)->on(self::TABLE . '.id', $table . '.id')->cell());
+        assertEquals(4, $this->mpdo->select(self::TABLE)->columns([new Count()])->leftJoin($table)->on(self::TABLE . '.id', $table . '.id')->cell());
+        assertEquals(4, $this->mpdo->select(self::TABLE)->columns([new Count()])->rightJoin($table)->on(self::TABLE . '.id', $table . '.id')->cell());
+        assertEquals(6, $this->mpdo->select(self::TABLE)->columns([new Count()])->fullJoin($table)->on(self::TABLE . '.id', $table . '.id')->cell());
+
+        assertEquals([
+            ['id' => 1, 'name' => 'l1'],
+            ['id' => 2, 'name' => 'l2'],
+        ], $this->mpdo->select(self::TABLE)
+            ->columns([
+                self::TABLE . '.id' => 'id',
+                self::TABLE . '.name' => 'name',
+            ])->innerJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
+        );
+
+        assertEquals([
+            ['id' => 1, 'name' => 'l1'],
+            ['id' => 2, 'name' => 'l2'],
+            ['id' => 3, 'name' => 'l3'],
+            ['id' => 4, 'name' => 'l4'],
+        ], $this->mpdo->select(self::TABLE)
+            ->columns([
+                self::TABLE . '.id' => 'id',
+                self::TABLE . '.name' => 'name',
+            ])->leftJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
+        );
+
+        assertEquals([
+            ['id' => 1, 'name' => 'l1'],
+            ['id' => 2, 'name' => 'l2'],
+            ['id' => null, 'name' => null],
+            ['id' => null, 'name' => null],
+        ], $this->mpdo->select(self::TABLE)
+            ->columns([
+                self::TABLE . '.id' => 'id',
+                self::TABLE . '.name' => 'name',
+            ])->rightJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
+        );
+
+        assertEquals([
+            ['id' => 1, 'name' => 'l1'],
+            ['id' => 2, 'name' => 'l2'],
+            ['id' => 3, 'name' => 'l3'],
+            ['id' => 4, 'name' => 'l4'],
+            ['id' => null, 'name' => null],
+            ['id' => null, 'name' => null],
+        ], $this->mpdo->select(self::TABLE)
+            ->columns([
+                self::TABLE . '.id' => 'id',
+                self::TABLE . '.name' => 'name',
+            ])->fullJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
+        );
     }
 
     public function testUpdate(): void
