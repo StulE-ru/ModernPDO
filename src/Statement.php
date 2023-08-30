@@ -67,7 +67,7 @@ class Statement
     public function fetchColumn(int $column = 0): mixed
     {
         try {
-            /** @var mixed */
+            /** @var mixed Comment for PSalm and CSFixer */
             $result = $this->statement?->fetchColumn($column) ?? false;
         } catch (\Throwable $th) {
             $result = false;

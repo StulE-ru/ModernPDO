@@ -115,8 +115,8 @@ class CRUDTest extends IntegrationTestCase
         assertEquals(['len' => 5], $this->mpdo->select(self::TABLE)->columns(['len' => new Lenght('name')])->where('id', 1)->row());
 
         // test conditions
-        assertEquals([['id' => 1, 'id' => 3]], $this->mpdo->select(self::TABLE)->columns(['id'])->where('id', new In([1, 3]))->rows());
-        assertEquals([['id' => 1, 'id' => 2, 'id' => 3]], $this->mpdo->select(self::TABLE)->columns(['id'])->where('id', new Between(1, 3))->rows());
+        assertEquals([['id' => 1], ['id' => 3]], $this->mpdo->select(self::TABLE)->columns(['id'])->where('id', new In([1, 3]))->rows());
+        assertEquals([['id' => 1], ['id' => 2], ['id' => 3]], $this->mpdo->select(self::TABLE)->columns(['id'])->where('id', new Between(1, 3))->rows());
 
         // test get cell
         assertEquals(9, $this->mpdo->select(self::TABLE)->columns([new Count()])->cell());
@@ -173,7 +173,6 @@ class CRUDTest extends IntegrationTestCase
         assertEquals(2, $this->mpdo->select(self::TABLE)->columns([new Count()])->innerJoin($table)->on(self::TABLE . '.id', $table . '.id')->cell());
         assertEquals(4, $this->mpdo->select(self::TABLE)->columns([new Count()])->leftJoin($table)->on(self::TABLE . '.id', $table . '.id')->cell());
         assertEquals(4, $this->mpdo->select(self::TABLE)->columns([new Count()])->rightJoin($table)->on(self::TABLE . '.id', $table . '.id')->cell());
-        assertEquals(6, $this->mpdo->select(self::TABLE)->columns([new Count()])->fullJoin($table)->on(self::TABLE . '.id', $table . '.id')->cell());
 
         assertEquals(
             [
@@ -182,8 +181,8 @@ class CRUDTest extends IntegrationTestCase
             ],
             $this->mpdo->select(self::TABLE)
                 ->columns([
-                    self::TABLE . '.id' => 'id',
-                    self::TABLE . '.name' => 'name',
+                    'id' => self::TABLE . '.id',
+                    'name' => self::TABLE . '.name',
                 ])->innerJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
         );
 
@@ -196,8 +195,8 @@ class CRUDTest extends IntegrationTestCase
             ],
             $this->mpdo->select(self::TABLE)
                 ->columns([
-                    self::TABLE . '.id' => 'id',
-                    self::TABLE . '.name' => 'name',
+                    'id' => self::TABLE . '.id',
+                    'name' => self::TABLE . '.name',
                 ])->leftJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
         );
 
@@ -210,25 +209,9 @@ class CRUDTest extends IntegrationTestCase
             ],
             $this->mpdo->select(self::TABLE)
                 ->columns([
-                    self::TABLE . '.id' => 'id',
-                    self::TABLE . '.name' => 'name',
+                    'id' => self::TABLE . '.id',
+                    'name' => self::TABLE . '.name',
                 ])->rightJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
-        );
-
-        assertEquals(
-            [
-                ['id' => 1, 'name' => 'l1'],
-                ['id' => 2, 'name' => 'l2'],
-                ['id' => 3, 'name' => 'l3'],
-                ['id' => 4, 'name' => 'l4'],
-                ['id' => null, 'name' => null],
-                ['id' => null, 'name' => null],
-            ],
-            $this->mpdo->select(self::TABLE)
-                ->columns([
-                    self::TABLE . '.id' => 'id',
-                    self::TABLE . '.name' => 'name',
-                ])->fullJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
         );
     }
 

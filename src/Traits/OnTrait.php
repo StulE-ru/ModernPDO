@@ -15,7 +15,7 @@ use ModernPDO\Functions\Scalar\ScalarFunction;
 trait OnTrait
 {
     /**
-     * @var list<array{type: string, name: string, sign: string, value: scalar|null|ScalarFunction|Condition}> on conditions
+     * @var list<array{type: string, name: string, sign: string, value: scalar|ScalarFunction|Condition|null}> on conditions
      */
     protected array $on = [];
 
@@ -41,7 +41,7 @@ trait OnTrait
                 $value = '?';
             }*/
 
-            $query .= $type . ' ' . $escaper->column($name) . $sign . $escaper->column(strval($value)) . ' ';
+            $query .= $type . ' ' . $escaper->column($name) . $sign . $escaper->column((string) $value) . ' ';
         }
 
         return trim($query);
@@ -74,10 +74,10 @@ trait OnTrait
     /**
      * Adds condition to list.
      *
-     * @param string $type
-     * @param string $name
-     * @param string $sign
-     * @param scalar|null|ScalarFunction|Condition $value
+     * @param string                               $type  condition type
+     * @param string                               $name  column name
+     * @param string                               $sign  condition sign
+     * @param scalar|ScalarFunction|Condition|null $value condition value
      */
     protected function addOnCondition(string $type, string $name, string $sign, string|int|float|bool|null|ScalarFunction|Condition $value): void
     {
@@ -92,9 +92,9 @@ trait OnTrait
     /**
      * Set first condition.
      *
-     * @param string $name
-     * @param scalar|null|ScalarFunction|Condition $value
-     * @param string $sign
+     * @param string                               $name  column name
+     * @param scalar|ScalarFunction|Condition|null $value condition value
+     * @param string                               $sign  condition sign
      *
      * !!! ATTENTION !!!
      * Method think that $value is name of table like 'join_table.id'
@@ -119,9 +119,9 @@ trait OnTrait
     /**
      * Adds 'and' condition.
      *
-     * @param string $name
-     * @param scalar|null|ScalarFunction|Condition $value
-     * @param string $sign
+     * @param string                               $name  column name
+     * @param scalar|ScalarFunction|Condition|null $value condition value
+     * @param string                               $sign  condition sign
      *
      * !!! ATTENTION !!!
      * Method think that $value is name of table like 'join_table.id'
@@ -149,6 +149,10 @@ trait OnTrait
 
     /**
      * Adds 'or' condition.
+     *
+     * @param string                               $name  column name
+     * @param scalar|ScalarFunction|Condition|null $value condition value
+     * @param string                               $sign  condition sign
      *
      * !!! ATTENTION !!!
      * Method think that $value is name of table like 'join_table.id'

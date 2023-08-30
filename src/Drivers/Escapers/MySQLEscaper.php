@@ -19,6 +19,16 @@ class MySQLEscaper extends Escaper
      */
     public function table(string $name): string
     {
+        $pieces = explode('.', $name);
+
+        if (\count($pieces) > 1) {
+            foreach ($pieces as $key => $piece) {
+                $pieces[$key] = self::table($piece);
+            }
+
+            return implode('.', $pieces);
+        }
+
         return self::QUOTE . parent::table($name) . self::QUOTE;
     }
 
@@ -27,6 +37,16 @@ class MySQLEscaper extends Escaper
      */
     public function column(string $name): string
     {
+        $pieces = explode('.', $name);
+
+        if (\count($pieces) > 1) {
+            foreach ($pieces as $key => $piece) {
+                $pieces[$key] = self::table($piece);
+            }
+
+            return implode('.', $pieces);
+        }
+
         return self::QUOTE . parent::column($name) . self::QUOTE;
     }
 

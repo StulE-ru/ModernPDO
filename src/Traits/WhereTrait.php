@@ -12,7 +12,7 @@ use ModernPDO\Functions\Scalar\ScalarFunction;
 trait WhereTrait
 {
     /**
-     * @var list<array{type: string, name: string, sign: string, value: scalar|null|ScalarFunction|Condition}> where conditions
+     * @var list<array{type: string, name: string, sign: string, value: scalar|ScalarFunction|Condition|null}> where conditions
      */
     protected array $where = [];
 
@@ -71,10 +71,10 @@ trait WhereTrait
     /**
      * Adds condition to list.
      *
-     * @param string $type
-     * @param string $name
-     * @param string $sign
-     * @param scalar|null|ScalarFunction|Condition $value
+     * @param string                               $type  condition type
+     * @param string                               $name  column name
+     * @param string                               $sign  condition sign
+     * @param scalar|ScalarFunction|Condition|null $value condition value
      */
     protected function addCondition(string $type, string $name, string $sign, string|int|float|bool|null|ScalarFunction|Condition $value): void
     {
@@ -89,9 +89,9 @@ trait WhereTrait
     /**
      * Set first condition.
      *
-     * @param string $name
-     * @param scalar|null|ScalarFunction|Condition $value
-     * @param string $sign
+     * @param string                               $name  column name
+     * @param scalar|ScalarFunction|Condition|null $value condition value
+     * @param string                               $sign  condition sign
      *
      * $value can be subclass of Condition (In, Beetween, etc.)
      * If $value is subclass of Condition $sign will be ignored.
@@ -112,9 +112,9 @@ trait WhereTrait
     /**
      * Adds 'and' condition.
      *
-     * @param string $name
-     * @param scalar|null|ScalarFunction|Condition $value
-     * @param string $sign
+     * @param string                               $name  column name
+     * @param scalar|ScalarFunction|Condition|null $value condition value
+     * @param string                               $sign  condition sign
      *
      * $value can be subclass of Condition (In, Beetween, etc.)
      * If $value is subclass of Condition $sign will be ignored.
@@ -139,9 +139,9 @@ trait WhereTrait
     /**
      * Adds 'or' condition.
      *
-     * @param string $name
-     * @param scalar|null|ScalarFunction|Condition $value
-     * @param string $sign
+     * @param string                               $name  column name
+     * @param scalar|ScalarFunction|Condition|null $value condition value
+     * @param string                               $sign  condition sign
      *
      * $value can be subclass of Condition (In, Beetween, etc.)
      * If $value is subclass of Condition $sign will be ignored.

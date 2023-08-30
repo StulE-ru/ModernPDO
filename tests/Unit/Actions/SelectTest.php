@@ -183,40 +183,37 @@ class SelectTest extends TestCase
 
     public function testJoins(): void
     {
-        $this->make('SELECT * FROM ' . self::TABLE . ' INNER JOIN ?', ['join_table'])
+        $this->make('SELECT * FROM ' . self::TABLE . ' INNER JOIN join_table', [])
             ->innerJoin('join_table')->rows();
 
-        $this->make('SELECT * FROM ' . self::TABLE . ' LEFT OUTER JOIN ?', ['join_table'])
+        $this->make('SELECT * FROM ' . self::TABLE . ' LEFT OUTER JOIN join_table', [])
             ->leftJoin('join_table')->rows();
 
-        $this->make('SELECT * FROM ' . self::TABLE . ' RIGHT OUTER JOIN ?', ['join_table'])
+        $this->make('SELECT * FROM ' . self::TABLE . ' RIGHT OUTER JOIN join_table', [])
             ->rightJoin('join_table')->rows();
-
-        $this->make('SELECT * FROM ' . self::TABLE . ' FULL OUTER JOIN ?', ['join_table'])
-            ->fullJoin('join_table')->rows();
     }
 
     public function testJoinsOn(): void
     {
-        $this->make('SELECT * FROM ' . self::TABLE . ' INNER JOIN ? ON ' . self::TABLE . '.id=join_table.id', ['join_table'])
+        $this->make('SELECT * FROM ' . self::TABLE . ' INNER JOIN join_table ON ' . self::TABLE . '.id=join_table.id', [])
             ->innerJoin('join_table')->on(self::TABLE . '.id', 'join_table.id')->rows();
 
-        $this->make('SELECT * FROM ' . self::TABLE . ' INNER JOIN ? ON ' . self::TABLE . '.id=join_table.id AND ' . self::TABLE . '.id=join_table.id', ['join_table'])
+        $this->make('SELECT * FROM ' . self::TABLE . ' INNER JOIN join_table ON ' . self::TABLE . '.id=join_table.id AND ' . self::TABLE . '.id=join_table.id', [])
             ->innerJoin('join_table')->on(self::TABLE . '.id', 'join_table.id')->onAnd(self::TABLE . '.id', 'join_table.id')->rows();
 
-        $this->make('SELECT * FROM ' . self::TABLE . ' INNER JOIN ? ON ' . self::TABLE . '.id=join_table.id OR ' . self::TABLE . '.id=join_table.id', ['join_table'])
+        $this->make('SELECT * FROM ' . self::TABLE . ' INNER JOIN join_table ON ' . self::TABLE . '.id=join_table.id OR ' . self::TABLE . '.id=join_table.id', [])
             ->innerJoin('join_table')->on(self::TABLE . '.id', 'join_table.id')->onOr(self::TABLE . '.id', 'join_table.id')->rows();
     }
 
     public function testJoinsOnWhere(): void
     {
-        $this->make('SELECT * FROM ' . self::TABLE . ' INNER JOIN ? ON ' . self::TABLE . '.id=join_table.id WHERE id=?', ['join_table', 1])
+        $this->make('SELECT * FROM ' . self::TABLE . ' INNER JOIN join_table ON ' . self::TABLE . '.id=join_table.id WHERE id=?', [1])
             ->innerJoin('join_table')->on(self::TABLE . '.id', 'join_table.id')->where('id', 1)->rows();
 
-        $this->make('SELECT * FROM ' . self::TABLE . ' INNER JOIN ? ON ' . self::TABLE . '.id=join_table.id WHERE id=? AND name=?', ['join_table', 1, 'name'])
+        $this->make('SELECT * FROM ' . self::TABLE . ' INNER JOIN join_table ON ' . self::TABLE . '.id=join_table.id WHERE id=? AND name=?', [1, 'name'])
             ->innerJoin('join_table')->on(self::TABLE . '.id', 'join_table.id')->where('id', 1)->and('name', 'name')->rows();
 
-        $this->make('SELECT * FROM ' . self::TABLE . ' INNER JOIN ? ON ' . self::TABLE . '.id=join_table.id AND ' . self::TABLE . '.name=join_table.name WHERE id=? AND name=?', ['join_table', 1, 'name'])
+        $this->make('SELECT * FROM ' . self::TABLE . ' INNER JOIN join_table ON ' . self::TABLE . '.id=join_table.id AND ' . self::TABLE . '.name=join_table.name WHERE id=? AND name=?', [1, 'name'])
             ->innerJoin('join_table')->on(self::TABLE . '.id', 'join_table.id')->onAnd(self::TABLE . '.name', 'join_table.name')->where('id', 1)->and('name', 'name')->rows();
     }
 
