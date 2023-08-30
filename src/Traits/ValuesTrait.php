@@ -8,7 +8,7 @@ use ModernPDO\Functions\Scalar\ScalarFunction;
 trait ValuesTrait
 {
     /**
-     * @var list<list<scalar|null|ScalarFunction>> values for VALUES
+     * @var list<list<scalar|ScalarFunction|null>> values for VALUES
      */
     protected array $values = [];
 
@@ -63,7 +63,7 @@ trait ValuesTrait
     /**
      * Set values for VALUES.
      *
-     * @param list<list<scalar|null|ScalarFunction>> $values values for VALUES
+     * @param list<list<scalar|ScalarFunction|null>> $values values for VALUES
      *
      * @return $this
      */

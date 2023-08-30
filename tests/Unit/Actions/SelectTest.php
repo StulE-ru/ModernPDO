@@ -207,7 +207,7 @@ class SelectTest extends TestCase
 
     public function testJoinsOnWhere(): void
     {
-        $this->make('SELECT * FROM ' . self::TABLE . ' INNER JOIN join_table ON ' . self::TABLE . '.id=join_table.id WHERE id=?', [ 1])
+        $this->make('SELECT * FROM ' . self::TABLE . ' INNER JOIN join_table ON ' . self::TABLE . '.id=join_table.id WHERE id=?', [1])
             ->innerJoin('join_table')->on(self::TABLE . '.id', 'join_table.id')->where('id', 1)->rows();
 
         $this->make('SELECT * FROM ' . self::TABLE . ' INNER JOIN join_table ON ' . self::TABLE . '.id=join_table.id WHERE id=? AND name=?', [1, 'name'])

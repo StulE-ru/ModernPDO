@@ -21,7 +21,7 @@ class MySQLEscaper extends Escaper
     {
         $pieces = explode('.', $name);
 
-        if (count($pieces) > 1) {
+        if (\count($pieces) > 1) {
             foreach ($pieces as $key => $piece) {
                 $pieces[$key] = self::table($piece);
             }
@@ -39,7 +39,7 @@ class MySQLEscaper extends Escaper
     {
         $pieces = explode('.', $name);
 
-        if (count($pieces) > 1) {
+        if (\count($pieces) > 1) {
             foreach ($pieces as $key => $piece) {
                 $pieces[$key] = self::table($piece);
             }

@@ -11,7 +11,7 @@ use ModernPDO\Functions\Scalar\ScalarFunction;
 trait SetTrait
 {
     /**
-     * @var array<string, scalar|null|ScalarFunction> values for SET
+     * @var array<string, scalar|ScalarFunction|null> values for SET
      */
     protected array $set = [];
 
@@ -58,7 +58,7 @@ trait SetTrait
     /**
      * Set values for SET.
      *
-     * @param array<string, scalar|null|ScalarFunction> $values array of values for SET
+     * @param array<string, scalar|ScalarFunction|null> $values array of values for SET
      *
      * @return $this
      */
