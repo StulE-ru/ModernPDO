@@ -79,6 +79,6 @@ class PostgreSQLEscaper extends Escaper
      */
     public function boolValue(bool $value): string
     {
-        return '\'' . parent::boolValue($value) . '\'';
+        return $value ? 'TRUE::int::bit(1)' : 'FALSE::int::bit(1)';
     }
 }
