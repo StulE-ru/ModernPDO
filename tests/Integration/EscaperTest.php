@@ -7,9 +7,9 @@ use function PHPUnit\Framework\assertTrue;
 
 class EscaperTest extends IntegrationTestCase
 {
-    protected const TABLE = 'sp\'ecif"ic ta\\bl/e';
-    protected const COLUMN = 'sp\'ecif"ic col\\um/n';
-    protected const VALUE = 'sp\'ecif"ic va\\lu/e';
+    protected const TABLE = 'sp\'ecif"ic `ta\\bl/e';
+    protected const COLUMN = 'sp\'ecif"ic `col\\um/n';
+    protected const VALUE = 'sp\'ecif"ic `va\\lu/e';
 
     public function testBasic(): void
     {
