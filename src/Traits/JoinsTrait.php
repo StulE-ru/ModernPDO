@@ -30,7 +30,7 @@ trait JoinsTrait
             return '';
         }
 
-        $query = $this->joinsType . ' ?';
+        $query = $this->joinsType . ' ' . $escaper->table($this->joinsTable);
 
         if (!empty($this->on)) {
             $query .= ' ' . $this->onQuery($escaper);
@@ -50,9 +50,7 @@ trait JoinsTrait
             return [];
         }
 
-        return array_merge([
-            $this->joinsTable,
-        ], $this->onPlaceholders());
+        return $this->onPlaceholders();
     }
 
     /**
