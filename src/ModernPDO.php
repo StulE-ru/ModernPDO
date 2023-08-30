@@ -89,7 +89,7 @@ class ModernPDO
      */
     public function query(string $query, array $values = []): Statement
     {
-        try {
+        //try {
             if (empty($values)) {
                 $statement = $this->pdo->query($query);
             } else {
@@ -99,11 +99,11 @@ class ModernPDO
                     $statement->execute($values);
                 }
             }
-        } catch (\Throwable $th) {
-            throw new \Exception($query, 1);
-
-            $statement = false;
-        }
+        //} catch (\Throwable $th) {
+        //    throw new \Exception($query, 1);
+        //
+        //    $statement = false;
+        //}
 
         return $this->factory->statement($statement !== false ? $statement : null);
     }
