@@ -19,7 +19,21 @@ class PostgreSQLEscaper extends Escaper
      */
     public function table(string $name): string
     {
-        return self::QUOTE . parent::table($name) . self::QUOTE;
+        $pieces = explode('.', $name);
+
+        if (\count($pieces) > 1) {
+            foreach ($pieces as $key => $piece) {
+                $pieces[$key] = self::table($piece);
+            }
+
+            return implode('.', $pieces);
+        }
+
+        $name = parent::table($name);
+
+        $name = str_replace('"', '""', $name);
+
+        return self::QUOTE . $name . self::QUOTE;
     }
 
     /**
@@ -27,7 +41,21 @@ class PostgreSQLEscaper extends Escaper
      */
     public function column(string $name): string
     {
-        return self::QUOTE . parent::column($name) . self::QUOTE;
+        $pieces = explode('.', $name);
+
+        if (\count($pieces) > 1) {
+            foreach ($pieces as $key => $piece) {
+                $pieces[$key] = self::column($piece);
+            }
+
+            return implode('.', $pieces);
+        }
+
+        $name = parent::column($name);
+
+        $name = str_replace('"', '""', $name);
+
+        return self::QUOTE . $name . self::QUOTE;
     }
 
     /**
