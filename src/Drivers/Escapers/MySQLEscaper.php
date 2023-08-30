@@ -29,7 +29,11 @@ class MySQLEscaper extends Escaper
             return implode('.', $pieces);
         }
 
-        return self::QUOTE . parent::table($name) . self::QUOTE;
+        $name = parent::table($name);
+
+        $name = str_replace('`', '``', $name);
+
+        return self::QUOTE . $name . self::QUOTE;
     }
 
     /**
@@ -41,13 +45,17 @@ class MySQLEscaper extends Escaper
 
         if (\count($pieces) > 1) {
             foreach ($pieces as $key => $piece) {
-                $pieces[$key] = self::table($piece);
+                $pieces[$key] = self::column($piece);
             }
 
             return implode('.', $pieces);
         }
 
-        return self::QUOTE . parent::column($name) . self::QUOTE;
+        $name = parent::column($name);
+
+        $name = str_replace('`', '``', $name);
+
+        return self::QUOTE . $name . self::QUOTE;
     }
 
     /**
