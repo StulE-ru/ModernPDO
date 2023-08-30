@@ -3,6 +3,7 @@
 namespace ModernPDO\Drivers;
 
 use ModernPDO\Drivers\Escapers\PostgreSQLEscaper;
+use ModernPDO\Drivers\Factories\PostgreSQLFactory;
 use ModernPDO\ModernPDO;
 
 /**
@@ -37,6 +38,6 @@ class PostgreSQLDriver extends ModernPDO
             $password,
         );
 
-        parent::__construct($pdo, new PostgreSQLEscaper($pdo));
+        parent::__construct($pdo, new PostgreSQLEscaper($pdo), new PostgreSQLFactory($pdo, $this));
     }
 }
