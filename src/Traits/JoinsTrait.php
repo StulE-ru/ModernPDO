@@ -97,17 +97,4 @@ trait JoinsTrait
 
         return $this;
     }
-
-    /**
-     * Set full outer join.
-     *
-     * @return $this
-     */
-    public function fullJoin(string $table): object
-    {
-        $this->joinsTable = $table;
-        $this->joinsType = 'FULL OUTER JOIN';
-
-        return $this;
-    }
 }
