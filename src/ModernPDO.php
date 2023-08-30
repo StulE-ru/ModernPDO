@@ -100,6 +100,8 @@ class ModernPDO
                 }
             }
         } catch (\Throwable $th) {
+            throw new \Exception($query, 1);
+
             $statement = false;
         }
 
