@@ -34,6 +34,8 @@ trait WhereTrait
             } elseif ($value instanceof Condition) {
                 $sign = ' ' . $value->buildSign() . ' ';
                 $value = $value->buildQuery();
+            } elseif (is_bool($value)) {
+                $value = $escaper->boolValue($value);
             } else {
                 $value = '?';
             }
@@ -60,7 +62,7 @@ trait WhereTrait
                 $placeholders = array_merge($placeholders, $value->buildParams());
             } elseif ($value instanceof Condition) {
                 $placeholders = array_merge($placeholders, $value->buildParams());
-            } else {
+            } elseif (!is_bool($value)) {
                 $placeholders[] = $value;
             }
         }

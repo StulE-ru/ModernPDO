@@ -25,6 +25,8 @@ trait SetTrait
         foreach ($this->set as $column => $value) {
             if ($value instanceof ScalarFunction) {
                 $value = $value->buildQuery();
+            } elseif (is_bool($value)) {
+                $value = $escaper->boolValue($value);
             } else {
                 $value = '?';
             }
@@ -47,7 +49,7 @@ trait SetTrait
         foreach ($this->set as $value) {
             if ($value instanceof ScalarFunction) {
                 $placeholders = array_merge($placeholders, $value->buildParams());
-            } else {
+            } elseif (!is_bool($value)) {
                 $placeholders[] = $value;
             }
         }
