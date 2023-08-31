@@ -27,6 +27,6 @@ class SQLite3Driver extends ModernPDO
     ) {
         $pdo = new \PDO('sqlite:' . $mode);
 
-        parent::__construct($pdo, new SQLite3Escaper($pdo), new SQLite3Factory($pdo, $this));
+        parent::__construct($pdo, SQLite3Escaper::class, SQLite3Factory::class);
     }
 }

@@ -45,6 +45,6 @@ class MySQLDriver extends ModernPDO
             $password,
         );
 
-        parent::__construct($pdo, new MySQLEscaper($pdo));
+        parent::__construct($pdo, MySQLEscaper::class);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace ModernPDO\Tests\Integration;
 
+use ModernPDO\Drivers\Escapers\PostgreSQLEscaper;
+use ModernPDO\Drivers\Factories\PostgreSQLFactory;
 use ModernPDO\Drivers\MariaDBDriver;
 use ModernPDO\Drivers\MySQLDriver;
 use ModernPDO\Drivers\PostgreSQLDriver;
@@ -32,6 +34,8 @@ class IntegrationTestCase extends TestCase
 
                 return new ModernPDO(
                     pdo: $pdo,
+                    escaper: PostgreSQLEscaper::class,
+                    factory: PostgreSQLFactory::class,
                 );
 
             case 'MySQL':
