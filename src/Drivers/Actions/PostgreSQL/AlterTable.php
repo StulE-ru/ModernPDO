@@ -63,7 +63,7 @@ class AlterTable extends BaseAlterTable
         $this->addFields = $addFields;
         $this->dropFields = $dropFields;
 
-        if (!parent::execute() && !empty($renameFields)) {
+        if (!parent::execute() && empty($renameFields)) {
             $transaction->rollBack();
 
             return false;

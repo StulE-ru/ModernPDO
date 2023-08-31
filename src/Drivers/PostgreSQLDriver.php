@@ -38,6 +38,6 @@ class PostgreSQLDriver extends ModernPDO
             $password,
         );
 
-        parent::__construct($pdo, new PostgreSQLEscaper($pdo), new PostgreSQLFactory($pdo, $this));
+        parent::__construct($pdo, PostgreSQLEscaper::class, PostgreSQLFactory::class);
     }
 }

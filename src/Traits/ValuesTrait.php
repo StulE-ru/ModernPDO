@@ -25,6 +25,8 @@ trait ValuesTrait
             foreach ($values as $value) {
                 if ($value instanceof ScalarFunction) {
                     $value = $value->buildQuery();
+                } elseif (is_bool($value)) {
+                    $value = $escaper->boolValue($value);
                 } else {
                     $value = '?';
                 }
@@ -51,7 +53,7 @@ trait ValuesTrait
             foreach ($values as $value) {
                 if ($value instanceof ScalarFunction) {
                     $placeholders = array_merge($placeholders, $value->buildParams());
-                } else {
+                } else if (!is_bool($value)) {
                     $placeholders[] = $value;
                 }
             }

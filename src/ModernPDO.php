@@ -32,15 +32,19 @@ class ModernPDO
 
     /**
      * ModernPDO constructor.
+     *
+     * @param \PDO $pdo PDO object
+     * @param class-string $escaper Full escaper class name
+     * @param class-string $factory Full factory class name
      */
     public function __construct(
         \PDO $pdo,
-        Escaper $escaper = null,
-        Factory $factory = null,
+        string $escaper = Escaper::class,
+        string $factory = Factory::class,
     ) {
         $this->pdo = $pdo;
-        $this->escaper = $escaper ?? new Escaper($pdo);
-        $this->factory = $factory ?? new Factory($pdo, $this);
+        $this->escaper = new $escaper($pdo);
+        $this->factory = new $factory($pdo, $this);
     }
 
     /**
