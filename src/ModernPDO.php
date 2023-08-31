@@ -33,7 +33,7 @@ class ModernPDO
     /**
      * ModernPDO constructor.
      *
-     * @param \PDO $pdo PDO object
+     * @param \PDO                  $pdo     PDO object
      * @param class-string<Escaper> $escaper Full escaper class name
      * @param class-string<Factory> $factory Full factory class name
      */
