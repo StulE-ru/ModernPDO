@@ -12,9 +12,9 @@ class Select extends BaseSelect
     /**
      * Set right outer join.
      *
-     * @throws \Exception Database does not support this feature
-     *
      * @return $this
+     *
+     * @throws \Exception Database does not support this feature
      */
     public function rightJoin(string $table): object
     {
