@@ -90,27 +90,27 @@ class CreateTableTest extends TestCase
 
         // Bool
 
-        $this->make('CREATE TABLE ' . self::TABLE . ' (bool BIT NOT NULL)', [])
+        $this->make('CREATE TABLE ' . self::TABLE . ' (bool BIT(1) NOT NULL)', [])
             ->fields([
                 new BoolField('bool'),
             ])->execute();
 
-        $this->make('CREATE TABLE ' . self::TABLE . ' (bool BIT NULL DEFAULT 1)', [])
+        $this->make('CREATE TABLE ' . self::TABLE . ' (bool BIT(1) NULL DEFAULT 1)', [])
             ->fields([
                 new BoolField('bool', canBeNull: true, default: true),
             ])->execute();
 
-        $this->make('CREATE TABLE ' . self::TABLE . ' (bool BIT NULL DEFAULT 0)', [])
+        $this->make('CREATE TABLE ' . self::TABLE . ' (bool BIT(1) NULL DEFAULT 0)', [])
             ->fields([
                 new BoolField('bool', canBeNull: true, default: false),
             ])->execute();
 
-        $this->make('CREATE TABLE ' . self::TABLE . ' (bool BIT NULL DEFAULT 1)', [])
+        $this->make('CREATE TABLE ' . self::TABLE . ' (bool BIT(1) NULL DEFAULT 1)', [])
             ->fields([
                 new BoolField('bool', canBeNull: true, default: 1),
             ])->execute();
 
-        $this->make('CREATE TABLE ' . self::TABLE . ' (bool BIT NULL DEFAULT 0)', [])
+        $this->make('CREATE TABLE ' . self::TABLE . ' (bool BIT(1) NULL DEFAULT 0)', [])
             ->fields([
                 new BoolField('bool', canBeNull: true, default: 0),
             ])->execute();

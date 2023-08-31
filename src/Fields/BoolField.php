@@ -32,7 +32,7 @@ class BoolField extends Field
      */
     public function build(Escaper $escaper): string
     {
-        $query = $escaper->column($this->name) . ' BIT';
+        $query = $escaper->column($this->name) . ' BIT(1)';
 
         // Check can be null
 
