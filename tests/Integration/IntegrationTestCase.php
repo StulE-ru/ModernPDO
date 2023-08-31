@@ -15,6 +15,8 @@ class IntegrationTestCase extends TestCase
 
     protected ModernPDO $mpdo;
 
+    protected string $db_type = '';
+
     protected function make(string $type): ModernPDO
     {
         switch ($type) {
@@ -70,11 +72,38 @@ class IntegrationTestCase extends TestCase
 
     protected function setUp(): void
     {
+        $this->db_type = getenv('DB_TYPE');
+
         $this->mpdo = $this->make(
-            getenv('DB_TYPE'),
+            $this->db_type,
         );
 
         $this->mpdo->exec('DROP TABLE IF EXISTS ' . static::TABLE . ';');
         $this->mpdo->exec('CREATE TABLE ' . static::TABLE . ' (id int, name varchar(32));');
+    }
+
+    protected function isPDO(): bool
+    {
+        return $this->db_type === 'PDO';
+    }
+
+    protected function isMySQL(): bool
+    {
+        return $this->db_type === 'MySQL';
+    }
+
+    protected function isMariaDB(): bool
+    {
+        return $this->db_type === 'MariaDB';
+    }
+
+    protected function isPostgreSQL(): bool
+    {
+        return $this->db_type === 'PostgreSQL';
+    }
+
+    protected function isSQLite3(): bool
+    {
+        return $this->db_type === 'SQLite3';
     }
 }
