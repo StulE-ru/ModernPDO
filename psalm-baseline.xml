@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.14.1@b9d355e0829c397b9b3b47d0c0ed042a8a70284d"/>
+<files psalm-version="5.14.1@b9d355e0829c397b9b3b47d0c0ed042a8a70284d">
+  <file src="src/ModernPDO.php">
+    <UnsafeInstantiation>
+      <code>new $escaper($pdo)</code>
+      <code>new $factory($pdo, $this)</code>
+    </UnsafeInstantiation>
+  </file>
+</files>
