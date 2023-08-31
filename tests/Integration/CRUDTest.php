@@ -167,8 +167,6 @@ class CRUDTest extends IntegrationTestCase
         // Test joins
 
         assertEquals(2, $this->mpdo->select(self::TABLE)->columns([new Count()])->innerJoin($table)->on(self::TABLE . '.id', $table . '.id')->cell());
-        assertEquals(4, $this->mpdo->select(self::TABLE)->columns([new Count()])->leftJoin($table)->on(self::TABLE . '.id', $table . '.id')->cell());
-        assertEquals(4, $this->mpdo->select(self::TABLE)->columns([new Count()])->rightJoin($table)->on(self::TABLE . '.id', $table . '.id')->cell());
 
         assertEquals(
             [
@@ -181,6 +179,8 @@ class CRUDTest extends IntegrationTestCase
                     'name' => self::TABLE . '.name',
                 ])->innerJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
         );
+
+        assertEquals(4, $this->mpdo->select(self::TABLE)->columns([new Count()])->leftJoin($table)->on(self::TABLE . '.id', $table . '.id')->cell());
 
         assertEquals(
             [
@@ -196,19 +196,41 @@ class CRUDTest extends IntegrationTestCase
                 ])->leftJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
         );
 
-        assertEquals(
-            [
-                ['id' => 1, 'name' => 'l1'],
-                ['id' => 2, 'name' => 'l2'],
-                ['id' => null, 'name' => null],
-                ['id' => null, 'name' => null],
-            ],
-            $this->mpdo->select(self::TABLE)
-                ->columns([
-                    'id' => self::TABLE . '.id',
-                    'name' => self::TABLE . '.name',
-                ])->rightJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
-        );
+        if ($this->isSQLite3()) {
+            try {
+                $this->mpdo->select(self::TABLE)->columns([new Count()])->rightJoin($table)->on(self::TABLE . '.id', $table . '.id')->cell();
+
+                $this->fail('SQLite3 must throw exception when testing rightJoin');
+            } catch (\Exception $ex) {
+            }
+
+            try {
+                $this->mpdo->select(self::TABLE)
+                    ->columns([
+                        'id' => self::TABLE . '.id',
+                        'name' => self::TABLE . '.name',
+                    ])->rightJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows();
+
+                $this->fail('SQLite3 must throw exception when testing rightJoin');
+            } catch (\Exception $ex) {
+            }
+        } else {
+            assertEquals(4, $this->mpdo->select(self::TABLE)->columns([new Count()])->rightJoin($table)->on(self::TABLE . '.id', $table . '.id')->cell());
+
+            assertEquals(
+                [
+                    ['id' => 1, 'name' => 'l1'],
+                    ['id' => 2, 'name' => 'l2'],
+                    ['id' => null, 'name' => null],
+                    ['id' => null, 'name' => null],
+                ],
+                $this->mpdo->select(self::TABLE)
+                    ->columns([
+                        'id' => self::TABLE . '.id',
+                        'name' => self::TABLE . '.name',
+                    ])->rightJoin($table)->on(self::TABLE . '.id', $table . '.id')->rows()
+            );
+        }
     }
 
     public function testUpdate(): void
