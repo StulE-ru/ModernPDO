@@ -5,6 +5,7 @@ on:
     branches:
       - 'release'
       - 'hotfix'
+      - 'develop'
 
 permissions:
   contents: write

@@ -3,6 +3,9 @@
 namespace ModernPDO\Actions;
 
 use ModernPDO\Traits\ColumnsTrait;
+use ModernPDO\Traits\JoinsTrait;
+use ModernPDO\Traits\LimitTrait;
+use ModernPDO\Traits\OrderByTrait;
 use ModernPDO\Traits\WhereTrait;
 
 /**
@@ -11,6 +14,9 @@ use ModernPDO\Traits\WhereTrait;
 class Select extends Action
 {
     use ColumnsTrait;
+    use JoinsTrait;
+    use LimitTrait;
+    use OrderByTrait;
     use WhereTrait;
 
     /**
@@ -18,7 +24,27 @@ class Select extends Action
      */
     protected function buildQuery(): string
     {
-        return trim('SELECT ' . $this->columns . ' FROM ' . $this->table . ' ' . $this->where);
+        $escaper = $this->mpdo->escaper();
+
+        $query = 'SELECT ' . $this->columnsQuery($escaper) . ' FROM ' . $escaper->table($this->table);
+
+        if ($this->joinsTable !== '') {
+            $query .= ' ' . $this->joinsQuery($escaper);
+        }
+
+        if (!empty($this->where)) {
+            $query .= ' ' . $this->whereQuery($escaper);
+        }
+
+        if ($this->orderByColumn !== '') {
+            $query .= ' ' . $this->orderByQuery($escaper);
+        }
+
+        if ($this->limitCount > 0) {
+            $query .= ' ' . $this->limitQuery($escaper);
+        }
+
+        return $query;
     }
 
     /**
@@ -28,39 +54,24 @@ class Select extends Action
      */
     protected function getPlaceholders(): array
     {
-        return $this->where_params;
+        return array_merge(
+            $this->columnsPlaceholders(),
+            $this->joinsPlaceholders(),
+            $this->wherePlaceholders(),
+            $this->orderByPlaceholders(),
+        );
     }
 
     /**
-     * Executes query and returns one row.
-     *
-     * @return array<string, mixed>
-     */
-    protected function getOne(): array
-    {
-        return $this->exec()->fetch();
-    }
-
-    /**
-     * Executes query and returns all rows.
+     * Returns all or few rows from table.
      *
      * @return list<array<string, mixed>>
      */
-    protected function getAll(): array
-    {
-        return $this->exec()->fetchAll();
-    }
-
-    /**
-     * Returns all rows from table.
-     *
-     * @return list<array<string, mixed>>
-     */
-    public function all(): array
+    public function rows(): array
     {
         $this->query = $this->buildQuery();
 
-        return $this->getAll();
+        return $this->exec()->fetchAll();
     }
 
     /**
@@ -68,38 +79,24 @@ class Select extends Action
      *
      * @return array<string, mixed>
      */
-    public function one(): array
+    public function row(): array
     {
-        $this->query = $this->buildQuery() . ' LIMIT 1';
+        $this->limit(1);
 
-        return $this->getOne();
+        $this->query = $this->buildQuery();
+
+        return $this->exec()->fetch();
     }
 
     /**
-     * Returns first row from table.
-     *
-     * @param string $order column name to sort rows
-     *
-     * @return array<string, mixed>
+     * Returns one row cell from table.
      */
-    public function firstBy(string $order): array
+    public function cell(int $column = 0): mixed
     {
-        $this->query = $this->buildQuery() . ' ORDER BY ' . $order . ' ASC LIMIT 1';
+        $this->limit(1);
 
-        return $this->getOne();
-    }
+        $this->query = $this->buildQuery();
 
-    /**
-     * Returns last row from table.
-     *
-     * @param string $order column name to sort rows
-     *
-     * @return array<string, mixed>
-     */
-    public function lastBy(string $order): array
-    {
-        $this->query = $this->buildQuery() . ' ORDER BY ' . $order . ' DESC LIMIT 1';
-
-        return $this->getOne();
+        return $this->exec()->fetchColumn($column);
     }
 }

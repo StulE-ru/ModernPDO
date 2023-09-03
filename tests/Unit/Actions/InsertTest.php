@@ -3,27 +3,47 @@
 namespace ModernPDO\Tests\Unit\Actions;
 
 use ModernPDO\Actions\Insert;
+use ModernPDO\Escaper;
+use ModernPDO\Functions\Scalar\String\Lower;
+use ModernPDO\Functions\Scalar\String\Reverse;
+use ModernPDO\Functions\Scalar\String\Upper;
 use ModernPDO\ModernPDO;
 use ModernPDO\Statement;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use PHPUnit\Framework\TestCase;
 
 class InsertTest extends TestCase
 {
-    public const TABLE = 'table_for_tests';
+    public const TABLE = 'unit_tests_insert';
 
-    private function helperCreateMock(): MockObject
+    private function make(string $query, array $placeholders, InvokedCount $count = null, Escaper $escaper = null): Insert
     {
-        /** @var MockObject */
-        $mock = $this->createMock(ModernPDO::class);
+        /** @var MockObject&ModernPDO */
+        $mpdo = $this->createMock(ModernPDO::class);
 
-        return $mock;
-    }
+        $mpdo
+            ->expects($count ?? self::once())
+            ->method('query')
+            ->with($query, $placeholders)
+            ->willReturn(new Statement(null));
 
-    private function helperCreateInsert(MockObject $mock): Insert
-    {
-        /** @var ModernPDO */
-        $mpdo = $mock;
+        if ($escaper === null) {
+            /** @var MockObject&Escaper */
+            $escaper = $this->createMock(Escaper::class);
+
+            $escaper
+                ->method('table')
+                ->willReturnArgument(0);
+
+            $escaper
+                ->method('column')
+                ->willReturnArgument(0);
+        }
+
+        $mpdo
+            ->method('escaper')
+            ->willReturn($escaper);
 
         return new Insert($mpdo, self::TABLE);
     }
@@ -31,48 +51,116 @@ class InsertTest extends TestCase
     public function dataProvider(): array
     {
         return [
-            [1, 'test1'],
-            [2, 'test2'],
-            [3, 'test3'],
-            [4, 'test4'],
-            [5, 'test5'],
-            [6, 'test6'],
+            [1, 'Gail Kerr'],
+            [2, 'Flora Harvey'],
+            [3, 'Khalil Allison'],
+            [4, 'Chaya Schneider'],
+            [5, 'Bibi Blackburn'],
         ];
     }
 
     /**
      * @dataProvider dataProvider
      */
-    public function testInsert(int $id, string $name): void
+    public function testBasic(int $id, string $name): void
     {
-        $mock = $this->helperCreateMock();
+        $this->make('INSERT INTO ' . self::TABLE . ' VALUES (?, ?)', [$id, $name])
+            ->values([
+                [$id, $name],
+            ])->execute();
 
-        $mock
-            ->expects(self::once())
-            ->method('query')
-            ->with('INSERT INTO ' . self::TABLE . ' (id, name) VALUES (?, ?)', [$id, $name])
-            ->willReturn(new Statement(null));
+        $this->make('INSERT INTO ' . self::TABLE . ' VALUES (?, ?)', [$id, $name])
+            ->values([
+                ['unknown'],
+            ])->values([
+                [$id, $name],
+            ])->execute();
 
-        $this->helperCreateInsert($mock)->values(['id' => $id, 'name' => $name])->execute();
+        $this->make('INSERT INTO ' . self::TABLE . ' VALUES (?, ?), (?, ?)', [$id, $name, $id, $name])
+            ->values([
+                [],
+            ])->values([
+            ])->values([
+                [$id, $name],
+                [$id, $name],
+            ])->execute();
+    }
 
-        $mock = $this->helperCreateMock();
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testColumns(int $id, string $name): void
+    {
+        $this->make('INSERT INTO ' . self::TABLE . ' (id, name) VALUES (?, ?)', [$id, $name])
+            ->columns([
+                'id', 'name',
+            ])->values([
+                [$id, $name],
+            ])->execute();
 
-        $mock
-            ->expects(self::once())
-            ->method('query')
-            ->with('INSERT INTO ' . self::TABLE . ' (id, name) VALUES (?, ?)', [$id, $name])
-            ->willReturn(new Statement(null));
+        $this->make('INSERT INTO ' . self::TABLE . ' (id, name) VALUES (?, ?)', [$id, $name])
+            ->columns([
+                'id', 'name',
+            ])->values([
+                ['unknown'],
+            ])->values([
+                [$id, $name],
+            ])->execute();
 
-        $this->helperCreateInsert($mock)->values(['name' => 'unknown'])->values(['id' => $id, 'name' => $name])->execute();
+        $this->make('INSERT INTO ' . self::TABLE . ' (id, name) VALUES (?, ?), (?, ?)', [$id, $name, $id, $name])
+            ->columns([
+                'id', 'name',
+            ])->values([
+                [],
+            ])->values([
+            ])->values([
+                [$id, $name],
+                [$id, $name],
+            ])->execute();
 
-        $mock = $this->helperCreateMock();
+        $this->make('INSERT INTO ' . self::TABLE . ' (id, name) VALUES (?, ?), (?, ?)', [$id, $name, $id, $name], self::never())
+            ->columns([
+                'id', 'name',
+            ])->values([
+            ])->execute();
+    }
 
-        $mock
-            ->expects(self::once())
-            ->method('query')
-            ->with('INSERT INTO ' . self::TABLE . ' (id, name) VALUES (?, ?)', [$id, $name])
-            ->willReturn(new Statement(null));
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testScalarStringFunctions(int $id, string $name): void
+    {
+        $this->make('INSERT INTO ' . self::TABLE . ' (id, name) VALUES (?, LOWER(?)), (?, UPPER(?)), (?, REVERSE(?))', [$id, $name, $id, $name, $id, $name])
+            ->columns([
+                'id', 'name',
+            ])->values([
+                [$id, new Lower($name)],
+                [$id, new Upper($name)],
+                [$id, new Reverse($name)],
+            ])->execute();
+    }
 
-        $this->helperCreateInsert($mock)->values([])->values(['id' => $id, 'name' => $name])->execute();
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testEscaper(int $id, string $name): void
+    {
+        /** @var MockObject&Escaper */
+        $escaper = $this->createMock(Escaper::class);
+
+        $escaper
+            ->method('table')
+            ->willReturn('[table]');
+
+        $escaper
+            ->method('column')
+            ->willReturn('[column]');
+
+        $this->make('INSERT INTO [table] ([column], [column]) VALUES (?, ?)', [$id, $name], escaper: $escaper)
+            ->columns([
+                'id', 'name',
+            ])->values([
+                [$id, $name],
+            ])->execute();
     }
 }

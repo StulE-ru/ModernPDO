@@ -2,6 +2,7 @@
 
 namespace ModernPDO\Actions;
 
+use ModernPDO\Traits\ColumnsTrait;
 use ModernPDO\Traits\ValuesTrait;
 
 /**
@@ -9,6 +10,7 @@ use ModernPDO\Traits\ValuesTrait;
  */
 class Insert extends Action
 {
+    use ColumnsTrait;
     use ValuesTrait;
 
     /**
@@ -16,7 +18,17 @@ class Insert extends Action
      */
     protected function buildQuery(): string
     {
-        return 'INSERT INTO ' . $this->table . ' (' . $this->columns . ') VALUES (' . $this->values . ')';
+        $escaper = $this->mpdo->escaper();
+
+        $query = 'INSERT INTO ' . $escaper->table($this->table);
+
+        if (!empty($this->columns)) {
+            $query .= ' (' . $this->columnsQuery($escaper) . ')';
+        }
+
+        $query .= ' VALUES ' . $this->valuesQuery($escaper);
+
+        return trim($query);
     }
 
     /**
@@ -26,7 +38,7 @@ class Insert extends Action
      */
     protected function getPlaceholders(): array
     {
-        return $this->values_params;
+        return array_merge($this->columnsPlaceholders(), $this->valuesPlaceholders());
     }
 
     /**
@@ -34,6 +46,10 @@ class Insert extends Action
      */
     public function execute(): bool
     {
+        if (empty($this->values)) {
+            return false;
+        }
+
         $this->query = $this->buildQuery();
 
         return $this->exec()->rowCount() > 0;

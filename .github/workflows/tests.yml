@@ -1,7 +1,3 @@
-#
-# We know this is bullshit, but right now we think it does not matter.
-#
-
 name: Tests
 
 on:
@@ -9,6 +5,7 @@ on:
     branches:
       - 'release'
       - 'hotfix'
+      - 'develop'
 
 permissions:
   contents: read
@@ -20,9 +17,9 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.1]
+        php: [8.1, 8.2]
 
-    name: PHP-STAN ${{ matrix.php }}
+    name: PHP-PHPStan
 
     steps:
       - name: Code checkout
@@ -54,43 +51,317 @@ jobs:
       - name: Srart PHP STAN
         run: composer stan
 
-  database-tests:
-      name: Tests Database
-      runs-on: ubuntu-22.04
-      strategy:
-          fail-fast: false
-          matrix:
-            php: [8.1]
-      steps:
-          - name: Code checkout
-            uses: actions/checkout@v3
+  mariadb:
+    name: Integration Tests
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [8.1, 8.2]
+        database: ["mariadb:10.5", "mariadb:10.9"]
+    services:
+      mariadb:
+        image: docker.io/library/${{ matrix.database }}
+        env:
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
+          MARIADB_DATABASE: testing
+          MARIADB_USER: testing
+          MARIADB_PASSWORD: testing
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    env:
+      DB_TYPE: MariaDB
+      DB_HOST: 127.0.0.1
+      DB_DATABASE: testing
+      DB_USERNAME: testing
+      DB_PASSWORD: testing
+      DB_PORT: 3306
+    steps:
+    - name: Code checkout
+      uses: actions/checkout@v3
 
-          - name: Copy .env
-            run: cp .env.example .env
+    - name: Get cache directory
+      id: composer-cache
+      run: |
+        echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-          - name: Start docker-compose
-            uses: isbang/compose-action@v1.5.1
-            with:
-              compose-file: "./docker-compose.yaml"
+    - name: Cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-${{ matrix.php }}-
 
-          - name: Get cache directory
-            id: composer-cache
-            run: |
-                echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: dom, libxml, mbstring, pdo
+        coverage: none
 
-          - name: Cache
-            uses: actions/cache@v3
-            with:
-              path: ${{ steps.composer-cache.outputs.dir }}
-              key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
-              restore-keys: |
-                ${{ runner.os }}-composer-${{ matrix.php }}-
+    - name: Install dependencies
+      run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
 
-          - name: Install dependencies
-            run: composer install --no-interaction --no-progress --prefer-dist
+    - name: Integration tests
+      run: composer i-tests
 
-          - name: Exec unit tests
-            run: sleep 20;docker compose exec php "composer" "tests"
+  mysql:
+    name: Integration Tests
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [8.1, 8.2]
+        database: ["mysql:8.1.0"]
+    services:
+      mysql:
+        image: docker.io/library/${{ matrix.database }}
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: testing
+          MYSQL_USER: testing
+          MYSQL_PASSWORD: testing
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    env:
+      DB_TYPE: MySQL
+      DB_HOST: 127.0.0.1
+      DB_DATABASE: testing
+      DB_USERNAME: testing
+      DB_PASSWORD: testing
+      DB_PORT: 3306
+    steps:
+    - name: Code checkout
+      uses: actions/checkout@v3
+
+    - name: Get cache directory
+      id: composer-cache
+      run: |
+        echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+    - name: Cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-${{ matrix.php }}-
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: dom, libxml, mbstring, pdo
+        coverage: none
+
+    - name: Install dependencies
+      run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
+
+    - name: Integration tests
+      run: composer i-tests
+
+  postgres:
+    name: Integration Tests
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [8.1, 8.2]
+        database: ["postgres:13", "postgres:14", "postgres:15"]
+    services:
+      postgres:
+        image: docker.io/library/${{ matrix.database }}
+        env:
+          POSTGRES_USER: testing
+          POSTGRES_PASSWORD: testing
+          POSTGRES_DB: testing
+        ports:
+          - 5432:5432
+        options: --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
+    env:
+      DB_TYPE: PostgreSQL
+      DB_HOST: 127.0.0.1
+      DB_DATABASE: testing
+      DB_USERNAME: testing
+      DB_PASSWORD: testing
+      DB_PORT: 5432
+    steps:
+    - name: Code checkout
+      uses: actions/checkout@v3
+
+    - name: Get cache directory
+      id: composer-cache
+      run: |
+        echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+    - name: Cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-${{ matrix.php }}-
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: dom, libxml, mbstring
+        coverage: none
+
+    - name: Install dependencies
+      run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
+
+    - name: Integration tests
+      run: composer i-tests
+
+  postgres_pdo:
+    name: Integration Tests PDO
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [8.1, 8.2]
+        database: ["postgres:13", "postgres:14", "postgres:15"]
+    services:
+      postgres:
+        image: docker.io/library/${{ matrix.database }}
+        env:
+          POSTGRES_USER: testing
+          POSTGRES_PASSWORD: testing
+          POSTGRES_DB: testing
+        ports:
+          - 5432:5432
+        options: --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
+    env:
+      DB_TYPE: PDO
+      DB_HOST: 127.0.0.1
+      DB_DATABASE: testing
+      DB_USERNAME: testing
+      DB_PASSWORD: testing
+      DB_PORT: 5432
+    steps:
+    - name: Code checkout
+      uses: actions/checkout@v3
+
+    - name: Get cache directory
+      id: composer-cache
+      run: |
+        echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+    - name: Cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-${{ matrix.php }}-
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: dom, libxml, mbstring, pdo
+        coverage: none
+
+    - name: Install dependencies
+      run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
+
+    - name: Integration tests
+      run: composer i-tests
+
+  sqlite3:
+    name: Integration Tests SQLite3
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [8.1, 8.2]
+    env:
+      DB_TYPE: SQLite3
+      DB_MODE: memory
+    steps:
+    - name: Code checkout
+      uses: actions/checkout@v3
+
+    - name: Get cache directory
+      id: composer-cache
+      run: |
+        echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+    - name: Cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-${{ matrix.php }}-
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: dom, libxml, mbstring
+        coverage: none
+
+    - name: Install dependencies
+      run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
+
+    - name: Integration tests
+      run: composer i-tests
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.1, 8.2]
+
+    name: Unit Tests
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Get cache directory
+      id: composer-cache
+      run: |
+        echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+    - name: Cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-${{ matrix.php }}-
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: dom, libxml, mbstring
+        coverage: xdebug
+
+    - name: Install dependencies
+      run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
+
+    - name: Execute unit tests
+      run: XDEBUG_MODE_COVERAGE=coverage composer u-tests
+
+    - name: Generate test coverage badge
+      uses: timkrase/phpunit-coverage-badge@v1.2.1
+      if: github.ref_name == 'release'
+      with:
+        coverage_badge_path: '.github/badge.svg'
+        push_badge: true
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
 
   php-salm:
     runs-on: ubuntu-latest
@@ -98,7 +369,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.1]
+        php: [8.1, 8.2]
 
     name: PHP-PSalm ${{ matrix.php }}
 

@@ -2,6 +2,8 @@
 
 namespace ModernPDO\Actions;
 
+use ModernPDO\Traits\LimitTrait;
+use ModernPDO\Traits\OrderByTrait;
 use ModernPDO\Traits\SetTrait;
 use ModernPDO\Traits\WhereTrait;
 
@@ -10,6 +12,8 @@ use ModernPDO\Traits\WhereTrait;
  */
 class Update extends Action
 {
+    use LimitTrait;
+    use OrderByTrait;
     use SetTrait;
     use WhereTrait;
 
@@ -18,7 +22,23 @@ class Update extends Action
      */
     protected function buildQuery(): string
     {
-        return trim('UPDATE ' . $this->table . ' SET ' . $this->set . ' ' . $this->where);
+        $escaper = $this->mpdo->escaper();
+
+        $query = 'UPDATE ' . $escaper->table($this->table) . ' SET ' . $this->setQuery($escaper);
+
+        if (!empty($this->where)) {
+            $query .= ' ' . $this->whereQuery($escaper);
+        }
+
+        if ($this->orderByColumn !== '') {
+            $query .= ' ' . $this->orderByQuery($escaper);
+        }
+
+        if ($this->limitCount > 0) {
+            $query .= ' ' . $this->limitQuery($escaper);
+        }
+
+        return $query;
     }
 
     /**
@@ -28,7 +48,12 @@ class Update extends Action
      */
     protected function getPlaceholders(): array
     {
-        return array_merge($this->set_params, $this->where_params);
+        return array_merge(
+            $this->setPlaceholders(),
+            $this->wherePlaceholders(),
+            $this->orderByPlaceholders(),
+            $this->limitPlaceholders(),
+        );
     }
 
     /**

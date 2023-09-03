@@ -2,70 +2,37 @@
 
 namespace ModernPDO\Tests\Integration;
 
-use ModernPDO\ModernPDO;
-use PHPUnit\Framework\TestCase;
-
 use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertNotEmpty;
 
-class ModernPDOTest extends TestCase
+class ModernPDOTest extends IntegrationTestCase
 {
-    public const TABLE = 'table_for_tests';
-
-    public function testCreateMySQL(): void
-    {
-        $mpdo = ModernPDO::createMySQL(
-            host: getenv('MYSQL_HOST'),
-            database: getenv('MYSQL_DATABASE'),
-            username: getenv('MYSQL_USERNAME'),
-            password: getenv('MYSQL_PASSWORD'),
-            charset: getenv('MYSQL_CHARSET'),
-        );
-
-        assertNotEmpty($mpdo);
-    }
-
-    public function testCreateMariaDB(): void
-    {
-        $mpdo = ModernPDO::createMariaDB(
-            host: getenv('MARIADB_HOST'),
-            database: getenv('MARIADB_DATABASE'),
-            username: getenv('MARIADB_USERNAME'),
-            password: getenv('MARIADB_PASSWORD'),
-            charset: getenv('MARIADB_CHARSET'),
-        );
-
-        assertNotEmpty($mpdo);
-    }
-
-    public function testCreatePostgreSQL(): void
-    {
-        $mpdo = ModernPDO::createPostgreSQL(
-            host: getenv('POSTGRES_HOST'),
-            database: getenv('POSTGRES_DATABASE'),
-            username: getenv('POSTGRES_USERNAME'),
-            password: getenv('POSTGRES_PASSWORD'),
-        );
-
-        assertNotEmpty($mpdo);
-    }
-
-    public function testCreateSQLite3(): void
-    {
-        $mpdo = ModernPDO::createSQLite3();
-
-        assertNotEmpty($mpdo);
-    }
+    public const TABLE = 'integration_tests_modernpdo';
 
     public function testExec(): void
     {
-        $mpdo = ModernPDO::createSQLite3();
+        $this->mpdo->exec('INSERT INTO ' . self::TABLE . ' VALUES (1, \'test\'), (2, \'test\');');
+        assertEquals(1, $this->mpdo->exec('DELETE FROM ' . self::TABLE . ' WHERE id=1;'));
+        assertEquals(1, $this->mpdo->exec('UPDATE ' . self::TABLE . ' SET name=\'unknown\' WHERE id=2;'));
+        assertEquals(0, $this->mpdo->exec('UPDATE ' . self::TABLE . ' SET name=\'unknown\' WHER id=2;')); // Bad query
+        assertEquals(0, $this->mpdo->query('UPDATE ' . self::TABLE . ' SET name=\'unknown\' WHER id=2;')->rowCount()); // Bad query
+    }
 
-        assertNotEmpty($mpdo);
+    public function testFeathModes(): void
+    {
+        $this->mpdo->exec('INSERT INTO ' . self::TABLE . ' VALUES (1, \'test\'), (2, \'test\'), (3, \'test\');');
 
-        $mpdo->exec('CREATE TABLE ' . self::TABLE . ' (id int, name varchar(32));');
-        $mpdo->exec('INSERT INTO ' . self::TABLE . ' VALUES (1, \'test\'), (2, \'test\');');
-        assertEquals(1, $mpdo->exec('DELETE FROM ' . self::TABLE . ' WHERE id=1;'));
-        assertEquals(1, $mpdo->exec('UPDATE ' . self::TABLE . ' SET name=\'unknown\' WHERE id=2;'));
+        assertEquals(2, $this->mpdo->query('SELECT * FROM ' . self::TABLE)->columnCount());
+        assertEquals(3, $this->mpdo->query('SELECT COUNT(*) FROM ' . self::TABLE)->fetchColumn());
+
+        $temp = $this->mpdo->query('SELECT * FROM ' . self::TABLE);
+
+        assertEquals(1, $temp->fetchColumn());
+        assertEquals(2, $temp->fetchColumn());
+        assertEquals('test', $temp->fetchColumn(1));
+
+        $object = $this->mpdo->query('SELECT * FROM ' . self::TABLE . ' WHERE id=1')->fetchObject();
+
+        assertEquals(1, $object->id);
+        assertEquals('test', $object->name);
     }
 }

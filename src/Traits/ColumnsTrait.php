@@ -2,38 +2,67 @@
 
 namespace ModernPDO\Traits;
 
-use ModernPDO\Actions\Select;
+use ModernPDO\Escaper;
+use ModernPDO\Functions\BaseFunction;
 
 /**
  * Trait for working with 'columns'.
  */
 trait ColumnsTrait
 {
-    /** List of columns. */
-    protected string $columns = '*';
+    /**
+     * @var array<int|string, string|BaseFunction> column names
+     */
+    protected array $columns = [];
+
+    /**
+     * Returns list of columns.
+     */
+    protected function columnsQuery(Escaper $escaper): string
+    {
+        if (empty($this->columns)) {
+            return '*';
+        }
+
+        $query = '';
+
+        foreach ($this->columns as $key => $column) {
+            if ($column instanceof BaseFunction) {
+                $query .= $column->build($escaper);
+            } else {
+                $query .= $escaper->column($column);
+            }
+
+            if (\is_string($key)) {
+                $query .= ' AS ' . $escaper->column($key);
+            }
+
+            $query .= ', ';
+        }
+
+        return mb_substr($query, 0, -2);
+    }
+
+    /**
+     * Returns empty array.
+     *
+     * @return list<mixed>
+     */
+    protected function columnsPlaceholders(): array
+    {
+        return [];
+    }
 
     /**
      * Set columns.
      *
-     * @param string[] $columns array of column names
+     * @param array<int|string, string|BaseFunction> $columns array of column names
+     *
+     * @return $this
      */
-    public function columns(array $columns): Select
+    public function columns(array $columns): object
     {
-        if (empty($columns)) {
-            return $this;
-        }
-
-        $this->columns = '';
-
-        $last_key = array_key_last($columns);
-
-        foreach ($columns as $key => $column) {
-            $this->columns .= $column;
-
-            if ($last_key !== $key) {
-                $this->columns .= ', ';
-            }
-        }
+        $this->columns = $columns;
 
         return $this;
     }

@@ -9,6 +9,9 @@ namespace ModernPDO;
  */
 class Transaction
 {
+    /**
+     * Transaction constructor.
+     */
     public function __construct(
         private \PDO $pdo,
     ) {
@@ -21,7 +24,11 @@ class Transaction
      */
     public function begin(): bool
     {
-        return $this->pdo->beginTransaction();
+        try {
+            return $this->pdo->beginTransaction();
+        } catch (\Throwable $th) {
+            return false;
+        }
     }
 
     /**
@@ -31,7 +38,11 @@ class Transaction
      */
     public function commit(): bool
     {
-        return $this->pdo->commit();
+        try {
+            return $this->pdo->commit();
+        } catch (\Throwable $th) {
+            return false;
+        }
     }
 
     /**
@@ -41,7 +52,11 @@ class Transaction
      */
     public function rollBack(): bool
     {
-        return $this->pdo->rollBack();
+        try {
+            return $this->pdo->rollBack();
+        } catch (\Throwable $th) {
+            return false;
+        }
     }
 
     /**

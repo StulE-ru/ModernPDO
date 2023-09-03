@@ -2,48 +2,75 @@
 
 namespace ModernPDO\Traits;
 
-use ModernPDO\Actions\Update;
+use ModernPDO\Escaper;
+use ModernPDO\Functions\Scalar\ScalarFunction;
 
 /**
  * Trait for working with 'where'.
  */
 trait SetTrait
 {
-    /** List of set. */
-    protected string $set = '';
+    /**
+     * @var array<string, scalar|ScalarFunction|null> values for SET
+     */
+    protected array $set = [];
 
     /**
-     * Array of placeholders.
-     *
-     * @var mixed[]
+     * Returns set query.
      */
-    protected array $set_params = [];
+    protected function setQuery(Escaper $escaper): string
+    {
+        $query = '';
+
+        foreach ($this->set as $column => $value) {
+            if ($value instanceof ScalarFunction) {
+                $value = $value->buildQuery();
+            } elseif (\is_bool($value)) {
+                $value = $escaper->boolValue($value);
+            } else {
+                $value = '?';
+            }
+
+            $query .= $escaper->column($column) . '=' . $value . ', ';
+        }
+
+        return mb_substr($query, 0, -2);
+    }
+
+    /**
+     * Returns set placeholders.
+     *
+     * @return list<mixed>
+     */
+    protected function setPlaceholders(): array
+    {
+        $placeholders = [];
+
+        foreach ($this->set as $value) {
+            if ($value instanceof ScalarFunction) {
+                $placeholders = array_merge($placeholders, $value->buildParams());
+            } elseif (!\is_bool($value)) {
+                $placeholders[] = $value;
+            }
+        }
+
+        return $placeholders;
+    }
 
     /**
      * Set values for SET.
      *
-     * @param string[] $values array of values for SET
+     * @param array<string, scalar|ScalarFunction|null> $values array of values for SET
+     *
+     * @return $this
      */
-    public function set(array $values): Update
+    public function set(array $values): object
     {
         if (empty($values)) {
             return $this;
         }
 
-        $this->set = '';
-        $this->set_params = [];
-
-        $last_key = array_key_last($values);
-
-        foreach ($values as $column => $value) {
-            $this->set .= $column . '=?';
-
-            $this->set_params[] = $value;
-
-            if ($last_key !== $column) {
-                $this->set .= ', ';
-            }
-        }
+        $this->set = $values;
 
         return $this;
     }

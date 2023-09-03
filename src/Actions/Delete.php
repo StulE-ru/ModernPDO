@@ -2,6 +2,8 @@
 
 namespace ModernPDO\Actions;
 
+use ModernPDO\Traits\LimitTrait;
+use ModernPDO\Traits\OrderByTrait;
 use ModernPDO\Traits\WhereTrait;
 
 /**
@@ -9,6 +11,8 @@ use ModernPDO\Traits\WhereTrait;
  */
 class Delete extends Action
 {
+    use LimitTrait;
+    use OrderByTrait;
     use WhereTrait;
 
     /**
@@ -16,7 +20,23 @@ class Delete extends Action
      */
     protected function buildQuery(): string
     {
-        return trim('DELETE FROM ' . $this->table . ' ' . $this->where);
+        $escaper = $this->mpdo->escaper();
+
+        $query = 'DELETE FROM ' . $escaper->table($this->table);
+
+        if (!empty($this->where)) {
+            $query .= ' ' . $this->whereQuery($escaper);
+        }
+
+        if ($this->orderByColumn !== '') {
+            $query .= ' ' . $this->orderByQuery($escaper);
+        }
+
+        if ($this->limitCount > 0) {
+            $query .= ' ' . $this->limitQuery($escaper);
+        }
+
+        return $query;
     }
 
     /**
@@ -26,7 +46,11 @@ class Delete extends Action
      */
     protected function getPlaceholders(): array
     {
-        return $this->where_params;
+        return array_merge(
+            $this->wherePlaceholders(),
+            $this->orderByPlaceholders(),
+            $this->limitPlaceholders(),
+        );
     }
 
     /**

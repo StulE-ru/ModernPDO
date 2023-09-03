@@ -2,147 +2,57 @@
 
 namespace ModernPDO;
 
+use ModernPDO\Actions\AlterTable;
+use ModernPDO\Actions\CreateTable;
 use ModernPDO\Actions\Delete;
+use ModernPDO\Actions\DropTable;
 use ModernPDO\Actions\Insert;
 use ModernPDO\Actions\Select;
 use ModernPDO\Actions\Update;
 
 /**
  * Wrapper over PDO.
- *
- * Use ModerPDO::create... methods for create connections.
  */
 class ModernPDO
 {
-    /** Default port for MySQL. */
-    public const MYSQL_DEFAULT_PORT = '3306';
-    /** Default port for MariaDB. */
-    public const MARIADB_DEFAULT_PORT = '3306';
-    /** Default port for PostgreSQL. */
-    public const POSTGRESQL_DEFAULT_PORT = '5432';
+    /**
+     * @var \PDO pdo object
+     */
+    private \PDO $pdo;
 
-    private function __construct(
-        private \PDO $pdo,
+    /**
+     * @var Escaper escaper object
+     */
+    private Escaper $escaper;
+
+    /**
+     * @var Factory factory object
+     */
+    private Factory $factory;
+
+    /**
+     * ModernPDO constructor.
+     *
+     * @param \PDO                  $pdo     PDO object
+     * @param class-string<Escaper> $escaper Full escaper class name
+     * @param class-string<Factory> $factory Full factory class name
+     */
+    public function __construct(
+        \PDO $pdo,
+        string $escaper = Escaper::class,
+        string $factory = Factory::class,
     ) {
+        $this->pdo = $pdo;
+        $this->escaper = new $escaper($pdo);
+        $this->factory = new $factory($pdo, $this);
     }
 
     /**
-     * Creates and returns ModernPDO object using PDO object.
+     * Returns Escaper object.
      */
-    public static function createByPDO(\PDO $pdo): self
+    public function escaper(): Escaper
     {
-        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
-        $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
-
-        return new self($pdo);
-    }
-
-    /**
-     * Returns ModernPDO object configured with MySQL.
-     *
-     * @param string $host     The hostname on which the database server reside
-     * @param string $username The user name for the DSN string
-     * @param string $password The password for the DSN string
-     * @param string $charset  Connection charset, if empty, default database charset is used
-     * @param string $port     Connection port, if empty, default is used
-     *
-     * @see https://www.php.net/manual/ru/ref.pdo-mysql.php
-     */
-    public static function createMySQL(
-        string $host,
-        string $database,
-        string $username,
-        string $password,
-        string $charset = '',
-        string $port = self::MYSQL_DEFAULT_PORT,
-    ): self {
-        $pdo = new \PDO(
-            'mysql:host=' . $host . ';dbname=' . $database . ';port=' . $port,
-            $username,
-            $password,
-        );
-
-        if (!empty($charset)) {
-            $pdo->exec('SET NAMES ' . $charset);
-        }
-
-        return self::createByPDO($pdo);
-    }
-
-    /**
-     * Returns ModernPDO object configured with MariaDB.
-     *
-     * @param string $host     The hostname on which the database server reside
-     * @param string $database The name of the database
-     * @param string $username The user name for the DSN string
-     * @param string $password The password for the DSN string
-     * @param string $charset  Connection charset, if empty, default database charset is used
-     * @param string $port     Connection port, if empty, default is used
-     *
-     * @see https://www.php.net/manual/ru/ref.pdo-mysql.php
-     */
-    public static function createMariaDB(
-        string $host,
-        string $database,
-        string $username,
-        string $password,
-        string $charset = '',
-        string $port = self::MARIADB_DEFAULT_PORT,
-    ): self {
-        return self::createMySQL(
-            host: $host,
-            database: $database,
-            username: $username,
-            password: $password,
-            charset: $charset,
-            port: $port,
-        );
-    }
-
-    /**
-     * Returns ModernPDO object configured with PostgreSQL.
-     *
-     * @param string $host     The hostname on which the database server reside
-     * @param string $database The name of the database
-     * @param string $username The user name for the DSN string
-     * @param string $password The password for the DSN string
-     * @param string $port     Connection port, if empty, default is used
-     *
-     * @see https://www.php.net/manual/ru/ref.pdo-pgsql.php
-     */
-    public static function createPostgreSQL(
-        string $host,
-        string $database,
-        string $username,
-        string $password,
-        string $port = self::POSTGRESQL_DEFAULT_PORT,
-    ): self {
-        return self::createByPDO(
-            new \PDO(
-                'pgsql:host=' . $host . ';dbname=' . $database . ';port=' . $port,
-                $username,
-                $password,
-            ),
-        );
-    }
-
-    /**
-     * Returns ModernPDO object configured with SQLite3.
-     *
-     * @param string $mode Full path to the database file or :memory: or an empty string
-     *
-     * - To access a database on disk, $mode must be full path to the database file.
-     * - To create a database in memory, $mode must be ':memory:'.
-     * - To use a temporary database, which is deleted when the connection is closed, $mode must be an empty string.
-     *
-     * @see https://www.php.net/manual/en/ref.pdo-sqlite.connection.php
-     */
-    public static function createSQLite3(
-        string $mode = '',
-    ): self {
-        return self::createByPDO(
-            new \PDO('sqlite:' . $mode),
-        );
+        return $this->escaper;
     }
 
     /**
@@ -150,7 +60,7 @@ class ModernPDO
      */
     public function transaction(): Transaction
     {
-        return new Transaction($this->pdo);
+        return $this->factory->transaction();
     }
 
     /**
@@ -162,7 +72,11 @@ class ModernPDO
      */
     public function exec(string $query): int
     {
-        $count = $this->pdo->exec($query);
+        try {
+            $count = $this->pdo->exec($query);
+        } catch (\Throwable $th) {
+            $count = false;
+        }
 
         return $count !== false ? $count : 0;
     }
@@ -179,17 +93,45 @@ class ModernPDO
      */
     public function query(string $query, array $values = []): Statement
     {
-        if (empty($values)) {
-            $statement = $this->pdo->query($query);
-        } else {
-            $statement = $this->pdo->prepare($query);
+        try {
+            if (empty($values)) {
+                $statement = $this->pdo->query($query);
+            } else {
+                $statement = $this->pdo->prepare($query);
 
-            if ($statement !== false) {
-                $statement->execute($values);
+                if ($statement !== false) {
+                    $statement->execute($values);
+                }
             }
+        } catch (\Throwable $th) {
+            $statement = false;
         }
 
-        return new Statement($statement !== false ? $statement : null);
+        return $this->factory->statement($statement !== false ? $statement : null);
+    }
+
+    /**
+     * Returns CreateTable object.
+     */
+    public function createTable(string $table): CreateTable
+    {
+        return $this->factory->createTable($table);
+    }
+
+    /**
+     * Returns AlterTable object.
+     */
+    public function alterTable(string $table): AlterTable
+    {
+        return $this->factory->alterTable($table);
+    }
+
+    /**
+     * Returns DropTable object.
+     */
+    public function dropTable(string $table): DropTable
+    {
+        return $this->factory->dropTable($table);
     }
 
     /**
@@ -197,7 +139,7 @@ class ModernPDO
      */
     public function select(string $table): Select
     {
-        return new Select($this, $table);
+        return $this->factory->select($table);
     }
 
     /**
@@ -205,7 +147,7 @@ class ModernPDO
      */
     public function insert(string $table): Insert
     {
-        return new Insert($this, $table);
+        return $this->factory->insert($table);
     }
 
     /**
@@ -213,7 +155,7 @@ class ModernPDO
      */
     public function update(string $table): Update
     {
-        return new Update($this, $table);
+        return $this->factory->update($table);
     }
 
     /**
@@ -221,6 +163,6 @@ class ModernPDO
      */
     public function delete(string $table): Delete
     {
-        return new Delete($this, $table);
+        return $this->factory->delete($table);
     }
 }
